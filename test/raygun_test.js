@@ -22,15 +22,27 @@ var raygun = require('../lib/raygun.js');
     test.ifError(value)
 */
 
-exports['awesome'] = {
+exports['raygun functional test'] = {
   setUp: function(done) {
     // setup here
     done();
   },
-  'no args': function(test) {
-    test.expect(1);
-    // tests here
-    test.equal(raygun.awesome(), 'awesome', 'should be awesome.');
+  'init': function(test) {
+    var options = {
+      apiKey: 'key'
+    };
+    test.ok(raygun.client().init(options));
     test.done();
+  },
+  sendException: function(test){
+    var options = {
+      apiKey: 'key'
+    };
+
+    var client = raygun.client().init(options);
+
+    client.send(new Error(), function (){
+      test.done();
+    });
   },
 };
