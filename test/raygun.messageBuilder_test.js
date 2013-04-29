@@ -88,6 +88,25 @@ exports['error builder tests'] = {
     });
     test.done();
   },
+  messageIncludesTheErrorMessage: function (test) {
+    var errorMessage = 'WarpCoreAlignment';
+    var builder = messageBuilder.raygunMessageBuilder();
+    builder.setErrorDetails(new Error(errorMessage));
+    var message = builder.build();
+    test.ok(message.details.error.message);
+    test.equals(message.details.error.message, errorMessage);
+    test.done();
+  },
+  messageIncludeTheErrorMessageWhenNoneProvided: function (test) {
+    test.ok(this.message.details.error.message);
+    test.equals(this.message.details.error.message, 'NoMessage');
+    test.done();
+  },
+  messageIncludesClassName: function (test) {
+    test.ok(this.message.details.error.className);
+    test.equals(this.message.details.error.className, 'Error');
+    test.done();
+  },
 };
 
 exports['environment builder tests'] = {
