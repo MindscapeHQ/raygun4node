@@ -53,6 +53,13 @@ exports['basic builder tests'] = {
     test.equals(message.details.machineName, 'server1');
     test.done();
   },
+  defaultMachineNameIncluded: function (test) {
+    var builder = messageBuilder.raygunMessageBuilder();
+    builder.setMachineName();
+    var message = builder.build();
+    test.ok(message.details.machineName);
+    test.done();
+  },
 };
 
 exports['error builder tests'] = {
@@ -131,6 +138,13 @@ exports['custom data builder tests'] = {
     var message = builder.build();
     test.ok(message.details.userCustomData);
     test.equals(message.details.userCustomData.foo, 'bar');
+    test.done();
+  },
+  allowEmptyCustomDataToBeSet: function (test) {
+    var builder = messageBuilder.raygunMessageBuilder();
+    builder.setUserCustomData();
+    var message = builder.build();
+    test.equals(message.details.userCustomData, undefined);
     test.done();
   },
 };
