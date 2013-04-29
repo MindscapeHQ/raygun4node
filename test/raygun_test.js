@@ -29,19 +29,19 @@ exports['raygun functional test'] = {
   },
   'init': function(test) {
     var options = {
-      apiKey: 'key'
+      apiKey: ''
     };
     test.ok(raygun.client().init(options));
     test.done();
   },
-  sendException: function(test){
+  sendException: function(test) {
     var options = {
-      apiKey: 'key'
+      apiKey: ''
     };
 
     var client = raygun.client().init(options);
 
-    client.send(new Error(), function (){
+    client.send(new Error(), {}, function (){
       test.done();
     });
   },
