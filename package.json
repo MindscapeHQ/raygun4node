@@ -1,7 +1,7 @@
 {
   "name": "raygun",
   "description": "Raygun.io plugin for Node",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "homepage": "https://github.com/MindscapeHQ/raygun4node",
   "author": {
     "name": "MindscapeHQ",

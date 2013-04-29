@@ -88,6 +88,25 @@ exports['error builder tests'] = {
     });
     test.done();
   },
+  messageIncludesTheErrorMessage: function (test) {
+    var errorMessage = 'WarpCoreAlignment';
+    var builder = messageBuilder.raygunMessageBuilder();
+    builder.setErrorDetails(new Error(errorMessage));
+    var message = builder.build();
+    test.ok(message.details.error.message);
+    test.equals(message.details.error.message, errorMessage);
+    test.done();
+  },
+  messageIncludeTheErrorMessageWhenNoneProvided: function (test) {
+    test.ok(this.message.details.error.message);
+    test.equals(this.message.details.error.message, 'NoMessage');
+    test.done();
+  },
+  messageIncludesClassName: function (test) {
+    test.ok(this.message.details.error.className);
+    test.equals(this.message.details.error.className, 'Error');
+    test.done();
+  },
 };
 
 exports['environment builder tests'] = {
@@ -98,35 +117,35 @@ exports['environment builder tests'] = {
     done();
   },
   environmentDetailsSet: function (test) {
-    test.ok(this.message.environment);
+    test.ok(this.message.details.environment);
     test.done();
   },
   processorCountSet: function (test) {
-    test.ok(this.message.environment.processorCount);
+    test.ok(this.message.details.environment.processorCount);
     test.done();
   },
   osVersionSet: function (test) {
-    test.ok(this.message.environment.osVersion);
+    test.ok(this.message.details.environment.osVersion);
     test.done();
   },
   cpuSet: function (test) {
-    test.ok(this.message.environment.cpu);
+    test.ok(this.message.details.environment.cpu);
     test.done();
   },
   architectureSet: function (test) {
-    test.ok(this.message.environment.architecture);
+    test.ok(this.message.details.environment.architecture);
     test.done();
   },
   totalPhysicalMemorySet: function (test) {
-    test.ok(this.message.environment.totalPhysicalMemory);
+    test.ok(this.message.details.environment.totalPhysicalMemory);
     test.done();
   },
   availablePhysicalMemorySet: function (test) {
-    test.ok(this.message.environment.availablePhysicalMemory);
+    test.ok(this.message.details.environment.availablePhysicalMemory);
     test.done();
   },
   utcOffsetIncluded: function (test) {
-    test.ok(this.message.environment.utcOffset);
+    test.ok(this.message.details.environment.utcOffset);
     test.done();
   },
 };
