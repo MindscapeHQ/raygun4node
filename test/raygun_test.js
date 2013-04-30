@@ -1,6 +1,6 @@
 'use strict';
 
-var raygun = require('../lib/raygun.js');
+var Raygun = require('../lib/raygun.js');
 
 /*
   ======== A Handy Little Nodeunit Reference ========
@@ -31,17 +31,18 @@ exports['raygun functional test'] = {
     var options = {
       apiKey: ''
     };
-    test.ok(raygun.client().init(options));
+    test.ok(new Raygun.Client().init(options));
     test.done();
   },
   sendException: function(test) {
     var options = {
-      apiKey: ''
+      apiKey: '' // set a valid api key to run this test
     };
 
-    var client = raygun.client().init(options);
+    var client = new Raygun.Client().init(options);
 
-    client.send(new Error(), {}, function (){
+    client.send(new Error(), {}, function (response){
+      test.equals(response.statusCode, 200);// should be a 202, bug with the API at the moment
       test.done();
     });
   },

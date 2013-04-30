@@ -7,7 +7,10 @@ Install the module with: `npm install raygun`
 
 ```javascript
 var raygun = require('raygun');
-raygun.client().init({ apiKey: 'your API key' }).send(theError);
+var raygunClient = new raygun.Client().init({ apiKey: 'your API key' });
+raygunClient.send(theError);
+
+express.add(raygunClient.expressHandler);
 ```
 
 ## Documentation
