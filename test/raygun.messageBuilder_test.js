@@ -167,3 +167,16 @@ exports['custom data builder tests'] = {
     test.done();
   },
 };
+
+exports['express request builder tests'] = {
+  setUp: function (done) {
+    var builder = new MessageBuilder();
+    builder.setRequestDetails({ host: 'localhost' });
+    this.message = builder.build();
+    done();
+  },
+  hostNameIsSet: function (test) {
+    test.ok(this.message.details.request.hostName);
+    test.done();
+  },
+};
