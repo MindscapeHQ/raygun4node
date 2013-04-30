@@ -1,6 +1,6 @@
 'use strict';
 
-var messageBuilder = require('../lib/raygun.messageBuilder.js');
+var MessageBuilder = require('../lib/raygun.messageBuilder.js');
 
 /*
   ======== A Handy Little Nodeunit Reference ========
@@ -24,7 +24,7 @@ var messageBuilder = require('../lib/raygun.messageBuilder.js');
 
 exports['basic builder tests'] = {
   setUp: function (done) {
-    var builder = messageBuilder.raygunMessageBuilder();
+    var builder = new MessageBuilder();
     this.message = builder.build();
     done();
   },
@@ -47,14 +47,14 @@ exports['basic builder tests'] = {
     test.done();
   },
   setMachineNameIncluded: function (test) {
-    var builder = messageBuilder.raygunMessageBuilder();
+    var builder = new MessageBuilder();
     builder.setMachineName('server1');
     var message = builder.build();
     test.equals(message.details.machineName, 'server1');
     test.done();
   },
   defaultMachineNameIncluded: function (test) {
-    var builder = messageBuilder.raygunMessageBuilder();
+    var builder = new MessageBuilder();
     builder.setMachineName();
     var message = builder.build();
     test.ok(message.details.machineName);
@@ -64,7 +64,7 @@ exports['basic builder tests'] = {
 
 exports['error builder tests'] = {
   setUp: function (done) {
-    var builder = messageBuilder.raygunMessageBuilder();
+    var builder = new MessageBuilder();
     builder.setErrorDetails(new Error());
     this.message = builder.build();
     done();
@@ -90,7 +90,7 @@ exports['error builder tests'] = {
   },
   messageIncludesTheErrorMessage: function (test) {
     var errorMessage = 'WarpCoreAlignment';
-    var builder = messageBuilder.raygunMessageBuilder();
+    var builder = new MessageBuilder();
     builder.setErrorDetails(new Error(errorMessage));
     var message = builder.build();
     test.ok(message.details.error.message);
@@ -111,7 +111,7 @@ exports['error builder tests'] = {
 
 exports['environment builder tests'] = {
   setUp: function (done) {
-    var builder = messageBuilder.raygunMessageBuilder();
+    var builder = new MessageBuilder();
     builder.setEnvironmentDetails();
     this.message = builder.build();
     done();
@@ -152,7 +152,7 @@ exports['environment builder tests'] = {
 
 exports['custom data builder tests'] = {
   allowCustomDataToBeSet: function (test) {
-    var builder = messageBuilder.raygunMessageBuilder();
+    var builder = new MessageBuilder();
     builder.setUserCustomData({ foo: 'bar' });
     var message = builder.build();
     test.ok(message.details.userCustomData);
@@ -160,10 +160,23 @@ exports['custom data builder tests'] = {
     test.done();
   },
   allowEmptyCustomDataToBeSet: function (test) {
-    var builder = messageBuilder.raygunMessageBuilder();
+    var builder = new MessageBuilder();
     builder.setUserCustomData();
     var message = builder.build();
     test.equals(message.details.userCustomData, undefined);
+    test.done();
+  },
+};
+
+exports['express request builder tests'] = {
+  setUp: function (done) {
+    var builder = new MessageBuilder();
+    builder.setRequestDetails({ host: 'localhost' });
+    this.message = builder.build();
+    done();
+  },
+  hostNameIsSet: function (test) {
+    test.ok(this.message.details.request.hostName);
     test.done();
   },
 };
