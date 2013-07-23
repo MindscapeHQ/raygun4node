@@ -10,14 +10,12 @@ var raygun = require('raygun');
 var raygunClient = new raygun.Client().init({ apiKey: 'your API key' });
 raygunClient.send(theError);
 
-express.add(raygunClient.expressHandler);
+// For express, at the end of the middleware definitions:
+app.use(raygunClient.expressHandler);
 ```
 
-## Documentation
-_(Coming soon)_
-
 ## Examples
-_(Coming soon)_
+View a screencast on creating an app with Node.js and Express.js, then hooking up the error handling and sending them at {{blogpost}}
 
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
