@@ -15,7 +15,7 @@ app.use(raygunClient.expressHandler);
 ```
 
 ## Examples
-View a screencast on creating an app with Node.js and Express.js, then hooking up the error handling and sending them at {{blogpost}}
+View a screencast on creating an app with Node.js and Express.js, then hooking up the error handling and sending them at [http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/](http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/)
 
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
