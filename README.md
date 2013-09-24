@@ -14,7 +14,17 @@ raygunClient.send(theError);
 app.use(raygunClient.expressHandler);
 ```
 
-## Examples
+## Help
+
+### Sending custom data
+
+You can pass custom data in on the Send() function, as the second parameter. For instance (based off the call in test/raygun_test.js):
+
+```javascript
+client.send(new Error(), { 'version': 1.1 }, function (response){
+```
+
+### Examples
 View a screencast on creating an app with Node.js and Express.js, then hooking up the error handling and sending them at [http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/](http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/)
 
 ## Contributing
