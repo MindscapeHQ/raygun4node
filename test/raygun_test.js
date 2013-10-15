@@ -42,8 +42,8 @@ exports['raygun functional test'] = {
     var client = new Raygun.Client().init(options);
 
     client.send(new Error(), {}, function (response){
-      test.equals(response.statusCode, 200);// should be a 202, bug with the API at the moment
+      test.equals(response.statusCode, 202);
       test.done();
     });
-  },
+  }
 };

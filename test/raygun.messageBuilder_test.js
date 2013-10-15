@@ -59,7 +59,7 @@ exports['basic builder tests'] = {
     var message = builder.build();
     test.ok(message.details.machineName);
     test.done();
-  },
+  }
 };
 
 exports['error builder tests'] = {
@@ -106,7 +106,7 @@ exports['error builder tests'] = {
     test.ok(this.message.details.error.className);
     test.equals(this.message.details.error.className, 'Error');
     test.done();
-  },
+  }
 };
 
 exports['environment builder tests'] = {
@@ -147,7 +147,7 @@ exports['environment builder tests'] = {
   utcOffsetIncluded: function (test) {
     test.ok(this.message.details.environment.utcOffset);
     test.done();
-  },
+  }
 };
 
 exports['custom data builder tests'] = {
@@ -165,7 +165,7 @@ exports['custom data builder tests'] = {
     var message = builder.build();
     test.equals(message.details.userCustomData, undefined);
     test.done();
-  },
+  }
 };
 
 exports['express request builder tests'] = {
@@ -178,5 +178,5 @@ exports['express request builder tests'] = {
   hostNameIsSet: function (test) {
     test.ok(this.message.details.request.hostName);
     test.done();
-  },
+  }
 };
