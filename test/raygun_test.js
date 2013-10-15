@@ -51,7 +51,7 @@ exports['raygun functional test'] = {
       apiKey: 'cZyvBzHJo0lAYjowjAHj0Q==' // set a valid api key to run this test
     };
 
-    var client = new Raygun.Client().init(options).setUser("callum@mindscape.co.nz");
+    var client = new Raygun.Client().init(options).setUser("callum@mindscape.co.nz").setVersion("1.0.0.0");
 
     client.send(new Error(), {}, function (response){
       test.equals(response.statusCode, 202);

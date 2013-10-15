@@ -180,3 +180,20 @@ exports['express request builder tests'] = {
     test.done();
   }
 };
+
+exports['user and version builder tests'] = {
+  userSet: function (test) {
+    var builder = new MessageBuilder();
+    builder.setUser('testuser');
+    this.message = builder.build();
+    test.equals(this.message.details.user.identifier, 'testuser');
+    test.done();
+  },
+  versionSet: function (test) {
+    var builder = new MessageBuilder();
+    builder.setVersion('1.0.0.0');
+    this.message = builder.build();
+    test.equals(this.message.details.version, '1.0.0.0');
+    test.done();
+  }
+};
