@@ -36,10 +36,22 @@ exports['raygun functional test'] = {
   },
   sendException: function(test) {
     var options = {
-      apiKey: '' // set a valid api key to run this test
+      apiKey: 'cZyvBzHJo0lAYjowjAHj0Q==' // set a valid api key to run this test
     };
 
     var client = new Raygun.Client().init(options);
+
+    client.send(new Error(), {}, function (response){
+      test.equals(response.statusCode, 202);
+      test.done();
+    });
+  },
+  sendExceptionWithUser: function(test) {
+    var options = {
+      apiKey: 'cZyvBzHJo0lAYjowjAHj0Q==' // set a valid api key to run this test
+    };
+
+    var client = new Raygun.Client().init(options).setUser("callum@mindscape.co.nz");
 
     client.send(new Error(), {}, function (response){
       test.equals(response.statusCode, 202);
