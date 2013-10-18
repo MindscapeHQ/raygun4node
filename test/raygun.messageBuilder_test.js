@@ -189,6 +189,13 @@ exports['user and version builder tests'] = {
     test.equals(this.message.details.user.identifier, 'testuser');
     test.done();
   },
+  userSetFunction: function (test) {
+    var builder = new MessageBuilder();
+    builder.setUser(function() { return 'testuser'; });
+    this.message = builder.build();
+    test.equals(this.message.details.user.identifier, 'testuser');
+    test.done();
+  },
   versionSet: function (test) {
     var builder = new MessageBuilder();
     builder.setVersion('1.0.0.0');

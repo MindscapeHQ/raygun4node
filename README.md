@@ -30,6 +30,13 @@ You can call setUser(string) to RaygunClient to pass in a user name or email add
 
 Note that if your users can change context (log in/out), take care to call setUser() again to update their handle.
 
+For user tracking in Express.js with the middleware handler, you can pass a function to setUser that will get the current user context (after you call init():
+
+```javascript
+// myUser is an email address or username
+client.setUser(function () { return myUser } );
+```
+
 ### Version tracking
 
 Call setVersion(string) on a RaygunClient to set the version of the calling application. This is expected to be of the format x.x.x.x, where x is a positive integer. The version will be visible in the dashboard.
