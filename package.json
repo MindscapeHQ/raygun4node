@@ -1,7 +1,7 @@
 {
   "name": "raygun",
   "description": "Raygun.io plugin for Node",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "homepage": "https://github.com/MindscapeHQ/raygun4node",
   "author": {
     "name": "MindscapeHQ",
@@ -28,7 +28,7 @@
     "test": "grunt nodeunit"
   },
   "devDependencies": {
-    "grunt-contrib-jshint": "~0.1.1",
+    "grunt-contrib-jshint": "~0.6.4",
     "grunt-contrib-nodeunit": "~0.1.2",
     "grunt-contrib-watch": "~0.2.0",
     "grunt": "~0.4.1"
