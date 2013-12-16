@@ -14,7 +14,7 @@ raygunClient.send(theError);
 app.use(raygunClient.expressHandler);
 ```
 
-## Help
+## Documentation
 
 ### Sending custom data
 
@@ -26,20 +26,33 @@ client.send(new Error(), { 'mykey': 'beta' }, function (response){
 
 ### Unique user tracking
 
-You can call setUser(string) to RaygunClient to pass in a user name or email address representing the current user context. This will be transmitted with each message sent, and a count of affected users will appear on the dashboard in the error group view. If you pass in an email address, and the user has associated a Gravatar with it, their picture will be also displayed.
+New in 0.4: You can set **raygunClient.user** to a function that returns the user name or email address of the currently logged in user.
 
-Note that if your users can change context (log in/out), take care to call setUser() again to update their handle.
-
-For user tracking in Express.js with the middleware handler, you can pass a function to setUser that will get the current user context (after you call init():
+An example, using the Passport.js middleware:
 
 ```javascript
-// myUser is an email address or username
-client.setUser(function () { return myUser } );
+var raygunClient = new raygun.Client().init({apiKey: "yourkey"});
+
+raygunClient.user = function (req) {
+  if (req.user) {
+    return req.user.username;
+  }
+}
 ```
+
+####raygunClient.user(req)
+
+**Param**: *req*: the current request.
+
+This will be transmitted with each message sent, and a count of affected users will appear on the dashboard in the error group view. If you pass in an email address, and the user has associated a Gravatar with it, their picture will be also displayed.
+
+**Note:** setUser deprecated in 0.4
+
+Release 0.3 previously had a setUser function that accepted a string or function to specify the user, however it did not accept arguments. This method is considered deprecated and will be removed in the 1.0 release, thus it is advised to update your code to set it with the new *user* function.
 
 ### Version tracking
 
-Call setVersion(string) on a RaygunClient to set the version of the calling application. This is expected to be of the format x.x.x.x, where x is a positive integer. The version will be visible in the dashboard.
+Call setVersion(*string*) on a RaygunClient to set the version of the calling application. This is expected to be of the format x.x.x.x, where x is a positive integer. The version will be visible in the dashboard.
 
 ### Examples
 View a screencast on creating an app with Node.js and Express.js, then hooking up the error handling and sending them at [http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/](http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/)
@@ -48,6 +61,7 @@ View a screencast on creating an app with Node.js and Express.js, then hooking u
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
+- 0.4.0 - Added *user* function, deprecated setUser
 - 0.3.0 - Added version and user tracking functionality; bump jshint version, update test
 - 0.2.0 - Added Express handler, bug fixes
 - 0.1.2 - Include more error information
