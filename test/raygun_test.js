@@ -34,6 +34,20 @@ exports['raygun functional test'] = {
     test.ok(new Raygun.Client().init(options));
     test.done();
   },
+  'user': function(test) {
+    var client = new Raygun.Client().init({apiKey: "" });
+
+    client.user = function (req) {
+      return req.user;
+    };
+
+    var req = {
+      user: "theuser"
+    };
+
+    test.equals(client.user(req), "theuser");
+    test.done();
+  },
   sendException: function(test) {
     var options = {
       apiKey: '' // set a valid api key to run this test
