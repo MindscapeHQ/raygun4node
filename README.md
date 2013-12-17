@@ -61,6 +61,7 @@ View a screencast on creating an app with Node.js and Express.js, then hooking u
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
+- 0.4.1 - Fixed issue where getting cpu information returned undefined
 - 0.4.0 - Added *user* function, deprecated setUser
 - 0.3.0 - Added version and user tracking functionality; bump jshint version, update test
 - 0.2.0 - Added Express handler, bug fixes
