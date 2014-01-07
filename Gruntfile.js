@@ -5,7 +5,7 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
     nodeunit: {
-      files: ['test/**/*_test.js']
+      files: ['test/**/*_test.js', '!test/**/raygun_send_test.js']
     },
     jshint: {
       options: {
