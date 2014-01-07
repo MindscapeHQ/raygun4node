@@ -22,30 +22,33 @@ var Raygun = require('../lib/raygun.js');
     test.ifError(value)
 */
 
-exports['raygun functional test'] = {
+exports['raygun functional sending test'] = {
   setUp: function(done) {
     // setup here
     done();
   },
-  'init': function(test) {
+  sendException: function(test) {
     var options = {
-      apiKey: ''
+      apiKey: '' // set a valid api key to run this test
     };
-    test.ok(new Raygun.Client().init(options));
-    test.done();
+
+    var client = new Raygun.Client().init(options);
+
+    client.send(new Error(), {}, function (response){
+      test.equals(response.statusCode, 202);
+      test.done();
+    });
   },
-  'user': function(test) {
-    var client = new Raygun.Client().init({apiKey: "" });
-
-    client.user = function (req) {
-      return req.user;
+  sendExceptionWithUser: function(test) {
+    var options = {
+      apiKey: '' // set a valid api key to run this test
     };
 
-    var req = {
-      user: "theuser"
-    };
+    var client = new Raygun.Client().init(options).setUser("callum@mindscape.co.nz").setVersion("1.0.0.0");
 
-    test.equals(client.user(req), "theuser");
-    test.done();
+    client.send(new Error(), {}, function (response){
+      test.equals(response.statusCode, 202);
+      test.done();
+    });
   }
 };
