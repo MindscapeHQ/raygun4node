@@ -57,8 +57,25 @@ raygunClient.user = function (req) {
 ####raygunClient.user(req)
 
 **Param**: *req*: the current request.
+**Returns**: The current user's identifier, or an object that describes the user.
 
-This will be transmitted with each message sent, and a count of affected users will appear on the dashboard in the error group view. If you pass in an email address, and the user has associated a Gravatar with it, their picture will be also displayed.
+This will be transmitted with each message sent, and a count of affected users will appear on the dashboard in the error group view. If you return an email address, and the user has associated a Gravatar with it, their picture will be also displayed.
+
+If you return an object, it may have any of the following properties (only identifier is required):
+
+`identifier` is the user identifier. This will be used to uniquely identify the user within Raygun. This is the only required parameter, but is only required if you are using user tracking.
+
+`isAnonymous` is a bool indicating whether the user is anonymous or actually has a user account. Even if this is set to true, you should still give the user a unique identifier of some kind.
+
+`email` is the user's email address.
+
+`fullName` is the user's full name.
+
+`firstName` is the user's first or preferred name.
+
+`uuid` is the identifier of the device the app is running on. This could be used to correlate user accounts over multiple machines.
+
+Any other properties will be discarded.
 
 **Note:** setUser deprecated in 0.4
 
