@@ -24,7 +24,7 @@ You can pass custom data in on the Send() function, as the second parameter. For
 client.send(new Error(), { 'mykey': 'beta' }, function (response){
 ```
 
-### Sengin request data
+### Sending request data
 
 You can send the request data in the Send() function, as the fourth parameter. For example:
 ```javascript
