@@ -24,6 +24,13 @@ You can pass custom data in on the Send() function, as the second parameter. For
 client.send(new Error(), { 'mykey': 'beta' }, function (response){
 ```
 
+### Sengin request data
+
+You can send the request data in the Send() function, as the fourth parameter. For example:
+```javascript
+client.send(new Error(), {}, function () {}, requestData);
+```
+
 ### Unique user tracking
 
 New in 0.4: You can set **raygunClient.user** to a function that returns the user name or email address of the currently logged in user.
