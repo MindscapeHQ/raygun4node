@@ -28,7 +28,7 @@ client.send(new Error(), { 'mykey': 'beta' }, function (response){
 
 You can send the request data in the Send() function, as the fourth parameter. For example:
 ```javascript
-client.send(new Error(), {}, function () {}, requestData);
+client.send(new Error(), {}, function () {}, request);
 ```
 
 ### Unique user tracking
