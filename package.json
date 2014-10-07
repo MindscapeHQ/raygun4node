@@ -25,13 +25,11 @@
     "node": ">= 0.10.0"
   },
   "scripts": {
-    "test": "grunt nodeunit"
+    "test": "jshint **/*.js && tap test/*.js"
   },
   "devDependencies": {
-    "grunt-contrib-jshint": "~0.6.4",
-    "grunt-contrib-nodeunit": "~0.1.2",
-    "grunt-contrib-watch": "~0.2.0",
-    "grunt": "~0.4.1"
+    "jshint": "^2.5.6",
+    "tap": "^0.4.13"
   },
   "dependencies": {
     "stack-trace": "0.0.6"
