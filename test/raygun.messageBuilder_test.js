@@ -175,3 +175,32 @@ test('user and version builder tests', function (t) {
   
   t.end();
 });
+
+test('filter keys tests', function (t) {
+  var builder = new MessageBuilder({ filters: ['username', 'password', 'X-ApiKey'] });
+  var body = { username: 'admin@raygun.io', password: 'nice try', remember: true };
+  var queryString = { username: 'admin@raygun.io', remember: false };
+  var headers = { 'X-ApiKey': '123456', 'Host': 'app.raygun.io' };
+  builder.setRequestDetails({ body: body, query: queryString, headers: headers });
+  var message = builder.build();
+  
+  t.test('form is filtered', function (tt) {
+    tt.equals(message.details.request.form.username, undefined);
+    tt.equals(message.details.request.form.password, undefined);
+    tt.equals(message.details.request.form.remember, true);
+    tt.end();
+  });
+  
+  t.test('query string is filtered', function (tt) {
+    tt.equals(message.details.request.queryString.username, undefined);
+    tt.equals(message.details.request.queryString.password, undefined);
+    tt.equals(message.details.request.queryString.remember, false);
+    tt.end();
+  });
+  
+  t.test('headers are filtered', function (tt) {
+    tt.equals(message.details.request.headers['X-ApiKey'], undefined);
+    tt.equals(message.details.request.headers['Host'], 'app.raygun.io');
+    tt.end();
+  });
+});
