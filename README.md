@@ -92,6 +92,7 @@ View a screencast on creating an app with Node.js and Express.js, then hooking u
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using "npm test".
 
 ## Release History
+- 0.5.0 - Added filters for sensitive request data, and better affected user tracking
 - 0.4.2 - Minor test refactor
 - 0.4.1 - Fixed issue where getting cpu information returned undefined
 - 0.4.0 - Added *user* function, deprecated setUser
