@@ -165,6 +165,16 @@ test('user and version builder tests', function (t) {
     tt.end();
   });
   
+  t.test('user function returning object', function (tt) {
+    var builder = new MessageBuilder();
+    builder.setUser(function() { return {identifier: 'testuser', email: 'test@example.com', notSupportedProp: 'ignore'}; });
+    var message = builder.build();
+    tt.equals(message.details.user.identifier, 'testuser');
+    tt.equals(message.details.user.email, 'test@example.com');
+    tt.equals(message.details.user.notSupportedProp, undefined);
+    tt.end();
+  });
+  
   t.test('version set', function (tt) {
     var builder = new MessageBuilder();
     builder.setVersion('1.0.0.0');
