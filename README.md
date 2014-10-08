@@ -31,7 +31,7 @@ You can send the request data in the Send() function, as the fourth parameter. F
 client.send(new Error(), {}, function () {}, request);
 ```
 
-If you want to filter any of the requets data then you can pass in an array of keys to filter when
+If you want to filter any of the request data then you can pass in an array of keys to filter when
 you init the client. For example:
 ```javascript
 var raygun = require('raygun');
