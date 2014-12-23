@@ -10,9 +10,13 @@ var raygun = require('raygun');
 var raygunClient = new raygun.Client().init({ apiKey: 'your API key' });
 raygunClient.send(theError);
 
-// For express, at the end of the middleware definitions:
+// For express, at the end of the middleware definitions, just above app.listen:
 app.use(raygunClient.expressHandler);
 ```
+
+### Expressjs 4.0 and above
+
+The [Express documentation](http://expressjs.com/guide/error-handling.html) says `Though not strictly required, by convention you define error-handling middleware last, after other app.use() calls`, but that is incorrect. If the `app.use(raygunClient.expressHandler);` call is not immediately before the `app.listen` call, then errors will not be handled by Raygun.
 
 ## Documentation
 
