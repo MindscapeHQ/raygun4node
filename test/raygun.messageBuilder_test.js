@@ -214,3 +214,41 @@ test('filter keys tests', function (t) {
     tt.end();
   });
 });
+
+test('custom tags', function (t) {
+  t.test('with array', function(tt) {
+    var builder = new MessageBuilder();
+    builder.setTags(['a', 'bb', 'c']);
+    var message = builder.build();
+    
+    tt.deepEqual(message.details.tags, ['a', 'bb', 'c']);
+    tt.end();
+  });
+  
+  t.test('with null', function(tt) {
+    var builder = new MessageBuilder();
+    builder.setTags(null);
+    var message = builder.build();
+    
+    tt.notOk(message.details.tags);
+    tt.end();
+  });
+  
+  t.test('with undefined', function(tt) {
+    var builder = new MessageBuilder();
+    builder.setTags(undefined);
+    var message = builder.build();
+    
+    tt.notOk(message.details.tags);
+    tt.end();
+  });
+  
+  t.test('with non-array type', function(tt) {
+    var builder = new MessageBuilder();
+    builder.setTags(5);
+    var message = builder.build();
+    
+    tt.notOk(message.details.tags);
+    tt.end();
+  });
+});
