@@ -103,6 +103,7 @@ View a screencast on creating an app with Node.js and Express.js, then hooking u
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using "npm test".
 
 ## Release History
+- 0.6.0 - Added ability to send tags with exception reports.
 - 0.5.0 - Added filters for sensitive request data, and better affected user tracking
 - 0.4.2 - Minor test refactor
 - 0.4.1 - Fixed issue where getting cpu information returned undefined
@@ -114,5 +115,5 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 - 0.1.0 - Initial release
 
 ## License
-Copyright (c) 2013 MindscapeHQ
+Copyright (c) 2015 MindscapeHQ
 Licensed under the MIT license.
