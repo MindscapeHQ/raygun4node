@@ -25,7 +25,7 @@ The [Express documentation](http://expressjs.com/guide/error-handling.html) says
 You can pass custom data in on the Send() function, as the second parameter. For instance (based off the call in test/raygun_test.js):
 
 ```javascript
-client.send(new Error(), { 'mykey': 'beta' }, function (response){
+client.send(new Error(), { 'mykey': 'beta' }, function (response){ });
 ```
 
 ### Sending request data
