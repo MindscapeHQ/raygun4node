@@ -141,7 +141,7 @@ test('custom data builder', function (t) {
 
 test('express request builder', function (t) {
   var builder = new MessageBuilder();
-  builder.setRequestDetails({ host: 'localhost' });
+  builder.setRequestDetails({ hostname: 'localhost' });
   var message = builder.build();
   
   t.ok(message.details.request.hostName);
