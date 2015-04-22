@@ -49,7 +49,7 @@ You can add tags to your error in the Send() function, as the fifth parameter. F
 client.send(new Error(), {}, function () {}, {}, ['custom tag 1', 'important error']);
 ```
 
-### Unique user tracking
+### Affected user tracking
 
 New in 0.4: You can set **raygunClient.user** to a function that returns the user name or email address of the currently logged in user.
 
