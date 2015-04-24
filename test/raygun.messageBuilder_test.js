@@ -139,11 +139,20 @@ test('custom data builder', function (t) {
   t.end();
 });
 
-test('express request builder', function (t) {
+test('express4 request builder', function (t) {
   var builder = new MessageBuilder();
   builder.setRequestDetails({ hostname: 'localhost' });
   var message = builder.build();
   
+  t.ok(message.details.request.hostName);
+  t.end();
+});
+
+test('express3 request builder', function (t) {
+  var builder = new MessageBuilder();
+  builder.setRequestDetails({ host: 'localhost' });
+  var message = builder.build();
+
   t.ok(message.details.request.hostName);
   t.end();
 });
