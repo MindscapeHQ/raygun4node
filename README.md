@@ -1,5 +1,7 @@
 # Raygun4Node
 
+[![Build Status](https://travis-ci.org/MindscapeHQ/raygun4node.svg?branch=master)](https://travis-ci.org/MindscapeHQ/raygun4node)
+
 Raygun.io plugin for Node
 
 ## Getting Started
@@ -103,6 +105,7 @@ View a screencast on creating an app with Node.js and Express.js, then hooking u
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using "npm test".
 
 ## Release History
+- 0.6.2 - Fix utf8 chars causing 400s, log when errors occur when posting
 - 0.6.1 - Replace deprecated request.host with request.hostname if it exists.
 - 0.6.0 - Added ability to send tags with exception reports.
 - 0.5.0 - Added filters for sensitive request data, and better affected user tracking
