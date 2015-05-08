@@ -1,5 +1,7 @@
 # Raygun4Node
 
+[![Build Status](https://travis-ci.org/MindscapeHQ/raygun4node.svg?branch=master)](https://travis-ci.org/MindscapeHQ/raygun4node)
+
 Raygun.io plugin for Node
 
 ## Getting Started
