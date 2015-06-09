@@ -20,6 +20,13 @@ The [Express documentation](http://expressjs.com/guide/error-handling.html) says
 
 ## Documentation
 
+### Callbacks
+
+The callback should be a node-style callback: `function(err, response) { /*...*/ }`.
+*Note*: If the callback only takes one parameter (`function(response){ /*...*/ }`)
+it will only be called when the transmission is successful. This is included for
+backwards compatibility; the Node-style callback should be preferred.
+
 ### Sending custom data
 
 You can pass custom data in on the Send() function, as the second parameter. For instance (based off the call in test/raygun_test.js):
