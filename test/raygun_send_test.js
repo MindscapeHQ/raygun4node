@@ -22,7 +22,7 @@ test('send complex', {skip: true}, function (t) {
   });
 });
 
-test('send with OnBeforeSend', function (t) {
+test('send with OnBeforeSend', {skip: true}, function (t) {
   t.plan(1);
   var client = new Raygun.Client().init({apiKey: process.env['RAYGUN_APIKEY']});
 
