@@ -102,6 +102,27 @@ Call setVersion(*string*) on a RaygunClient to set the version of the calling ap
 
 You can change the endpoint that error messages are sent to by specifying the `host`, `port`, and `useSSL` properties in the `raygunClient.init()` options hash. By default, `host` is `api.raygun.io`, `port` is `443`, and `useSSL` is `true`. 
 
+### onBeforeSend
+
+Call `Raygun.onBeforeSend()`, passing in a function which takes up to 5 parameters (see the example below). This callback function will be called immediately before the payload is sent. The first parameter it gets will be the payload that is about to be sent. Thus from your function you can inspect the payload and decide whether or not to send it.
+
+You can also pass this in as an option to `init()` like this: `raygunClient.init({ onBeforeSend: function(payload) { return payload; } });`
+
+From the supplied function, you should return either the payload (intact or mutated as per your needs), or false.
+
+If your function returns a truthy object, Raygun4Node will attempt to send it as supplied. Thus, you can mutate it as per your needs - preferably only the values if you wish to filter out data that is not taken care of by the filters. You can also of course return it as supplied.
+
+If, after inspecting the payload, you wish to discard it and abort the send to Raygun, simply return false.
+
+By example:
+
+    var myBeforeSend = function (payload, exception, customData, request, tags) {
+      console.log(payload); // Modify the payload here if necessary
+      return payload; // Return false here to abort the send
+    }
+
+    Raygun.onBeforeSend(myBeforeSend);
+
 ### Examples
 View a screencast on creating an app with Node.js and Express.js, then hooking up the error handling and sending them at [http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/](http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/)
 
