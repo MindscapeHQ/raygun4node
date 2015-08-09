@@ -21,3 +21,18 @@ test('send complex', {skip: true}, function (t) {
     t.equals(response.statusCode, 202);
   });
 });
+
+test('send with OnBeforeSend', function (t) {
+  t.plan(1);
+  var client = new Raygun.Client().init({apiKey: process.env['RAYGUN_APIKEY']});
+
+  var onBeforeSendCalled = false;
+  client.onBeforeSend(function(payload){
+    return payload;
+  });
+
+  client.send(new Error(), {}, function (response) {
+    t.equals(onBeforeSendCalled, true);
+    t.end();
+  });
+});
