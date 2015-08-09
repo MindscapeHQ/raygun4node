@@ -31,7 +31,7 @@ test('send with OnBeforeSend', {skip: true}, function (t) {
     return payload;
   });
 
-  client.send(new Error(), {}, function (response) {
+  client.send(new Error(), {}, function () {
     t.equals(onBeforeSendCalled, true);
     t.end();
   });
