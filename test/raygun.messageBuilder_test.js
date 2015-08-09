@@ -183,7 +183,17 @@ test('user and version builder tests', function (t) {
     tt.equals(message.details.user.notSupportedProp, undefined);
     tt.end();
   });
-  
+
+  t.test('set user with object', function (tt) {
+    var builder = new MessageBuilder();
+    builder.setUser({identifier: 'testuser', email: 'test@example.com', notSupportedProp: 'ignore'});
+    var message = builder.build();
+    tt.equals(message.details.user.identifier, 'testuser', 'identifier should be set to the one in the object we returned from the user function');
+    tt.equals(message.details.user.email, 'test@example.com', 'email should be set to the one in the object we returned from the user function');
+    tt.equals(message.details.user.notSupportedProp, undefined, 'should skip unknown properties');
+    tt.end();
+  });
+
   t.test('version set', function (tt) {
     var builder = new MessageBuilder();
     builder.setVersion('1.0.0.0');
