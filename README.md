@@ -130,6 +130,7 @@ View a screencast on creating an app with Node.js and Express.js, then hooking u
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using "npm test".
 
 ## Release History
+- 0.7.1 - Default useSSL to true.
 - 0.7.0 - Add onBeforeSend hook, api endpoint options, and bug fixes
 - 0.6.2 - Fix utf8 chars causing 400s, log when errors occur when posting
 - 0.6.1 - Replace deprecated request.host with request.hostname if it exists.
