@@ -30,6 +30,14 @@ You can pass custom data in on the Send() function, as the second parameter. For
 client.send(new Error(), { 'mykey': 'beta' }, function (response){ });
 ```
 
+### Callback
+
+```javascript
+client.send(new Error(), {}, function (response){ });
+```
+
+The argument to the 3rd argument callback is the response from the Raygun API - there's nothing in the body, it's just a status code response. If everything went ok, you'll get a 202 response code. Otherwise we throw 401 for incorrect API keys, 403 if you're over your plan limits, or anything in the 500+ range for internal errors. We use the nodejs http/https library to make the POST to Raygun, you can see more documentation about that callback here: https://nodejs.org/api/http.html#http_http_request_options_callback
+
 ### Sending request data
 
 You can send the request data in the Send() function, as the fourth parameter. For example:
