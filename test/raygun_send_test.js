@@ -50,5 +50,5 @@ test('send with expressHandler custom data', function (t) {
     t.equals(data.test, 'data');
     t.end();
   };
-  client.expressHandler(new Error, {}, {}, function () {});
+  client.expressHandler(new Error(), {}, {}, function () {});
 });
