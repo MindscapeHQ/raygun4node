@@ -30,6 +30,18 @@ You can pass custom data in on the Send() function, as the second parameter. For
 client.send(new Error(), { 'mykey': 'beta' }, function (response){ });
 ```
 
+#### Sending custom data with Expressjs
+
+If you're using the `raygunClient.expressHandler`, you can send custom data along by setting `raygunClient.expressCustomData` to a function. The function will get two parameters, the error being thrown, and the request object.
+
+```javascript
+var raygunClient = new raygun.Client().init({apiKey: "yourkey"});
+
+raygunClient.expressCustomData = function (err, req) {
+  return { 'level': err.level };
+};
+```
+
 ### Callback
 
 ```javascript

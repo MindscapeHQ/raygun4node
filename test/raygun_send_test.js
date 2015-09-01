@@ -36,3 +36,19 @@ test('send with OnBeforeSend', {skip: true}, function (t) {
     t.end();
   });
 });
+
+test('send with expressHandler custom data', function (t) {
+  t.plan(1);
+  var client = new Raygun.Client().init({apiKey: process.env['RAYGUN_APIKEY']});
+
+  client.expressCustomData = function () {
+    return { 'test': 'data' };
+  };
+  client._send = client.send;
+  client.send = function (err, data) {
+    client.send = client._send;
+    t.equals(data.test, 'data');
+    t.end();
+  };
+  client.expressHandler(new Error, {}, {}, function () {});
+});
