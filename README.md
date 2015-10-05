@@ -133,7 +133,7 @@ By example:
     
 ### Offline caching
 
-Raygun can cache errors thrown by your Node application when it's running in 'offline' mode. By default the offline cache is disabled.
+Raygun can cache errors thrown by your Node application when it's running in 'offline' mode. By default the offline cache is disabled. Raygun4Node doesn't detect network state change, that is up to the application using the library.
 
 Raygun includes an on-disk cache provider out of the box, which required write permissions to the folder you wish to use. You cal also pass in your own cache storage.
 
@@ -171,8 +171,8 @@ You're able to provide your own cache provider if you can't get access to the di
 
 * init(cachePath) - Called when Raygun is marked as offline.
 * save(transportItem, callback) - Called when marked as offline
-* retrieve - Returns an array of cached item filenames/ids
-* send - Sends the backlog of errors to Raygun
+* retrieve(callback) - Returns an array of cached item filenames/ids
+* send(callback) - Sends the backlog of errors to Raygun
 
 See [lib/raygun.offline.js](lib/raygun.offline.js) for an example.
 
