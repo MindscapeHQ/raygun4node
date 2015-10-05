@@ -2,6 +2,7 @@
 
 var test = require("tap").test;
 var MessageBuilder = require('../lib/raygun.messageBuilder.js');
+var semver = require('semver');
 
 test('basic builder tests', function (t) {
   var builder = new MessageBuilder();
@@ -60,7 +61,13 @@ test('error builder tests', function (t) {
   
   t.test('stack trace', function (tt) {
     tt.ok(message.details.error.stackTrace);
-    tt.equal(message.details.error.stackTrace.length, 8);
+    var lines = 8;
+
+    if(semver.satisfies(process.version, '>=4.0.0')) {
+      lines = 10;
+    }
+
+    tt.equal(message.details.error.stackTrace.length, lines);
     tt.end();
   });
   
