@@ -174,7 +174,7 @@ You're able to provide your own cache provider if you can't get access to the di
 * retrieve - Returns an array of cached item filenames/ids
 * send - Sends the backlog of errors to Raygun
 
-See (lib/raygun.offline.js) for an example.
+See [lib/raygun.offline.js](lib/raygun.offline.js) for an example.
 
 ### Examples
 View a screencast on creating an app with Node.js and Express.js, then hooking up the error handling and sending them at [http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/](http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/)
