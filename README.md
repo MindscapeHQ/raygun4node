@@ -130,6 +130,51 @@ By example:
     }
 
     Raygun.onBeforeSend(myBeforeSend);
+    
+### Offline caching
+
+Raygun can cache errors thrown by your Node application when it's running in 'offline' mode. By default the offline cache is disabled.
+
+Raygun includes an on-disk cache provider out of the box, which required write permissions to the folder you wish to use. You cal also pass in your own cache storage.
+
+##### Getting setup
+
+When creating your Raygun client you need to pass through a cache path
+
+    var raygunClient = new raygun.Client().init(
+        {
+            apiKey: 'API-KEY',
+            isOnline: false,
+            cachePath: 'cachePath'
+        }
+    );
+    
+##### Changing online/offline state
+
+The Raygun client allows you to set it's online state when your application is running.
+
+*To mark as offline*
+
+    raygunClient.offline();
+    
+*To mark as online*
+
+    raygunClient.online();
+    
+When marking as online any cached errors will be forwarded to Raygun.
+
+##### Custom cache provider
+
+You're able to provide your own cache provider if you can't get access to the disk.
+
+*Required methods*
+
+* init(cachePath) - Called when Raygun is marked as offline.
+* save(transportItem, callback) - Called when marked as offline
+* retrieve - Returns an array of cached item filenames/ids
+* send - Sends the backlog of errors to Raygun
+
+See [[lib/raygun.offline.js]] for an example.
 
 ### Examples
 View a screencast on creating an app with Node.js and Express.js, then hooking up the error handling and sending them at [http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/](http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/)
@@ -138,11 +183,12 @@ View a screencast on creating an app with Node.js and Express.js, then hooking u
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using "npm test".
 
 ## Release History
-- 0.7.1 - Default useSSL to true.
+- 0.8.0 - Add offline support
+- 0.7.1 - Default useSSL to true
 - 0.7.0 - Add onBeforeSend hook, api endpoint options, and bug fixes
 - 0.6.2 - Fix utf8 chars causing 400s, log when errors occur when posting
-- 0.6.1 - Replace deprecated request.host with request.hostname if it exists.
-- 0.6.0 - Added ability to send tags with exception reports.
+- 0.6.1 - Replace deprecated request.host with request.hostname if it exists
+- 0.6.0 - Added ability to send tags with exception reports
 - 0.5.0 - Added filters for sensitive request data, and better affected user tracking
 - 0.4.2 - Minor test refactor
 - 0.4.1 - Fixed issue where getting cpu information returned undefined
