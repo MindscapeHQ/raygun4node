@@ -165,7 +165,20 @@ When marking as online any cached errors will be forwarded to Raygun.
 
 ##### Custom cache provider
 
-You're able to provide your own cache provider if you can't access to the disk.
+You're able to provide your own cache provider if you can't access to the disk. When creating your Raygun client, pass in the storage provider on the offlineStorage property
+
+Example:
+
+     var sqlStorageProvider = new SQLStorageProvider();
+     
+     var raygunClient = new raygun.Client().init(
+            {
+                apiKey: 'API-KEY',
+                isOffline: false,
+                cachePath: 'cachePath',
+                offlineStorage: sqlStorageProvider 
+            }
+        );
 
 *Required methods*
 
