@@ -144,7 +144,7 @@ When creating your Raygun client you need to pass through a cache path
     var raygunClient = new raygun.Client().init(
         {
             apiKey: 'API-KEY',
-            isOnline: false,
+            isOffline: false,
             cachePath: 'cachePath'
         }
     );
@@ -165,7 +165,7 @@ When marking as online any cached errors will be forwarded to Raygun.
 
 ##### Custom cache provider
 
-You're able to provide your own cache provider if you can't get access to the disk.
+You're able to provide your own cache provider if you can't access to the disk.
 
 *Required methods*
 
