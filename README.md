@@ -146,7 +146,8 @@ When creating your Raygun client you need to pass through a cache path
             apiKey: 'API-KEY',
             isOffline: false,
             offlineStorageOptions: {
-              cachePath: 'raygunCache/'
+              cachePath: 'raygunCache/',
+              cacheLimit: 1000 // defaults to 100 errors if you don't set this
             }
         }
     );
