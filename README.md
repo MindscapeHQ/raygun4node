@@ -194,6 +194,8 @@ Example:
 
 See [lib/raygun.offline.js](lib/raygun.offline.js) for an example.
 
+We recommend that you limit the number of errors that you are caching so that you don't swamp the clients internet connection sending errors.
+
 ### Examples
 View a screencast on creating an app with Node.js and Express.js, then hooking up the error handling and sending them at [http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/](http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/)
 
