@@ -108,7 +108,7 @@ Call setVersion(*string*) on a RaygunClient to set the version of the calling ap
 
 ### Changing the API endpoint
 
-You can change the endpoint that error messages are sent to by specifying the `host`, `port`, and `useSSL` properties in the `raygunClient.init()` options hash. By default, `host` is `api.raygun.io`, `port` is `443`, and `useSSL` is `true`. 
+You can change the endpoint that error messages are sent to by specifying the `host`, `port`, and `useSSL` properties in the `raygunClient.init()` options hash. By default, `host` is `api.raygun.io`, `port` is `443`, and `useSSL` is `true`.
 
 ### onBeforeSend
 
@@ -130,14 +130,14 @@ By example:
     }
 
     Raygun.onBeforeSend(myBeforeSend);
-    
+
 ### Offline caching
 
 Raygun can cache errors thrown by your Node application when it's running in 'offline' mode. By default the offline cache is disabled. Raygun4Node doesn't detect network state change, that is up to the application using the library.
 
 Raygun includes an on-disk cache provider out of the box, which required write permissions to the folder you wish to use. You cal also pass in your own cache storage.
 
-##### Getting setup
+##### Getting setup with the default offline provider
 
 When creating your Raygun client you need to pass through a cache path
 
@@ -145,10 +145,12 @@ When creating your Raygun client you need to pass through a cache path
         {
             apiKey: 'API-KEY',
             isOffline: false,
-            cachePath: 'cachePath'
+            offlineStorageOptions: {
+              cachePath: 'raygunCache/'
+            }
         }
     );
-    
+
 ##### Changing online/offline state
 
 The Raygun client allows you to set it's online state when your application is running.
@@ -156,11 +158,11 @@ The Raygun client allows you to set it's online state when your application is r
 *To mark as offline*
 
     raygunClient.offline();
-    
+
 *To mark as online*
 
     raygunClient.online();
-    
+
 When marking as online any cached errors will be forwarded to Raygun.
 
 ##### Custom cache provider
@@ -170,19 +172,21 @@ You're able to provide your own cache provider if you can't access to the disk. 
 Example:
 
      var sqlStorageProvider = new SQLStorageProvider();
-     
+
      var raygunClient = new raygun.Client().init(
             {
                 apiKey: 'API-KEY',
                 isOffline: false,
-                cachePath: 'cachePath',
-                offlineStorage: sqlStorageProvider 
+                offlineStorage: sqlStorageProvider,
+                offlineStorageOptions: {
+                    table: 'RaygunCache'
+                }
             }
         );
 
 *Required methods*
 
-* init(cachePath) - Called when Raygun is marked as offline.
+* init(offlineStorageOptions) - Called when Raygun is marked as offline. offlineStorageOptions is an object with properties specific to each offline provider
 * save(transportItem, callback) - Called when marked as offline
 * retrieve(callback) - Returns an array of cached item filenames/ids
 * send(callback) - Sends the backlog of errors to Raygun
