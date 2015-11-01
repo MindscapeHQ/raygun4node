@@ -4,7 +4,7 @@ A demo on how to use Raygun4Node and ExpressJS together.
 
 ## To run
 
-Set your API key in config/default.json and run
+Set your API key in *config/default.json* and run
 
 	npm install && npm start
 
