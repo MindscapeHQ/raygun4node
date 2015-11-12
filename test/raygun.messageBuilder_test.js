@@ -103,6 +103,16 @@ test('error builder tests', function (t) {
     tt.equals(message.details.error.className, 'Error');
     tt.end();
   });
+  
+  t.test('error from string', function(tt) {
+    var errorMessage = 'WarpCoreAlignment';
+    var builder = new MessageBuilder();
+    builder.setErrorDetails(errorMessage);
+    var message = builder.build();
+    tt.ok(message.details.error.message);
+    tt.equals(message.details.error.message, errorMessage);
+    tt.end();
+  });
 });
 
 test('environment builder', function (t) {
