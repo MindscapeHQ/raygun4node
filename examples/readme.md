@@ -2,7 +2,7 @@
 
 ## [Using Domains](https://github.com/MindscapeHQ/raygun4node/tree/examples/examples/using-domains)
 
-An exmpale of how to use Raygun with Node's domains feature
+An example of how to use Raygun with Node's domains feature
 
 ## [Express](https://github.com/MindscapeHQ/raygun4node/tree/examples/examples/express-sample)
 
