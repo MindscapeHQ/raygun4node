@@ -196,6 +196,19 @@ See [lib/raygun.offline.js](lib/raygun.offline.js) for an example.
 
 We recommend that you limit the number of errors that you are caching so that you don't swamp the clients internet connection sending errors.
 
+### Custom error grouping
+
+You can provide your own grouping key if you wish. We only recommend this you're having issues with errors not being grouped properly.
+
+When initializing Raygun, pass through a `groupingKey` function.
+
+    var raygunClient = new raygun.Client().init({
+        apiKey: 'YOUR_KEY',
+        groupingKey: function(message, exception, customData, request, tags) {
+            return "CUSTOMKEY";
+        }
+    });
+
 ### Examples
 View a screencast on creating an app with Node.js and Express.js, then hooking up the error handling and sending them at [http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/](http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/)
 
@@ -203,6 +216,8 @@ View a screencast on creating an app with Node.js and Express.js, then hooking u
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using "npm test".
 
 ## Release History
+
+- 0.8.1 - Add custom error grouping key
 - 0.8.0 - Add offline support
 - 0.7.1 - Default useSSL to true
 - 0.7.0 - Add onBeforeSend hook, api endpoint options, and bug fixes
