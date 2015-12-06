@@ -58,6 +58,7 @@ test('check that tags get merged', {}, function (t) {
 
     client.onBeforeSend(function (payload) {
         t.same(payload.details.tags, ['Tag1', 'Tag2']);
+        t.end();
         return false;
     });
 
