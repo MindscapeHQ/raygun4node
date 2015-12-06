@@ -217,6 +217,7 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 
 ## Release History
 
+- 0.8.2 - Add setTags method
 - 0.8.1 - Add custom error grouping key
 - 0.8.0 - Add offline support
 - 0.7.1 - Default useSSL to true
