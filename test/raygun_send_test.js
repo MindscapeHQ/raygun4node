@@ -40,11 +40,12 @@ test('send with OnBeforeSend', {skip: true}, function (t) {
 test('check that tags get passed through', {}, function (t) {
     var tag = ['Test'];
     var client = new Raygun.Client().init({apiKey: 'TEST'});
+
     client.setTags(tag);
 
     client.onBeforeSend(function (payload) {
         t.same(payload.details.tags, tag);
-        return false;
+        t.end();
     });
 
     client.send(new Error(), {}, function () {
@@ -59,7 +60,6 @@ test('check that tags get merged', {}, function (t) {
     client.onBeforeSend(function (payload) {
         t.same(payload.details.tags, ['Tag1', 'Tag2']);
         t.end();
-        return false;
     });
 
     client.send(new Error(), {}, function () {
