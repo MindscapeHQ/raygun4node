@@ -59,6 +59,12 @@ You can add tags to your error in the Send() function, as the fifth parameter. F
 client.send(new Error(), {}, function () {}, {}, ['custom tag 1', 'important error']);
 ```
 
+Tags can also be set globally using setTags
+
+```javascript
+client.setTags(['Tag1', 'Tag2']);
+```
+
 ### Affected user tracking
 
 New in 0.4: You can set **raygunClient.user** to a function that returns the user name or email address of the currently logged in user.
@@ -217,6 +223,7 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 
 ## Release History
 
+- 0.8.2 - Add setTags method
 - 0.8.1 - Add custom error grouping key
 - 0.8.0 - Add offline support
 - 0.7.1 - Default useSSL to true
