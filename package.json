@@ -33,8 +33,6 @@
     "tap": "^0.4.13"
   },
   "dependencies": {
-    "install": "^0.4.1",
-    "npm": "^3.5.2",
     "object-to-human-string": "0.0.3",
     "stack-trace": "0.0.6"
   },
