@@ -223,6 +223,7 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 
 ## Release History
 
+- 0.8.4 - Add some smarts around passing an object in to the exception parameter
 - 0.8.3 - Turn strings into errors if passed through. Log out request errors.
 - 0.8.2 - Add setTags method
 - 0.8.1 - Add custom error grouping key
