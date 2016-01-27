@@ -63,7 +63,7 @@ test('basic builder tests', function (t) {
 
     var message = builder.build();
     tt.notOk(message.details.groupingKey);
-    tt.equal('NoMessage', message.details.error.message); 
+    tt.equal('NoMessage', message.details.error.message);
     tt.end();
   });
 
