@@ -45,7 +45,28 @@ test('basic builder tests', function (t) {
     tt.ok(message.details.machineName);
     tt.end();
   });
-  
+
+  t.test('humanise error string', function (tt){
+    var builder = new MessageBuilder({ useHumanStringForObject:true });
+    builder.setErrorDetails({name:'Test'});
+
+    var message = builder.build();
+    tt.ok(message.details.error.message);
+    tt.equal('name=Test', message.details.error.message);
+    tt.ok(message.details.groupingKey);
+    tt.end();
+  });
+
+  t.test('dont humanise string', function (tt){
+    var builder = new MessageBuilder({useHumanStringForObject:false});
+    builder.setErrorDetails({name:'Test'});
+
+    var message = builder.build();
+    tt.notOk(message.details.groupingKey);
+    tt.equal('NoMessage', message.details.error.message); 
+    tt.end();
+  });
+
   t.end();
 });
 
