@@ -215,6 +215,17 @@ When initializing Raygun, pass through a `groupingKey` function.
         }
     });
 
+### Custom error objects
+
+By default Raygun4Node tries to convert unknown objects into a human readable string to help with grouping, this doens't always make sense.
+
+To disable it
+
+    var raygunClient = new raygun.Client().init({
+        apiKey: 'YOUR_KEY',
+        useHumanStringForObject: false
+    });
+
 ### Examples
 View a screencast on creating an app with Node.js and Express.js, then hooking up the error handling and sending them at [http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/](http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/)
 
@@ -223,6 +234,7 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 
 ## Release History
 
+- 0.8.5 - Add ability to turn off 'humanised-object-strings'
 - 0.8.4 - Add some smarts around passing an object in to the exception parameter
 - 0.8.3 - Turn strings into errors if passed through. Log out request errors.
 - 0.8.2 - Add setTags method
