@@ -71,6 +71,12 @@ You can add tags to your error in the Send() function, as the fifth parameter. F
 client.send(new Error(), {}, function () {}, {}, ['custom tag 1', 'important error']);
 ```
 
+Tags can also be set globally using setTags
+
+```javascript
+client.setTags(['Tag1', 'Tag2']);
+```
+
 ### Affected user tracking
 
 New in 0.4: You can set **raygunClient.user** to a function that returns the user name or email address of the currently logged in user.
@@ -120,7 +126,7 @@ Call setVersion(*string*) on a RaygunClient to set the version of the calling ap
 
 ### Changing the API endpoint
 
-You can change the endpoint that error messages are sent to by specifying the `host`, `port`, and `useSSL` properties in the `raygunClient.init()` options hash. By default, `host` is `api.raygun.io`, `port` is `443`, and `useSSL` is `true`. 
+You can change the endpoint that error messages are sent to by specifying the `host`, `port`, and `useSSL` properties in the `raygunClient.init()` options hash. By default, `host` is `api.raygun.io`, `port` is `443`, and `useSSL` is `true`.
 
 ### onBeforeSend
 
@@ -143,6 +149,95 @@ By example:
 
     Raygun.onBeforeSend(myBeforeSend);
 
+### Offline caching
+
+Raygun can cache errors thrown by your Node application when it's running in 'offline' mode. By default the offline cache is disabled. Raygun4Node doesn't detect network state change, that is up to the application using the library.
+
+Raygun includes an on-disk cache provider out of the box, which required write permissions to the folder you wish to use. You cal also pass in your own cache storage.
+
+##### Getting setup with the default offline provider
+
+When creating your Raygun client you need to pass through a cache path
+
+    var raygunClient = new raygun.Client().init(
+        {
+            apiKey: 'API-KEY',
+            isOffline: false,
+            offlineStorageOptions: {
+              cachePath: 'raygunCache/',
+              cacheLimit: 1000 // defaults to 100 errors if you don't set this
+            }
+        }
+    );
+
+##### Changing online/offline state
+
+The Raygun client allows you to set it's online state when your application is running.
+
+*To mark as offline*
+
+    raygunClient.offline();
+
+*To mark as online*
+
+    raygunClient.online();
+
+When marking as online any cached errors will be forwarded to Raygun.
+
+##### Custom cache provider
+
+You're able to provide your own cache provider if you can't access to the disk. When creating your Raygun client, pass in the storage provider on the offlineStorage property
+
+Example:
+
+     var sqlStorageProvider = new SQLStorageProvider();
+
+     var raygunClient = new raygun.Client().init(
+            {
+                apiKey: 'API-KEY',
+                isOffline: false,
+                offlineStorage: sqlStorageProvider,
+                offlineStorageOptions: {
+                    table: 'RaygunCache'
+                }
+            }
+        );
+
+*Required methods*
+
+* init(offlineStorageOptions) - Called when Raygun is marked as offline. offlineStorageOptions is an object with properties specific to each offline provider
+* save(transportItem, callback) - Called when marked as offline
+* retrieve(callback) - Returns an array of cached item filenames/ids
+* send(callback) - Sends the backlog of errors to Raygun
+
+See [lib/raygun.offline.js](lib/raygun.offline.js) for an example.
+
+We recommend that you limit the number of errors that you are caching so that you don't swamp the clients internet connection sending errors.
+
+### Custom error grouping
+
+You can provide your own grouping key if you wish. We only recommend this you're having issues with errors not being grouped properly.
+
+When initializing Raygun, pass through a `groupingKey` function.
+
+    var raygunClient = new raygun.Client().init({
+        apiKey: 'YOUR_KEY',
+        groupingKey: function(message, exception, customData, request, tags) {
+            return "CUSTOMKEY";
+        }
+    });
+
+### Custom error objects
+
+By default Raygun4Node tries to convert unknown objects into a human readable string to help with grouping, this doens't always make sense.
+
+To disable it
+
+    var raygunClient = new raygun.Client().init({
+        apiKey: 'YOUR_KEY',
+        useHumanStringForObject: false
+    });
+
 ### Examples
 View a screencast on creating an app with Node.js and Express.js, then hooking up the error handling and sending them at [http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/](http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/)
 
@@ -150,11 +245,18 @@ View a screencast on creating an app with Node.js and Express.js, then hooking u
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using "npm test".
 
 ## Release History
-- 0.7.1 - Default useSSL to true.
+
+- 0.8.5 - Add ability to turn off 'humanised-object-strings'
+- 0.8.4 - Add some smarts around passing an object in to the exception parameter
+- 0.8.3 - Turn strings into errors if passed through. Log out request errors.
+- 0.8.2 - Add setTags method
+- 0.8.1 - Add custom error grouping key
+- 0.8.0 - Add offline support
+- 0.7.1 - Default useSSL to true
 - 0.7.0 - Add onBeforeSend hook, api endpoint options, and bug fixes
 - 0.6.2 - Fix utf8 chars causing 400s, log when errors occur when posting
-- 0.6.1 - Replace deprecated request.host with request.hostname if it exists.
-- 0.6.0 - Added ability to send tags with exception reports.
+- 0.6.1 - Replace deprecated request.host with request.hostname if it exists
+- 0.6.0 - Added ability to send tags with exception reports
 - 0.5.0 - Added filters for sensitive request data, and better affected user tracking
 - 0.4.2 - Minor test refactor
 - 0.4.1 - Fixed issue where getting cpu information returned undefined

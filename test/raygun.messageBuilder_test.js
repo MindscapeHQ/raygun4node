@@ -2,6 +2,7 @@
 
 var test = require("tap").test;
 var MessageBuilder = require('../lib/raygun.messageBuilder.js');
+var semver = require('semver');
 
 test('basic builder tests', function (t) {
   var builder = new MessageBuilder();
@@ -44,7 +45,28 @@ test('basic builder tests', function (t) {
     tt.ok(message.details.machineName);
     tt.end();
   });
-  
+
+  t.test('humanise error string', function (tt){
+    var builder = new MessageBuilder({ useHumanStringForObject:true });
+    builder.setErrorDetails({name:'Test'});
+
+    var message = builder.build();
+    tt.ok(message.details.error.message);
+    tt.equal('name=Test', message.details.error.message);
+    tt.ok(message.details.groupingKey);
+    tt.end();
+  });
+
+  t.test('dont humanise string', function (tt){
+    var builder = new MessageBuilder({useHumanStringForObject:false});
+    builder.setErrorDetails({name:'Test'});
+
+    var message = builder.build();
+    tt.notOk(message.details.groupingKey);
+    tt.equal('NoMessage', message.details.error.message);
+    tt.end();
+  });
+
   t.end();
 });
 
@@ -60,7 +82,13 @@ test('error builder tests', function (t) {
   
   t.test('stack trace', function (tt) {
     tt.ok(message.details.error.stackTrace);
-    tt.equal(message.details.error.stackTrace.length, 8);
+    var lines = 8;
+
+    if(semver.satisfies(process.version, '>=4.0.0')) {
+      lines = 10;
+    }
+
+    tt.equal(message.details.error.stackTrace.length, lines);
     tt.end();
   });
   
@@ -94,6 +122,16 @@ test('error builder tests', function (t) {
   t.test('class name correct', function (tt) {
     tt.ok(message.details.error.className);
     tt.equals(message.details.error.className, 'Error');
+    tt.end();
+  });
+  
+  t.test('error from string', function(tt) {
+    var errorMessage = 'WarpCoreAlignment';
+    var builder = new MessageBuilder();
+    builder.setErrorDetails(errorMessage);
+    var message = builder.build();
+    tt.ok(message.details.error.message);
+    tt.equals(message.details.error.message, errorMessage);
     tt.end();
   });
 });
