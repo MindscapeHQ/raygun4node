@@ -232,6 +232,8 @@ View a screencast on creating an app with Node.js and Express.js, then hooking u
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using "npm test".
 
+To get the functional sending tests passing, set a `RAYGUN_APIKEY` environment variable to a valid apikey, e.g `export RAYGUN_APIKEY=your_apikey`.
+
 ## Release History
 
 [View the changelog here](CHANGELOG.md)
