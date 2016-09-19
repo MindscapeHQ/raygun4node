@@ -8,6 +8,7 @@ test('send basic', {}, function (t) {
     t.plan(1);
 
     if (semver.satisfies(process.version, '=0.10')) {
+      t.pass('Ignored on node 0.10');
       t.end();
       return;
     }
@@ -23,6 +24,7 @@ test('send complex', {}, function (t) {
     t.plan(1);
 
     if (semver.satisfies(process.version, '=0.10')) {
+      t.pass('Ignored on node 0.10');
       t.end();
       return;
     }
@@ -39,6 +41,7 @@ test('send with OnBeforeSend', {}, function (t) {
     t.plan(1);
 
     if (semver.satisfies(process.version, '=0.10')) {
+      t.pass('Ignored on node 0.10');
       t.end();
       return;
     }
