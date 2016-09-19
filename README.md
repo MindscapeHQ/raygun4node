@@ -20,6 +20,8 @@ app.use(raygunClient.expressHandler);
 
 The [Express documentation](http://expressjs.com/guide/error-handling.html) says `Though not strictly required, by convention you define error-handling middleware last, after other app.use() calls`, but that is incorrect. If the `app.use(raygunClient.expressHandler);` call is not immediately before the `app.listen` call, then errors will not be handled by Raygun.
 
+Note that the Express middleware handler will pick up and transmit any `err` objects that reach it. If the app code itself chooses to handle states that result in 4xx/5xx status codes, these will not result in an error payload sent to Raygun. 
+
 ## Documentation
 
 ### Callbacks
