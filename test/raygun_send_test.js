@@ -5,6 +5,12 @@ var Raygun = require('../lib/raygun.js');
 
 test('send basic', {}, function (t) {
     t.plan(1);
+
+    if (semver.satisfies(process.version, '=0.10')) {
+      t.end();
+      return;
+    }
+
     var client = new Raygun.Client().init({apiKey: process.env['RAYGUN_APIKEY']});
     client.send(new Error(), {}, function (response) {
         t.equals(response.statusCode, 202);
@@ -14,6 +20,12 @@ test('send basic', {}, function (t) {
 
 test('send complex', {}, function (t) {
     t.plan(1);
+
+    if (semver.satisfies(process.version, '=0.10')) {
+      t.end();
+      return;
+    }
+
     var client = new Raygun.Client().init({apiKey: process.env['RAYGUN_APIKEY']}).setUser("callum@mindscape.co.nz").setVersion("1.0.0.0");
 
     client.send(new Error(), {}, function (response) {
@@ -24,6 +36,12 @@ test('send complex', {}, function (t) {
 
 test('send with OnBeforeSend', {}, function (t) {
     t.plan(1);
+
+    if (semver.satisfies(process.version, '=0.10')) {
+      t.end();
+      return;
+    }
+
     var client = new Raygun.Client().init({apiKey: process.env['RAYGUN_APIKEY']});
 
     var onBeforeSendCalled = false;
@@ -62,6 +80,7 @@ test('check that tags get passed through', {}, function (t) {
 
     client.onBeforeSend(function (payload) {
         t.same(payload.details.tags, tag);
+        t.end();
     });
 
     client.send(new Error(), {}, function () {
@@ -75,6 +94,7 @@ test('check that tags get merged', {}, function (t) {
 
     client.onBeforeSend(function (payload) {
         t.same(payload.details.tags, ['Tag1', 'Tag2']);
+        t.end();
     });
 
     client.send(new Error(), {}, function () {
