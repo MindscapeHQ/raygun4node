@@ -20,7 +20,16 @@ app.use(raygunClient.expressHandler);
 
 The [Express documentation](http://expressjs.com/guide/error-handling.html) says `Though not strictly required, by convention you define error-handling middleware last, after other app.use() calls`, but that is incorrect. If the `app.use(raygunClient.expressHandler);` call is not immediately before the `app.listen` call, then errors will not be handled by Raygun.
 
+Note that the Express middleware handler will pick up and transmit any `err` objects that reach it. If the app code itself chooses to handle states that result in 4xx/5xx status codes, these will not result in an error payload sent to Raygun. 
+
 ## Documentation
+
+### Callbacks
+
+The callback should be a node-style callback: `function(err, response) { /*...*/ }`.
+*Note*: If the callback only takes one parameter (`function(response){ /*...*/ }`)
+it will only be called when the transmission is successful. This is included for
+backwards compatibility; the Node-style callback should be preferred.
 
 ### Sending custom data
 
@@ -28,6 +37,18 @@ You can pass custom data in on the Send() function, as the second parameter. For
 
 ```javascript
 client.send(new Error(), { 'mykey': 'beta' }, function (response){ });
+```
+
+#### Sending custom data with Expressjs
+
+If you're using the `raygunClient.expressHandler`, you can send custom data along by setting `raygunClient.expressCustomData` to a function. The function will get two parameters, the error being thrown, and the request object.
+
+```javascript
+var raygunClient = new raygun.Client().init({apiKey: "yourkey"});
+
+raygunClient.expressCustomData = function (err, req) {
+  return { 'level': err.level };
+};
 ```
 
 ### Callback
@@ -76,7 +97,13 @@ var raygunClient = new raygun.Client().init({apiKey: "yourkey"});
 
 raygunClient.user = function (req) {
   if (req.user) {
-    return req.user.username;
+    return {
+      identifier: req.user.username,
+      email: req.user.email,
+      fullName: req.user.fullName,
+      firstName: req.user.firstName,
+      uuid: req.user.deviceID
+    };
   }
 }
 ```
@@ -217,14 +244,16 @@ When initializing Raygun, pass through a `groupingKey` function.
 
 ### Custom error objects
 
-By default Raygun4Node tries to convert unknown objects into a human readable string to help with grouping, this doens't always make sense.
+By default Raygun4Node tries to convert unknown objects into a human readable string to help with grouping, this doesn't always make sense.
 
-To disable it
+To disable it:
 
     var raygunClient = new raygun.Client().init({
         apiKey: 'YOUR_KEY',
         useHumanStringForObject: false
     });
+
+If your custom error object inherits from `Error` as its parent prototype, this isn't necessary however and these will be sent correctly.
 
 ### Examples
 View a screencast on creating an app with Node.js and Express.js, then hooking up the error handling and sending them at [http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/](http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/)
@@ -232,29 +261,13 @@ View a screencast on creating an app with Node.js and Express.js, then hooking u
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using "npm test".
 
+To get the functional sending tests passing, set a `RAYGUN_APIKEY` environment variable to a valid apikey, e.g `export RAYGUN_APIKEY=your_apikey`.
+
 ## Release History
 
-- 0.8.5 - Add ability to turn off 'humanised-object-strings'
-- 0.8.4 - Add some smarts around passing an object in to the exception parameter
-- 0.8.3 - Turn strings into errors if passed through. Log out request errors.
-- 0.8.2 - Add setTags method
-- 0.8.1 - Add custom error grouping key
-- 0.8.0 - Add offline support
-- 0.7.1 - Default useSSL to true
-- 0.7.0 - Add onBeforeSend hook, api endpoint options, and bug fixes
-- 0.6.2 - Fix utf8 chars causing 400s, log when errors occur when posting
-- 0.6.1 - Replace deprecated request.host with request.hostname if it exists
-- 0.6.0 - Added ability to send tags with exception reports
-- 0.5.0 - Added filters for sensitive request data, and better affected user tracking
-- 0.4.2 - Minor test refactor
-- 0.4.1 - Fixed issue where getting cpu information returned undefined
-- 0.4.0 - Added *user* function, deprecated setUser
-- 0.3.0 - Added version and user tracking functionality; bump jshint version, update test
-- 0.2.0 - Added Express handler, bug fixes
-- 0.1.2 - Include more error information
-- 0.1.1 - Point at the correct API endpoint, include correct dependencies for NPM
-- 0.1.0 - Initial release
+[View the changelog here](CHANGELOG.md)
 
 ## License
-Copyright (c) 2015 MindscapeHQ
+Copyright (c) 2016 Raygun Limited
+
 Licensed under the MIT license.
