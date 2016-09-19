@@ -84,7 +84,9 @@ test('error builder tests', function (t) {
     tt.ok(message.details.error.stackTrace);
     var lines = 8;
 
-    if(semver.satisfies(process.version, '>=4.0.0')) {
+    if (semver.satisfies(process.version, '>=6.0.0')) {
+      lines = 15;
+    } else if (semver.satisfies(process.version, '>=4.0.0')) {
       lines = 10;
     }
 
