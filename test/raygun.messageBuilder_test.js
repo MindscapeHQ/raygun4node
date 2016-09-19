@@ -81,12 +81,10 @@ test('error builder tests', function (t) {
   
   t.test('stack trace', function (tt) {
     tt.ok(message.details.error.stackTrace);
-    var lines = 8;
+    var lines = 14;
 
     if (semver.satisfies(process.version, '>=6.0.0')) {
       lines = 15;
-    } else if (semver.satisfies(process.version, '>=4.0.0')) {
-      lines = 14;
     }
 
     tt.equal(message.details.error.stackTrace.length, lines);
