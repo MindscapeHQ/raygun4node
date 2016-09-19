@@ -3,26 +3,26 @@
 var test = require("tap").test;
 var Raygun = require('../lib/raygun.js');
 
-// need to get these working, they time out for some reason, despite the call succeeding
-
-test('send basic', {skip: true}, function (t) {
+test('send basic', {}, function (t) {
     t.plan(1);
     var client = new Raygun.Client().init({apiKey: process.env['RAYGUN_APIKEY']});
     client.send(new Error(), {}, function (response) {
         t.equals(response.statusCode, 202);
+        t.end();
     });
 });
 
-test('send complex', {skip: true}, function (t) {
+test('send complex', {}, function (t) {
     t.plan(1);
     var client = new Raygun.Client().init({apiKey: process.env['RAYGUN_APIKEY']}).setUser("callum@mindscape.co.nz").setVersion("1.0.0.0");
 
     client.send(new Error(), {}, function (response) {
         t.equals(response.statusCode, 202);
+        t.end();
     });
 });
 
-test('send with OnBeforeSend', {skip: true}, function (t) {
+test('send with OnBeforeSend', {}, function (t) {
     t.plan(1);
     var client = new Raygun.Client().init({apiKey: process.env['RAYGUN_APIKEY']});
 
