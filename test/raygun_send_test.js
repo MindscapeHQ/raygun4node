@@ -38,6 +38,22 @@ test('send with OnBeforeSend', {}, function (t) {
     });
 });
 
+test('send with expressHandler custom data', function (t) {
+    t.plan(1);
+    var client = new Raygun.Client().init({apiKey: process.env['RAYGUN_APIKEY']});
+
+    client.expressCustomData = function () {
+        return { 'test': 'data' };
+    };
+    client._send = client.send;
+    client.send = function (err, data) {
+        client.send = client._send;
+        t.equals(data.test, 'data');
+        t.end();
+    };
+    client.expressHandler(new Error(), {}, {}, function () {});
+});
+
 test('check that tags get passed through', {}, function (t) {
     var tag = ['Test'];
     var client = new Raygun.Client().init({apiKey: 'TEST'});
