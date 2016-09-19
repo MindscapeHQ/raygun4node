@@ -65,9 +65,8 @@ test('basic builder tests', function (t) {
     tt.notOk(message.details.groupingKey);
     tt.equal('NoMessage', message.details.error.message);
     tt.end();
+    t.end();
   });
-
-  t.end();
 });
 
 test('error builder tests', function (t) {
@@ -135,6 +134,7 @@ test('error builder tests', function (t) {
     tt.ok(message.details.error.message);
     tt.equals(message.details.error.message, errorMessage);
     tt.end();
+    t.end();
   });
 });
 
@@ -174,9 +174,8 @@ test('custom data builder', function (t) {
     var message = builder.build();
     tt.equals(message.details.userCustomData, undefined);
     tt.end();
+    t.end();
   });
-  
-  t.end();
 });
 
 test('express4 request builder', function (t) {
@@ -240,9 +239,8 @@ test('user and version builder tests', function (t) {
     var message = builder.build();
     tt.equals(message.details.version, '1.0.0.0');
     tt.end();
+    t.end();
   });
-  
-  t.end();
 });
 
 test('filter keys tests', function (t) {
@@ -271,6 +269,7 @@ test('filter keys tests', function (t) {
     tt.equals(message.details.request.headers['X-ApiKey'], undefined);
     tt.equals(message.details.request.headers['Host'], 'app.raygun.io');
     tt.end();
+    t.end();
   });
 });
 
@@ -309,5 +308,6 @@ test('custom tags', function (t) {
     
     tt.notOk(message.details.tags);
     tt.end();
+    t.end();
   });
 });
