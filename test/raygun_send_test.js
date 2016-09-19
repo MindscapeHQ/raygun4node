@@ -1,6 +1,7 @@
 'use strict';
 
 var test = require("tap").test;
+var semver = require('semver');
 var Raygun = require('../lib/raygun.js');
 
 test('send basic', {}, function (t) {
