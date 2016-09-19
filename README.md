@@ -95,7 +95,13 @@ var raygunClient = new raygun.Client().init({apiKey: "yourkey"});
 
 raygunClient.user = function (req) {
   if (req.user) {
-    return req.user.username;
+    return {
+      identifier: req.user.username,
+      email: req.user.email,
+      fullName: req.user.fullName,
+      firstName: req.user.firstName,
+      uuid: req.user.deviceID
+    };
   }
 }
 ```
