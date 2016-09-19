@@ -62,7 +62,6 @@ test('check that tags get passed through', {}, function (t) {
 
     client.onBeforeSend(function (payload) {
         t.same(payload.details.tags, tag);
-        t.end();
     });
 
     client.send(new Error(), {}, function () {
@@ -76,7 +75,6 @@ test('check that tags get merged', {}, function (t) {
 
     client.onBeforeSend(function (payload) {
         t.same(payload.details.tags, ['Tag1', 'Tag2']);
-        t.end();
     });
 
     client.send(new Error(), {}, function () {
