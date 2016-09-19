@@ -217,14 +217,16 @@ When initializing Raygun, pass through a `groupingKey` function.
 
 ### Custom error objects
 
-By default Raygun4Node tries to convert unknown objects into a human readable string to help with grouping, this doens't always make sense.
+By default Raygun4Node tries to convert unknown objects into a human readable string to help with grouping, this doesn't always make sense.
 
-To disable it
+To disable it:
 
     var raygunClient = new raygun.Client().init({
         apiKey: 'YOUR_KEY',
         useHumanStringForObject: false
     });
+
+If your custom error object inherits from `Error` as its parent prototype, this isn't necessary however and these will be sent correctly.
 
 ### Examples
 View a screencast on creating an app with Node.js and Express.js, then hooking up the error handling and sending them at [http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/](http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/)
@@ -240,4 +242,5 @@ To get the functional sending tests passing, set a `RAYGUN_APIKEY` environment v
 
 ## License
 Copyright (c) 2016 Raygun Limited
+
 Licensed under the MIT license.

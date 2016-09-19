@@ -28,6 +28,7 @@ test('send with OnBeforeSend', {}, function (t) {
 
     var onBeforeSendCalled = false;
     client.onBeforeSend(function (payload) {
+        onBeforeSendCalled = true;
         return payload;
     });
 
