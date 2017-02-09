@@ -255,6 +255,17 @@ To disable it:
 
 If your custom error object inherits from `Error` as its parent prototype, this isn't necessary however and these will be sent correctly.
 
+### Report column numbers
+
+By default Raygun4Node doesn't include column numbers in the stack trace. To include column numbers add the option `reportColumnNumbers` set to true to the configuration.
+
+    var raygunClient = new raygun.Client().init({
+        apiKey: 'YOUR_KEY',
+        reportColumnNumbers: true
+    });
+
+Including column numbers can enable source mapping if you have minified or transpiled code in your stack traces.
+
 ### Examples
 View a screencast on creating an app with Node.js and Express.js, then hooking up the error handling and sending them at [http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/](http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/)
 
