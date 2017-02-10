@@ -1,3 +1,7 @@
+## 0.9.1
+
+- Add an option to report column number for each frame of the stack trace
+
 ## 0.9.0
 
 - Add capability to send custom data with Express handler
