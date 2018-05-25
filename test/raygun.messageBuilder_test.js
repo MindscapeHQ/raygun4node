@@ -136,6 +136,79 @@ test('error builder tests', function (t) {
   });
 });
 
+test('inner error builder tests', function (t) {
+  var innerErrorMessage = 'Inner';
+  var innerInnerErrorMessage = 'InnerInner';  
+
+  var innerErrorFieldName = 'innerCause';
+
+  var error = new Error('Outer');
+  var innerError = new Error(innerErrorMessage);
+  var innerInnerError = new Error(innerInnerErrorMessage);
+
+  error[innerErrorFieldName] = function () {
+      return innerError;
+  };
+
+  innerError[innerErrorFieldName] = function () {
+    return innerInnerError;
+  };
+
+  var builder = new MessageBuilder({ innerErrorFieldName: innerErrorFieldName });
+  builder.setErrorDetails(error);
+  var message = builder.build();
+  
+  t.test('inner errors', function (tt) {
+    tt.ok(message.details.error.innerError);
+    tt.ok(message.details.error.innerError.innerError);
+    tt.notOk(message.details.error.innerError.innerError.innerError);
+    
+    tt.end();
+  });
+  
+  t.test('inner errors stack traces', function (tt) {
+    tt.ok(message.details.error.innerError.stackTrace);
+    tt.ok(message.details.error.innerError.innerError.stackTrace);
+    var lines = 14;
+
+    if (semver.satisfies(process.version, '>=6.0.0')) {
+      lines = 15;
+    }
+
+    tt.equal(message.details.error.stackTrace.length, lines);
+
+    tt.end();
+  });
+  
+  t.test('inner stack traces correct', function (tt) {
+    var stackTraces = [
+      message.details.error.innerError.stackTrace,
+      message.details.error.innerError.innerError.stackTrace
+    ];
+
+    stackTraces.forEach(function (stackTrace) {
+      stackTrace.forEach(function (stackTraceLine) {
+        tt.ok(stackTraceLine.lineNumber);
+        tt.ok(stackTraceLine.className);
+        tt.ok(stackTraceLine.fileName);
+        tt.ok(stackTraceLine.methodName);
+      });
+    });
+    tt.end();
+  });
+  
+  t.test('inner errors messages correct', function (tt) {
+    tt.ok(message.details.error.innerError.message);
+    tt.ok(message.details.error.innerError.innerError.message);
+
+    tt.equal(message.details.error.innerError.message, innerErrorMessage);
+    tt.equal(message.details.error.innerError.innerError.message, innerInnerErrorMessage);
+    
+    tt.end();
+    t.end();    
+  });
+});
+
 test('environment builder', function (t) {
   var builder = new MessageBuilder();
   builder.setEnvironmentDetails();

@@ -37,6 +37,29 @@ test('send complex', {}, function (t) {
     });
 });
 
+test('send with inner error', {}, function (t) {
+    t.plan(1);
+
+    if (semver.satisfies(process.version, '=0.10')) {
+      t.pass('Ignored on node 0.10');
+      t.end();
+      return;
+    }
+
+    var error = new Error('Outer');
+    var innerError = new Error('Inner');
+    
+    error.cause = function () {
+        return innerError;
+    };
+
+    var client = new Raygun.Client().init({apiKey: process.env['RAYGUN_APIKEY']});
+    client.send(error, {}, function (response) {
+        t.equals(response.statusCode, 202);
+        t.end();
+    });
+});
+
 test('send with OnBeforeSend', {}, function (t) {
     t.plan(1);
 
