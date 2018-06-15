@@ -2,6 +2,8 @@
 
 var test = require("tap").test;
 var semver = require('semver');
+var VError = require('verror');
+
 var Raygun = require('../lib/raygun.js');
 
 test('send basic', {}, function (t) {
@@ -52,6 +54,24 @@ test('send with inner error', {}, function (t) {
     error.cause = function () {
         return innerError;
     };
+
+    var client = new Raygun.Client().init({apiKey: process.env['RAYGUN_APIKEY']});
+    client.send(error, {}, function (response) {
+        t.equals(response.statusCode, 202);
+        t.end();
+    });
+});
+
+test('send with verror', {}, function (t) {
+    t.plan(1);
+
+    if (semver.satisfies(process.version, '=0.10')) {
+      t.pass('Ignored on node 0.10');
+      t.end();
+      return;
+    }
+
+    var error = new VError(new VError(new VError('Deep Error'), 'Inner Error'), 'Outer Error');
 
     var client = new Raygun.Client().init({apiKey: process.env['RAYGUN_APIKEY']});
     client.send(error, {}, function (response) {

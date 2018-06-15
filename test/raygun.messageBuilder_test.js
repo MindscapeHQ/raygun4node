@@ -3,6 +3,7 @@
 var test = require("tap").test;
 var MessageBuilder = require('../lib/raygun.messageBuilder.js');
 var semver = require('semver');
+var VError = require('verror');
 
 test('basic builder tests', function (t) {
   var builder = new MessageBuilder();
@@ -207,6 +208,27 @@ test('inner error builder tests', function (t) {
     tt.end();
     t.end();    
   });
+});
+
+test('VError support', function (t) {
+  var innerErrorMessage = 'Inner';
+  var innerInnerErrorMessage = 'InnerInner';
+
+  var error = new VError(new VError(new VError(innerInnerErrorMessage), innerErrorMessage), 'Outer Error');
+
+  var builder = new MessageBuilder({ innerErrorFieldName: 'cause'});
+  builder.setErrorDetails(error);
+  var message = builder.build();
+
+  t.test('inner errors', function (tt) {
+    tt.ok(message.details.error.innerError);
+    tt.ok(message.details.error.innerError.innerError);
+    tt.notOk(message.details.error.innerError.innerError.innerError);
+
+    tt.end();
+  });
+
+  t.end();
 });
 
 test('environment builder', function (t) {
