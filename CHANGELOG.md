@@ -1,3 +1,6 @@
+## 0.10.0
+- Add support for inner errors. Option `innerErrorFieldName` to specify a field or a function on the error object to use for retrieval of an inner error. Defaults to `cause` which is used in [VError](https://github.com/joyent/node-verror)
+
 ## 0.9.1
 
 - Add an option to report column number for each frame of the stack trace

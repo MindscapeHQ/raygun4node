@@ -139,6 +139,10 @@ Release 0.3 previously had a setUser function that accepted a string or function
 
 Call setVersion(*string*) on a RaygunClient to set the version of the calling application. This is expected to be of the format x.x.x.x, where x is a positive integer. The version will be visible in the dashboard.
 
+### Inner Errors
+
+Starting from 0.10.0 support for inner errors was added. Provide option `innerErrorFieldName` to specify a field or a function on the error object to use for retrieval of an inner error. Inner errors will be retrieved recursively until there is no more errors. Option `innerErrorFieldName` defaults to `cause` which is used in [VError](https://github.com/joyent/node-verror), therefore `VError` is supported out of the box.
+
 ### Changing the API endpoint
 
 You can change the endpoint that error messages are sent to by specifying the `host`, `port`, and `useSSL` properties in the `raygunClient.init()` options hash. By default, `host` is `api.raygun.io`, `port` is `443`, and `useSSL` is `true`.
