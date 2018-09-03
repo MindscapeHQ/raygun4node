@@ -34,7 +34,7 @@
     "verror": "^1.10.0"
   },
   "dependencies": {
-    "nock": "~8",
+    "nock": "~9",
     "object-to-human-string": "0.0.3",
     "stack-trace": "0.0.6"
   },
