@@ -25,7 +25,7 @@
     "node": ">= 0.10.0"
   },
   "scripts": {
-    "test": "jshint **/*.js && tap test/*.js"
+    "test": "jshint ./ && tap test/*.js"
   },
   "devDependencies": {
     "jshint": "^2.5.6",
