@@ -6,10 +6,10 @@
  * Licensed under the MIT license.
  */
 
-'use strict';
+"use strict";
 
-import os from 'os';
-import stackTrace from 'stack-trace';
+import os from "os";
+import stackTrace from "stack-trace";
 
 import {
   MessageBuilderOptions,
@@ -23,16 +23,16 @@ import {
   Tag,
   CustomData,
   Environment,
-  BuiltError
-} from './types';
+  BuiltError,
+} from "./types";
 
 type UserMessageData = RawUserData | string | undefined;
 
-const humanString = require('object-to-human-string');
-const packageDetails = require('../package.json');
+const humanString = require("object-to-human-string");
+const packageDetails = require("../package.json");
 
-function filterKeys(obj: {[key: string]: any}, filters: string[]) {
-  if (!obj || !filters || typeof obj !== 'object') {
+function filterKeys(obj: { [key: string]: any }, filters: string[]) {
+  if (!obj || !filters || typeof obj !== "object") {
     return obj;
   }
   Object.keys(obj).forEach(function (i) {
@@ -45,19 +45,25 @@ function filterKeys(obj: {[key: string]: any}, filters: string[]) {
   return obj;
 }
 
-function getStackTrace(error: Error, options: MessageBuilderOptions): StackFrame[] {
+function getStackTrace(
+  error: Error,
+  options: MessageBuilderOptions
+): StackFrame[] {
   const stack: StackFrame[] = [];
   const trace = stackTrace.parse(error);
 
   trace.forEach(function (callSite) {
     const frame: StackFrame = {
       lineNumber: callSite.getLineNumber(),
-      className: callSite.getTypeName() || 'unknown',
+      className: callSite.getTypeName() || "unknown",
       fileName: callSite.getFileName(),
-      methodName: callSite.getFunctionName() || '[anonymous]'
+      methodName: callSite.getFunctionName() || "[anonymous]",
     };
 
-    if (!!options.reportColumnNumbers && typeof (callSite.getColumnNumber) === 'function') {
+    if (
+      !!options.reportColumnNumbers &&
+      typeof callSite.getColumnNumber === "function"
+    ) {
       frame.columnNumber = callSite.getColumnNumber();
     }
 
@@ -67,16 +73,22 @@ function getStackTrace(error: Error, options: MessageBuilderOptions): StackFrame
   return stack;
 }
 
-function buildError(error: IndexableError, options: MessageBuilderOptions): BuiltError {
-  var builtError: BuiltError = {
+function buildError(
+  error: IndexableError,
+  options: MessageBuilderOptions
+): BuiltError {
+  const builtError: BuiltError = {
     stackTrace: getStackTrace(error, options),
     message: error.message || "NoMessage",
-    className: error.name
+    className: error.name,
   };
 
-  var innerError = typeof error[options.innerErrorFieldName] === 'function' ? error[options.innerErrorFieldName]() : error[options.innerErrorFieldName];
+  const innerError =
+    typeof error[options.innerErrorFieldName] === "function"
+      ? error[options.innerErrorFieldName]()
+      : error[options.innerErrorFieldName];
 
-  if(innerError instanceof Error) {
+  if (innerError instanceof Error) {
     builtError.innerError = buildError(innerError, options);
   }
 
@@ -97,10 +109,10 @@ export class RaygunMessageBuilder {
       occurredOn: new Date(),
       details: {
         client: {
-          name: 'raygun-node',
-          version: packageDetails.version
-        }
-      }
+          name: "raygun-node",
+          version: packageDetails.version,
+        },
+      },
     };
   }
 
@@ -108,17 +120,19 @@ export class RaygunMessageBuilder {
     // TODO - this provides no type safety that you actually passed what is needed
     // probably need to abandon the fluent builder pattern for better types
     return this.message as Message;
-  };
+  }
 
   setErrorDetails(error: any) {
     if (!(error instanceof Error) && this.options.useHumanStringForObject) {
       error = humanString(error);
-      this.message.details.groupingKey = error.replace(/\W+/g, "").substring(0, 64);
+      this.message.details.groupingKey = error
+        .replace(/\W+/g, "")
+        .substring(0, 64);
     }
 
     if (typeof error === "string") {
       this.message.details.error = {
-        message: error
+        message: error,
       };
 
       return this;
@@ -127,15 +141,15 @@ export class RaygunMessageBuilder {
     this.message.details.error = buildError(error, this.options);
 
     return this;
-  };
+  }
 
   setEnvironmentDetails() {
     const environment: Environment = {
-      osVersion: os.type() + ' ' + os.platform() + ' ' + os.release(),
+      osVersion: `${os.type()} ${os.platform()} ${os.release()}`,
       architecture: os.arch(),
       totalPhysicalMemory: os.totalmem(),
       availablePhysicalMemory: os.freemem(),
-      utcOffset: new Date().getTimezoneOffset() / -60.0
+      utcOffset: new Date().getTimezoneOffset() / -60.0,
     };
 
     // cpus seems to return undefined on some systems
@@ -149,24 +163,24 @@ export class RaygunMessageBuilder {
     this.message.details.environment = environment;
 
     return this;
-  };
+  }
 
   setMachineName(machineName?: string) {
     this.message.details.machineName = machineName || os.hostname();
     return this;
-  };
+  }
 
   setUserCustomData(customData: CustomData) {
     this.message.details.userCustomData = customData;
     return this;
-  };
+  }
 
   setTags(tags: Tag[]) {
     if (Array.isArray(tags)) {
       this.message.details.tags = tags;
     }
     return this;
-  };
+  }
 
   setRequestDetails(request: RequestParams | undefined) {
     if (request) {
@@ -177,11 +191,11 @@ export class RaygunMessageBuilder {
         ipAddress: request.ip,
         queryString: filterKeys(request.query, this._filters),
         headers: filterKeys(request.headers, this._filters),
-        form: filterKeys(request.body, this._filters)
+        form: filterKeys(request.body, this._filters),
       };
     }
     return this;
-  };
+  }
 
   setUser(user: (() => UserMessageData) | UserMessageData) {
     var userData: UserMessageData;
@@ -193,36 +207,36 @@ export class RaygunMessageBuilder {
     }
 
     if (userData instanceof Object) {
-        this.message.details.user = this.extractUserProperties(userData);
+      this.message.details.user = this.extractUserProperties(userData);
     } else if (typeof userData === "string") {
-        this.message.details.user = { 'identifier': userData };
+      this.message.details.user = { identifier: userData };
     }
 
     return this;
-  };
+  }
 
   setVersion(version: string) {
     this.message.details.version = version;
     return this;
-  };
+  }
 
   private extractUserProperties(userData: RawUserData): UserDetails {
     const data: UserDetails = {};
-    if(userData.identifier) {
+    if (userData.identifier) {
       data.identifier = userData.identifier;
     }
-    if(userData.email) {
+    if (userData.email) {
       data.email = userData.email;
     }
-    if(userData.fullName) {
+    if (userData.fullName) {
       data.fullName = userData.fullName;
     }
-    if(userData.firstName) {
+    if (userData.firstName) {
       data.firstName = userData.firstName;
     }
-    if(userData.uuid) {
+    if (userData.uuid) {
       data.uuid = userData.uuid;
     }
     return data;
-  };
-};
+  }
+}

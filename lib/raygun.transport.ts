@@ -6,43 +6,42 @@
  * Licensed under the MIT license.
  */
 
-'use strict';
+"use strict";
 
-import http from 'http';
-import https from 'https';
+import http from "http";
+import https from "https";
 
-import {IncomingMessage} from 'http';
-import {SendOptions} from './types';
+import { IncomingMessage } from "http";
+import { SendOptions } from "./types";
 
-const API_HOST = 'api.raygun.io';
-
+const API_HOST = "api.raygun.io";
 
 function getFullPath(options: SendOptions) {
-  var useSSL   = options.useSSL,
-      port     = useSSL ? 443 : 80,
-      protocol = useSSL ? 'https' : 'http';
+  const useSSL = options.useSSL;
+  const port = useSSL ? 443 : 80;
+  const protocol = useSSL ? "https" : "http";
 
-  return protocol + '://' + API_HOST + ':' + port + '/entries';
-};
+  return `${protocol}://${API_HOST}:${port}/entries`;
+}
 
 export function send(options: SendOptions) {
   try {
-    var data = Buffer.from(JSON.stringify(options.message));
-    var fullPath = getFullPath(options);
+    const data = Buffer.from(JSON.stringify(options.message));
+    const fullPath = getFullPath(options);
 
-    var httpOptions = {
+    const httpOptions = {
       host: options.host || API_HOST,
       port: options.port || 443,
       path: fullPath,
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Host': API_HOST,
-        'Content-Type': 'application/json',
-        'Content-Length': data.length,
-        'X-ApiKey': options.apiKey
-      }
+        Host: API_HOST,
+        "Content-Type": "application/json",
+        "Content-Length": data.length,
+        "X-ApiKey": options.apiKey,
+      },
     };
-    var cb = function (response: IncomingMessage) {
+    const cb = function (response: IncomingMessage) {
       if (options.callback) {
         if (options.callback.length > 1) {
           options.callback(null, response);
@@ -51,11 +50,13 @@ export function send(options: SendOptions) {
         }
       }
     };
-    var httpLib = options.useSSL ? https : http;
-    var request = httpLib.request(httpOptions, cb);
+    const httpLib = options.useSSL ? https : http;
+    const request = httpLib.request(httpOptions, cb);
 
     request.on("error", function (e) {
-      console.log("Raygun: error " + e.message + " occurred while attempting to send error with message: " + options.message);
+      console.log(
+        `Raygun: error ${e.message} occurred while attempting to send error with message: ${options.message}`
+      );
 
       // If the callback has two parameters, it should expect an `error` value.
       if (options.callback && options.callback.length > 1) {
@@ -66,6 +67,8 @@ export function send(options: SendOptions) {
     request.write(data);
     request.end();
   } catch (e) {
-    console.log("Raygun: error " + e + " occurred while attempting to send error with message: " + options.message);
+    console.log(
+      `Raygun: error ${e} occurred while attempting to send error with message: ${options.message}`
+    );
   }
-};
+}

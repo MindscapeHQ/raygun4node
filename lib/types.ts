@@ -32,7 +32,7 @@ export type BuiltError = {
   stackTrace?: StackFrame[];
   className?: string;
   innerError?: BuiltError;
-}
+};
 
 export interface MessageDetails {
   client: {
@@ -58,11 +58,9 @@ export type Environment = {
   utcOffset: number;
   processorCount?: number;
   cpu?: string;
-}
+};
 
-export interface Tag {
-}
-
+export interface Tag {}
 
 export interface SendOptions {
   message: Message;
@@ -75,7 +73,8 @@ export interface SendOptions {
 
 export type CustomData = any;
 
-export type RequestParams = ({host: string} | {hostname: string}) & CommonRequestParams;
+export type RequestParams = ({ host: string } | { hostname: string }) &
+  CommonRequestParams;
 
 interface CommonRequestParams {
   hostname?: string;
@@ -119,5 +118,4 @@ export interface RawUserData {
 export type OfflineStorageOptions = {
   cachePath: string;
   cacheLimit?: number;
-}
-
+};
