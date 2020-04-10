@@ -60,7 +60,7 @@ export type Environment = {
   cpu?: string;
 };
 
-export interface Tag {}
+export type Tag = string
 
 export interface SendOptions {
   message: Message;
