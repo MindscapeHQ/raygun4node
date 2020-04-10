@@ -10,26 +10,41 @@
 
 'use strict';
 
-var fs = require('fs');
-var path = require('path');
-var raygunTransport = require('./raygun.transport');
+import fs from 'fs';
+import path from 'path';
+import * as raygunTransport from './raygun.transport';
+import {OfflineStorageOptions} from './types';
 
-var OfflineStorage = function() {
+type TransportItem = {
+  callback?: Function;
+}
+
+type OfflineStorage = {
+  cachePath: string;
+  cacheLimit: number;
+
+  init(offlineStorageOptions: OfflineStorageOptions): OfflineStorage;
+  save(transportItem: TransportItem, callback: (err: Error | null) => void): void;
+  retrieve(cb: (error: NodeJS.ErrnoException | null, items: string[]) => void): void;
+  send(cb: (error: Error | null, items?: string[]) => void): void;
+}
+
+var OfflineStorage = function(this: OfflineStorage) {
   var storage = this;
 
-  function _sendAndDelete(item) {
+  function _sendAndDelete(item: string) {
     fs.readFile(
         path.join(storage.cachePath, item),
         'utf8',
         function(err, cacheContents) {
           raygunTransport.send(JSON.parse(cacheContents));
-          fs.unlink(path.join(storage.cachePath, item));
+          fs.unlink(path.join(storage.cachePath, item), () => {});
         }
     );
   }
 
   storage.init = function(offlineStorageOptions) {
-    if (!offlineStorageOptions && !offlineStorageOptions.cachePath) {
+    if (offlineStorageOptions && !offlineStorageOptions.cachePath) {
       throw new Error("Cache Path must be set before Raygun can cache offline");
     }
 

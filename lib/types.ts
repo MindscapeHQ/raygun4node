@@ -106,3 +106,7 @@ export interface RawUserData {
   email?: string;
 }
 
+export type OfflineStorageOptions = {
+  cachePath: string;
+  cacheLimit?: number;
+}

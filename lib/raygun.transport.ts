@@ -32,7 +32,7 @@ function getFullPath(options: SendOptions) {
   return protocol + '://' + API_HOST + ':' + port + '/entries';
 };
 
-function send(options: SendOptions) {
+export function send(options: SendOptions) {
   try {
     var data = Buffer.from(JSON.stringify(options.message));
     var fullPath = getFullPath(options);
@@ -76,5 +76,3 @@ function send(options: SendOptions) {
     console.log("Raygun: error " + e + " occurred while attempting to send error with message: " + options.message);
   }
 };
-
-exports.send = send;
