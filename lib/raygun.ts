@@ -10,21 +10,76 @@
 
 'use strict';
 
-var raygunTransport = require('./raygun.transport');
-var MessageBuilder = require('./raygun.messageBuilder');
-var OfflineStorage = require('./raygun.offline');
+import type { RawUserData, OfflineStorageOptions, Tag, CustomData, RequestParams, Message } from "./types";
+import type { Request, Response, NextFunction } from 'express';
+import * as raygunTransport from './raygun.transport';
+import {RaygunMessageBuilder} from './raygun.messageBuilder';
+import {OfflineStorage} from './raygun.offline';
 
-var Raygun = function () {
-    var _apiKey, _filters, raygun = this, _user, _version, _host, _port, _useSSL, _onBeforeSend, _offlineStorage, _isOffline, _offlineStorageOptions, _groupingKey, _tags, _useHumanStringForObject, _reportColumnNumbers, _innerErrorFieldName;
+type SendCB = (error: Error | null, items: string[] | undefined) => void;
+type BeforeSendCB = (message: Message, exception: Error | string, customData: CustomData, request?: RequestParams, tags?: Tag[]) => Message;
 
-    raygun.init = function (options) {
+type RaygunClient = {
+    init(options: RaygunOptions): RaygunClient;
+    user(req: Request): RawUserData | null;
+    setUser(user: RawUserData): RaygunClient;
+    expressCustomData: ((error: Error, request: Request) => CustomData) | CustomData;
+    setVersion(version: string): RaygunClient;
+    onBeforeSend(f: BeforeSendCB): RaygunClient;
+    groupingKey(key: Function): RaygunClient;
+    offline(): void;
+    online(cb: SendCB): void;
+    setTags(tags: Tag[]): void;
+    send(exception: Error | string, customData: CustomData, callback: (err: Error | null) => void, request?: Request, tags?: Tag[]): Message;
+    expressHandler(error: Error, req: Request, res: Response, next: NextFunction): void;
+}
+
+type RaygunOptions = {
+    apiKey: string;
+    filters?: string[];
+    host?: string;
+    port?: number;
+    useSSL?: boolean;
+    onBeforeSend?: BeforeSendCB;
+    offlineStorage?: OfflineStorage;
+    offlineStorageOptions?: OfflineStorageOptions;
+    isOffline?: boolean;
+    groupingKey?: Function;
+    tags?: Tag[];
+    useHumanStringForObject?: boolean;
+    reportColumnNumbers?: boolean;
+    innerErrorFieldName: string;
+}
+
+type Payload = {};
+
+var Raygun = function (this: RaygunClient) {
+    const raygun = this;
+    let _apiKey: string;
+    let _filters: string[];
+    let _user: RawUserData;
+    let _version: string;
+    let _host: string | undefined;
+    let _port: number | undefined;
+    let _useSSL: boolean;
+    let _onBeforeSend: BeforeSendCB | undefined;
+    let _offlineStorage: OfflineStorage;
+    let _isOffline: boolean | undefined;
+    let _offlineStorageOptions: OfflineStorageOptions | undefined;
+    let _groupingKey: Function | undefined; // TODO
+    let _tags: Tag[] | undefined;
+    let _useHumanStringForObject: boolean;
+    let _reportColumnNumbers: boolean | undefined;
+    let _innerErrorFieldName: string;
+
+    raygun.init = function (options: RaygunOptions) {
         _apiKey = options.apiKey;
-        _filters = options.filters;
+        _filters = options.filters || [];
         _host = options.host;
         _port = options.port;
         _useSSL = options.useSSL !== false;
         _onBeforeSend = options.onBeforeSend;
-        _offlineStorage = options.offlineStorage || new OfflineStorage();
+        _offlineStorage = options.offlineStorage || new OfflineStorage(); // TODO - TypeScript only allows typesafe `new` use with TS
         _offlineStorageOptions = options.offlineStorageOptions;
         _isOffline = options.isOffline;
         _groupingKey = options.groupingKey;
@@ -40,8 +95,8 @@ var Raygun = function () {
         return raygun;
     };
 
-    raygun.user = function (req) {
-        return;
+    raygun.user = function (req: RequestParams) {
+        return null;
     };
 
     // This function is deprecated, is provided for legacy apps and will be
@@ -85,7 +140,7 @@ var Raygun = function () {
     };
 
     raygun.send = function (exception, customData, callback, request, tags) {
-        var mergedTags = [];
+        var mergedTags: Tag[] = [];
 
         if (_tags) {
             mergedTags = mergedTags.concat(_tags);
@@ -95,13 +150,13 @@ var Raygun = function () {
             mergedTags = mergedTags.concat(tags);
         }
 
-        var builder = new MessageBuilder({filters: _filters, useHumanStringForObject: _useHumanStringForObject, reportColumnNumbers: _reportColumnNumbers, innerErrorFieldName: _innerErrorFieldName})
+        var builder = new RaygunMessageBuilder({filters: _filters, useHumanStringForObject: _useHumanStringForObject, reportColumnNumbers: _reportColumnNumbers, innerErrorFieldName: _innerErrorFieldName})
             .setErrorDetails(exception)
             .setRequestDetails(request)
             .setMachineName()
             .setEnvironmentDetails()
             .setUserCustomData(customData)
-            .setUser(raygun.user(request) || _user)
+            .setUser((request && raygun.user(request)) || _user)
             .setVersion(_version)
             .setTags(mergedTags);
 
@@ -111,7 +166,7 @@ var Raygun = function () {
             message.details.groupingKey = typeof _groupingKey === 'function' ? _groupingKey(message, exception, customData, request, tags) : null;
         }
 
-        if (raygun.onBeforeSend) {
+        if (_onBeforeSend) {
             message = typeof _onBeforeSend === 'function' ? _onBeforeSend(message, exception, customData, request, tags) : message;
         }
 
@@ -142,9 +197,8 @@ var Raygun = function () {
             customData = raygun.expressCustomData;
         }
 
-        raygun.send(err, customData || {}, function () {
-        }, req);
-        next(err);
+        raygun.send(err, customData || {}, function () {}, req);
+        next();
     };
 };
 

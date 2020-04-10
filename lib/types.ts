@@ -63,6 +63,16 @@ export type Environment = {
 export interface Tag {
 }
 
+
+export interface SendOptions {
+  message: Message;
+  useSSL: boolean;
+  host: string | undefined;
+  port: number | undefined;
+  apiKey: string;
+  callback: Function;
+}
+
 export type CustomData = any;
 
 export type RequestParams = ({host: string} | {hostname: string}) & CommonRequestParams;
@@ -110,3 +120,4 @@ export type OfflineStorageOptions = {
   cachePath: string;
   cacheLimit?: number;
 }
+

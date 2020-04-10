@@ -12,17 +12,10 @@ import http from 'http';
 import https from 'https';
 
 import {IncomingMessage} from 'http';
+import {SendOptions} from './types';
 
 const API_HOST = 'api.raygun.io';
 
-interface SendOptions {
-  message: string;
-  useSSL: boolean;
-  host: string | null;
-  port: number | null;
-  apiKey: string;
-  callback: Function;
-}
 
 function getFullPath(options: SendOptions) {
   var useSSL   = options.useSSL,

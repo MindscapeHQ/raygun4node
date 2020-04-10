@@ -19,22 +19,15 @@ type TransportItem = {
   callback?: Function;
 }
 
-type OfflineStorage = {
-  cachePath: string;
-  cacheLimit: number;
+export class OfflineStorage {
+  cachePath: string = "";
+  cacheLimit: number = 100;
 
-  init(offlineStorageOptions: OfflineStorageOptions): OfflineStorage;
-  save(transportItem: TransportItem, callback: (err: Error | null) => void): void;
-  retrieve(cb: (error: NodeJS.ErrnoException | null, items: string[]) => void): void;
-  send(cb: (error: Error | null, items?: string[]) => void): void;
-}
+  private _sendAndDelete(item: string) {
+    const storage = this;
 
-var OfflineStorage = function(this: OfflineStorage) {
-  var storage = this;
-
-  function _sendAndDelete(item: string) {
     fs.readFile(
-        path.join(storage.cachePath, item),
+        path.join(this.cachePath, item),
         'utf8',
         function(err, cacheContents) {
           raygunTransport.send(JSON.parse(cacheContents));
@@ -43,22 +36,24 @@ var OfflineStorage = function(this: OfflineStorage) {
     );
   }
 
-  storage.init = function(offlineStorageOptions) {
-    if (offlineStorageOptions && !offlineStorageOptions.cachePath) {
+  init(offlineStorageOptions: OfflineStorageOptions | undefined) {
+    if (!offlineStorageOptions || !offlineStorageOptions.cachePath) {
       throw new Error("Cache Path must be set before Raygun can cache offline");
     }
 
-    storage.cachePath = offlineStorageOptions.cachePath;
-    storage.cacheLimit = offlineStorageOptions.cacheLimit || 100;
+    this.cachePath = offlineStorageOptions.cachePath;
+    this.cacheLimit = offlineStorageOptions.cacheLimit || 100;
 
-    if (!fs.existsSync(storage.cachePath)) {
-      fs.mkdirSync(storage.cachePath);
+    if (!fs.existsSync(this.cachePath)) {
+      fs.mkdirSync(this.cachePath);
     }
 
-    return storage;
+    return this;
   };
 
-  storage.save = function(transportItem, callback) {
+  save(transportItem: TransportItem, callback: (err: Error | null) => void) {
+    const storage = this;
+
     var filename = path.join(storage.cachePath, Date.now() + '.json');
     delete transportItem.callback;
 
@@ -92,11 +87,13 @@ var OfflineStorage = function(this: OfflineStorage) {
     });
   };
 
-  storage.retrieve = function(callback) {
-    fs.readdir(storage.cachePath, callback);
+  retrieve(callback: (error: NodeJS.ErrnoException | null, items: string[]) => void) {
+    fs.readdir(this.cachePath, callback);
   };
 
-  storage.send = function(callback) {
+  send(callback: (error: Error | null, items?: string[]) => void) {
+    const storage = this;
+
     if (!callback) {
       callback = function() {};
     }
@@ -109,12 +106,10 @@ var OfflineStorage = function(this: OfflineStorage) {
       }
 
       for (var i = 0; i < items.length; i++) {
-        _sendAndDelete(items[i]);
+        storage._sendAndDelete(items[i]);
       }
 
       callback(err, items);
     });
   };
 };
-
-exports = module.exports = OfflineStorage;

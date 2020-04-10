@@ -70,74 +70,64 @@ function buildError(error: IndexableError, options: MessageBuilderOptions): Buil
     stackTrace: getStackTrace(error, options),
     message: error.message || "NoMessage",
     className: error.name
-  }; 
-  
+  };
+
   var innerError = typeof error[options.innerErrorFieldName] === 'function' ? error[options.innerErrorFieldName]() : error[options.innerErrorFieldName];
 
   if(innerError instanceof Error) {
     builtError.innerError = buildError(innerError, options);
   }
-    
+
   return builtError;
 }
 
-type RaygunMessageBuilder = {
-  build(): Message;
-  setVersion(version: string): RaygunMessageBuilder;
-  setUser(user: (() => RawUserData) | RawUserData): RaygunMessageBuilder;
-  setRequestDetails(request: RequestParams): RaygunMessageBuilder;
-  setTags(tags: Tag[]): RaygunMessageBuilder;
-  setUserCustomData(customData: CustomData): RaygunMessageBuilder;
-  setMachineName(machineName: string): RaygunMessageBuilder;
-  setEnvironmentDetails(): RaygunMessageBuilder;
-  setErrorDetails(error: any): RaygunMessageBuilder;
+export class RaygunMessageBuilder {
+  _filters: string[];
+  options: MessageBuilderOptions;
+  message: MessageBuilding;
 
-};
+  constructor(options: MessageBuilderOptions) {
+    options = options || {};
+    this.options = options;
+    this._filters = options.filters || [];
 
-var RaygunMessageBuilder = function (this: RaygunMessageBuilder, options: MessageBuilderOptions) {
-  options = options || {};
-  var _filters: string[];
-
-  if (Array.isArray(options.filters)) {
-    _filters = options.filters;
+    this.message = {
+      occurredOn: new Date(),
+      details: {
+        client: {
+          name: 'raygun-node',
+          version: packageDetails.version
+        }
+      }
+    };
   }
 
-  var message : MessageBuilding = {
-    occurredOn: new Date(),
-    details: {
-      client: {
-        name: 'raygun-node',
-        version: packageDetails.version
-      }
-    }
-  };
-
-  this.build = function () {
+  build(): Message {
     // TODO - this provides no type safety that you actually passed what is needed
     // probably need to abandon the fluent builder pattern for better types
-    return message as Message;
+    return this.message as Message;
   };
 
-  this.setErrorDetails = function (error: any) {
-    if (!(error instanceof Error) && options.useHumanStringForObject) {
+  setErrorDetails(error: any) {
+    if (!(error instanceof Error) && this.options.useHumanStringForObject) {
       error = humanString(error);
-      message.details.groupingKey = error.replace(/\W+/g, "").substring(0, 64);
+      this.message.details.groupingKey = error.replace(/\W+/g, "").substring(0, 64);
     }
 
     if (typeof error === "string") {
-      message.details.error = {
+      this.message.details.error = {
         message: error
       };
 
       return this;
     }
 
-    message.details.error = buildError(error, options);
+    this.message.details.error = buildError(error, this.options);
 
     return this;
   };
 
-  this.setEnvironmentDetails = function () {
+  setEnvironmentDetails() {
     const environment: Environment = {
       osVersion: os.type() + ' ' + os.platform() + ' ' + os.release(),
       architecture: os.arch(),
@@ -154,44 +144,66 @@ var RaygunMessageBuilder = function (this: RaygunMessageBuilder, options: Messag
       environment.cpu = cpus[0].model;
     }
 
-    message.details.environment = environment;
+    this.message.details.environment = environment;
 
     return this;
   };
 
-  this.setMachineName = function (machineName: string) {
-    message.details.machineName = machineName || os.hostname();
+  setMachineName(machineName?: string) {
+    this.message.details.machineName = machineName || os.hostname();
     return this;
   };
 
-  this.setUserCustomData = function (customData: CustomData) {
-    message.details.userCustomData = customData;
+  setUserCustomData(customData: CustomData) {
+    this.message.details.userCustomData = customData;
     return this;
   };
 
-  this.setTags = function (tags: Tag[]) {
+  setTags(tags: Tag[]) {
     if (Array.isArray(tags)) {
-      message.details.tags = tags;
+      this.message.details.tags = tags;
     }
     return this;
   };
 
-  this.setRequestDetails = function (request: RequestParams) {
+  setRequestDetails(request: RequestParams | undefined) {
     if (request) {
-      message.details.request = {
+      this.message.details.request = {
         hostName: request.hostname || request.host,
         url: request.path,
         httpMethod: request.method,
         ipAddress: request.ip,
-        queryString: filterKeys(request.query, _filters),
-        headers: filterKeys(request.headers, _filters),
-        form: filterKeys(request.body, _filters)
+        queryString: filterKeys(request.query, this._filters),
+        headers: filterKeys(request.headers, this._filters),
+        form: filterKeys(request.body, this._filters)
       };
     }
     return this;
   };
 
-  var extractUserProperties = function(userData: RawUserData): UserDetails {
+  setUser(user: (() => RawUserData) | RawUserData) {
+    var userData: RawUserData;
+    if (user instanceof Function) {
+      userData = user();
+    } else {
+      userData = user;
+    }
+
+    if (userData instanceof Object) {
+        this.message.details.user = this.extractUserProperties(userData);
+    } else {
+        this.message.details.user = { 'identifier': userData };
+    }
+
+    return this;
+  };
+
+  setVersion(version: string) {
+    this.message.details.version = version;
+    return this;
+  };
+
+  private extractUserProperties(userData: RawUserData): UserDetails {
     const data: UserDetails = {};
     if(userData.identifier) {
       data.identifier = userData.identifier;
@@ -210,28 +222,4 @@ var RaygunMessageBuilder = function (this: RaygunMessageBuilder, options: Messag
     }
     return data;
   };
-
-  this.setUser = function (user: (() => RawUserData) | RawUserData) {
-    var userData: RawUserData;
-    if (user instanceof Function) {
-      userData = user();
-    } else {
-      userData = user;
-    }
-
-    if (userData instanceof Object) {
-        message.details.user = extractUserProperties(userData);
-    } else {
-        message.details.user = { 'identifier': userData };
-    }
-
-    return this;
-  };
-
-  this.setVersion = function (version: string) {
-    message.details.version = version;
-    return this;
-  };
 };
-
-exports = module.exports = RaygunMessageBuilder;
