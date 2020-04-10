@@ -1,7 +1,7 @@
 'use strict';
 
 var test = require("tap").test;
-var Raygun = require('../build/raygun.js');
+var Raygun = require('../lib/raygun.ts');
 
 var options = {
   apiKey: process.env.RAYGUN_APIKEY
