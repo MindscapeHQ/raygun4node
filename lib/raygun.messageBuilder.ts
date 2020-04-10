@@ -26,6 +26,8 @@ import {
   BuiltError
 } from './types';
 
+type UserMessageData = RawUserData | string | undefined;
+
 const humanString = require('object-to-human-string');
 const packageDetails = require('../package.json');
 
@@ -181,8 +183,9 @@ export class RaygunMessageBuilder {
     return this;
   };
 
-  setUser(user: (() => RawUserData) | RawUserData) {
-    var userData: RawUserData;
+  setUser(user: (() => UserMessageData) | UserMessageData) {
+    var userData: UserMessageData;
+
     if (user instanceof Function) {
       userData = user();
     } else {
@@ -191,7 +194,7 @@ export class RaygunMessageBuilder {
 
     if (userData instanceof Object) {
         this.message.details.user = this.extractUserProperties(userData);
-    } else {
+    } else if (typeof userData === "string") {
         this.message.details.user = { 'identifier': userData };
     }
 

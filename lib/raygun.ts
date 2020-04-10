@@ -48,139 +48,143 @@ type RaygunOptions = {
     tags?: Tag[];
     useHumanStringForObject?: boolean;
     reportColumnNumbers?: boolean;
-    innerErrorFieldName: string;
+    innerErrorFieldName?: string;
 }
 
-type Payload = {};
+class Raygun {
+    _apiKey: string | undefined;
+    _filters: string[] = [];
+    _user: RawUserData | undefined;
+    _version: string = "";
+    _host: string | undefined;
+    _port: number | undefined;
+    _useSSL: boolean | undefined;
+    _onBeforeSend: BeforeSendCB | undefined;
+    _offlineStorage: OfflineStorage | undefined;
+    _isOffline: boolean | undefined;
+    _offlineStorageOptions: OfflineStorageOptions | undefined;
+    _groupingKey: Function | undefined; // TODO
+    _tags: Tag[] | undefined;
+    _useHumanStringForObject: boolean | undefined;
+    _reportColumnNumbers: boolean | undefined;
+    _innerErrorFieldName: string | undefined;
 
-var Raygun = function (this: RaygunClient) {
-    const raygun = this;
-    let _apiKey: string;
-    let _filters: string[];
-    let _user: RawUserData;
-    let _version: string;
-    let _host: string | undefined;
-    let _port: number | undefined;
-    let _useSSL: boolean;
-    let _onBeforeSend: BeforeSendCB | undefined;
-    let _offlineStorage: OfflineStorage;
-    let _isOffline: boolean | undefined;
-    let _offlineStorageOptions: OfflineStorageOptions | undefined;
-    let _groupingKey: Function | undefined; // TODO
-    let _tags: Tag[] | undefined;
-    let _useHumanStringForObject: boolean;
-    let _reportColumnNumbers: boolean | undefined;
-    let _innerErrorFieldName: string;
+    init(options: RaygunOptions) {
+        this._apiKey = options.apiKey;
+        this._filters = options.filters || [];
+        this._host = options.host;
+        this._port = options.port;
+        this._useSSL = options.useSSL !== false;
+        this._onBeforeSend = options.onBeforeSend;
+        this._offlineStorage = options.offlineStorage || new OfflineStorage(); // TODO - TypeScript only allows typesafe `new` use with TS
+        this._offlineStorageOptions = options.offlineStorageOptions;
+        this._isOffline = options.isOffline;
+        this._groupingKey = options.groupingKey;
+        this._tags = options.tags;
+        this._useHumanStringForObject = options.useHumanStringForObject === undefined ? true : options.useHumanStringForObject;
+        this._reportColumnNumbers = options.reportColumnNumbers;
+        this._innerErrorFieldName = options.innerErrorFieldName; // VError function to retrieve inner error;
 
-    raygun.init = function (options: RaygunOptions) {
-        _apiKey = options.apiKey;
-        _filters = options.filters || [];
-        _host = options.host;
-        _port = options.port;
-        _useSSL = options.useSSL !== false;
-        _onBeforeSend = options.onBeforeSend;
-        _offlineStorage = options.offlineStorage || new OfflineStorage(); // TODO - TypeScript only allows typesafe `new` use with TS
-        _offlineStorageOptions = options.offlineStorageOptions;
-        _isOffline = options.isOffline;
-        _groupingKey = options.groupingKey;
-        _tags = options.tags;
-        _useHumanStringForObject = options.useHumanStringForObject === undefined ? true : options.useHumanStringForObject;
-        _reportColumnNumbers = options.reportColumnNumbers;
-        _innerErrorFieldName = options.innerErrorFieldName || 'cause'; // VError function to retrieve inner error;
-
-        if (_isOffline) {
-            _offlineStorage.init(_offlineStorageOptions);
+        if (this._isOffline) {
+            this._offlineStorage.init(this._offlineStorageOptions);
         }
 
-        return raygun;
+        return this;
     };
 
-    raygun.user = function (req: RequestParams) {
+    user(req: Request): RawUserData | null {
         return null;
     };
 
     // This function is deprecated, is provided for legacy apps and will be
     // removed in 1.0: use raygun.user instead
-    raygun.setUser = function (user) {
-        _user = user;
-        return raygun;
+    setUser(user: RawUserData) {
+        this._user = user;
+        return this;
     };
 
-    raygun.expressCustomData = function () {
+    expressCustomData(error: Error, request: Request) {
         return {};
     };
 
-    raygun.setVersion = function (version) {
-        _version = version;
-        return raygun;
+    setVersion(version: string) {
+        this._version = version;
+        return this;
     };
 
-    raygun.onBeforeSend = function (onBeforeSend) {
-        _onBeforeSend = onBeforeSend;
-        return raygun;
+    onBeforeSend(onBeforeSend: BeforeSendCB) {
+        this._onBeforeSend = onBeforeSend;
+        return this;
     };
 
-    raygun.groupingKey = function (groupingKey) {
-        _groupingKey = groupingKey;
-        return raygun;
+    groupingKey(groupingKey: Function) {
+        this._groupingKey = groupingKey;
+        return this;
     };
 
-    raygun.offline = function () {
-        _offlineStorage.init(_offlineStorageOptions);
-        _isOffline = true;
+    offline() {
+        this.offlineStorage().init(this._offlineStorageOptions);
+        this._isOffline = true;
     };
 
-    raygun.online = function (callback) {
-        _isOffline = false;
-        _offlineStorage.send(callback);
+    online(callback: SendCB) {
+        this._isOffline = false;
+        this.offlineStorage().send(callback);
     };
 
-    raygun.setTags = function (tags) {
-        _tags = tags;
+    setTags(tags: Tag[]) {
+        this._tags = tags;
     };
 
-    raygun.send = function (exception, customData, callback, request, tags) {
+    send(exception: Error | string, customData: CustomData, callback: (err: Error | null) => void, request?: Request, tags?: Tag[]): Message {
         var mergedTags: Tag[] = [];
 
-        if (_tags) {
-            mergedTags = mergedTags.concat(_tags);
+        if (this._tags) {
+            mergedTags = mergedTags.concat(this._tags);
         }
 
         if (tags) {
             mergedTags = mergedTags.concat(tags);
         }
 
-        var builder = new RaygunMessageBuilder({filters: _filters, useHumanStringForObject: _useHumanStringForObject, reportColumnNumbers: _reportColumnNumbers, innerErrorFieldName: _innerErrorFieldName})
+        var builder = new RaygunMessageBuilder({filters: this._filters, useHumanStringForObject: this._useHumanStringForObject, reportColumnNumbers: this._reportColumnNumbers, innerErrorFieldName: this._innerErrorFieldName || 'cause'})
             .setErrorDetails(exception)
             .setRequestDetails(request)
             .setMachineName()
             .setEnvironmentDetails()
             .setUserCustomData(customData)
-            .setUser((request && raygun.user(request)) || _user)
-            .setVersion(_version)
+            .setUser((request && this.user(request)) || this._user)
+            .setVersion(this._version)
             .setTags(mergedTags);
 
         var message = builder.build();
 
-        if (_groupingKey) {
-            message.details.groupingKey = typeof _groupingKey === 'function' ? _groupingKey(message, exception, customData, request, tags) : null;
+        if (this._groupingKey) {
+            message.details.groupingKey = typeof this._groupingKey === 'function' ? this._groupingKey(message, exception, customData, request, tags) : null;
         }
 
-        if (_onBeforeSend) {
-            message = typeof _onBeforeSend === 'function' ? _onBeforeSend(message, exception, customData, request, tags) : message;
+        if (this._onBeforeSend) {
+            message = typeof this._onBeforeSend === 'function' ? this._onBeforeSend(message, exception, customData, request, tags) : message;
+        }
+
+        let apiKey = this._apiKey;
+
+        if (!apiKey) {
+            console.error(`Encountered an error sending an error to Raygun. No API key is configured, please ensure .init is called with api key. See docs for more info.`)
+            return message;
         }
 
         var transportMessage = {
             message: message,
-            apiKey: _apiKey,
+            apiKey: apiKey,
             callback: callback,
-            host: _host,
-            port: _port,
-            useSSL: _useSSL
+            host: this._host,
+            port: this._port,
+            useSSL: this._useSSL || false
         };
 
-        if (_isOffline) {
-            _offlineStorage.save(transportMessage, callback);
+        if (this._isOffline) {
+            this.offlineStorage().save(transportMessage, callback);
         } else {
             raygunTransport.send(transportMessage);
         }
@@ -188,18 +192,29 @@ var Raygun = function (this: RaygunClient) {
         return message;
     };
 
-    raygun.expressHandler = function (err, req, res, next) {
+    expressHandler(err: Error, req: Request, res: Response, next: NextFunction) {
         var customData;
 
-        if (typeof raygun.expressCustomData === 'function') {
-            customData = raygun.expressCustomData(err, req);
+        if (typeof this.expressCustomData === 'function') {
+            customData = this.expressCustomData(err, req);
         } else {
-            customData = raygun.expressCustomData;
+            customData = this.expressCustomData;
         }
 
-        raygun.send(err, customData || {}, function () {}, req);
+        this.send(err, customData || {}, function () {}, req);
         next();
     };
-};
 
-exports.Client = Raygun;
+    private offlineStorage(): OfflineStorage {
+        let storage = this._offlineStorage;
+
+        if (!storage) {
+            storage = this._offlineStorage = new OfflineStorage();
+        }
+
+        return storage;
+    }
+}
+
+
+export const Client = RaygunC;

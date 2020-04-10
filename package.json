@@ -25,6 +25,7 @@
     "node": ">= 0.10.0"
   },
   "scripts": {
+    "prepublish": "tsc",
     "test": "tap --no-ts --node-arg=--require=ts-node/register --no-coverage test/*.js"
   },
   "devDependencies": {
