@@ -12,6 +12,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var sassMiddleware = require('node-sass-middleware');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -35,8 +36,12 @@ app.use(bodyParser.urlencoded({
     extended: false
 }));
 app.use(cookieParser());
-app.use(require('node-compass')({
-    mode: 'expanded'
+app.use(sassMiddleware({
+  src: __dirname,
+  dest: path.join(__dirname, 'public'),
+  debug: true,
+  outputStyle: 'compressed',
+  prefix: '/stylesheets'
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 
