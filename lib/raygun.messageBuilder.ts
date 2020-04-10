@@ -8,12 +8,28 @@
 
 'use strict';
 
-var stackTrace = require('stack-trace');
-var os = require('os');
-var humanString = require('object-to-human-string');
-var packageDetails = require('../package.json');
+import os from 'os';
+import stackTrace from 'stack-trace';
 
-function filterKeys(obj, filters) {
+import {
+  MessageBuilderOptions,
+  StackFrame,
+  Message,
+  MessageBuilding,
+  IndexableError,
+  RawUserData,
+  UserDetails,
+  RequestParams,
+  Tag,
+  CustomData,
+  Environment,
+  BuiltError
+} from './types';
+
+const humanString = require('object-to-human-string');
+const packageDetails = require('../package.json');
+
+function filterKeys(obj: {[key: string]: any}, filters: string[]) {
   if (!obj || !filters || typeof obj !== 'object') {
     return obj;
   }
@@ -27,12 +43,12 @@ function filterKeys(obj, filters) {
   return obj;
 }
 
-function getStackTrace(error, options) {
-  var stack = [];
-  var trace = stackTrace.parse(error);
+function getStackTrace(error: Error, options: MessageBuilderOptions): StackFrame[] {
+  const stack: StackFrame[] = [];
+  const trace = stackTrace.parse(error);
 
   trace.forEach(function (callSite) {
-    var frame = {
+    const frame: StackFrame = {
       lineNumber: callSite.getLineNumber(),
       className: callSite.getTypeName() || 'unknown',
       fileName: callSite.getFileName(),
@@ -49,8 +65,8 @@ function getStackTrace(error, options) {
   return stack;
 }
 
-function buildError(error, options) {
-  var builtError = {
+function buildError(error: IndexableError, options: MessageBuilderOptions): BuiltError {
+  var builtError: BuiltError = {
     stackTrace: getStackTrace(error, options),
     message: error.message || "NoMessage",
     className: error.name
@@ -65,15 +81,28 @@ function buildError(error, options) {
   return builtError;
 }
 
-var RaygunMessageBuilder = function (options) {
+type RaygunMessageBuilder = {
+  build(): Message;
+  setVersion(version: string): RaygunMessageBuilder;
+  setUser(user: (() => RawUserData) | RawUserData): RaygunMessageBuilder;
+  setRequestDetails(request: RequestParams): RaygunMessageBuilder;
+  setTags(tags: Tag[]): RaygunMessageBuilder;
+  setUserCustomData(customData: CustomData): RaygunMessageBuilder;
+  setMachineName(machineName: string): RaygunMessageBuilder;
+  setEnvironmentDetails(): RaygunMessageBuilder;
+  setErrorDetails(error: any): RaygunMessageBuilder;
+
+};
+
+var RaygunMessageBuilder = function (this: RaygunMessageBuilder, options: MessageBuilderOptions) {
   options = options || {};
-  var _filters;
+  var _filters: string[];
 
   if (Array.isArray(options.filters)) {
     _filters = options.filters;
   }
 
-  var message = {
+  var message : MessageBuilding = {
     occurredOn: new Date(),
     details: {
       client: {
@@ -84,10 +113,12 @@ var RaygunMessageBuilder = function (options) {
   };
 
   this.build = function () {
-    return message;
+    // TODO - this provides no type safety that you actually passed what is needed
+    // probably need to abandon the fluent builder pattern for better types
+    return message as Message;
   };
 
-  this.setErrorDetails = function (error) {
+  this.setErrorDetails = function (error: any) {
     if (!(error instanceof Error) && options.useHumanStringForObject) {
       error = humanString(error);
       message.details.groupingKey = error.replace(/\W+/g, "").substring(0, 64);
@@ -107,7 +138,7 @@ var RaygunMessageBuilder = function (options) {
   };
 
   this.setEnvironmentDetails = function () {
-    var environment = {
+    const environment: Environment = {
       osVersion: os.type() + ' ' + os.platform() + ' ' + os.release(),
       architecture: os.arch(),
       totalPhysicalMemory: os.totalmem(),
@@ -116,7 +147,7 @@ var RaygunMessageBuilder = function (options) {
     };
 
     // cpus seems to return undefined on some systems
-    var cpus = os.cpus();
+    const cpus = os.cpus();
 
     if (cpus && cpus.length && cpus.length > 0) {
       environment.processorCount = cpus.length;
@@ -128,24 +159,24 @@ var RaygunMessageBuilder = function (options) {
     return this;
   };
 
-  this.setMachineName = function (machineName) {
+  this.setMachineName = function (machineName: string) {
     message.details.machineName = machineName || os.hostname();
     return this;
   };
 
-  this.setUserCustomData = function (customData) {
+  this.setUserCustomData = function (customData: CustomData) {
     message.details.userCustomData = customData;
     return this;
   };
 
-  this.setTags = function (tags) {
+  this.setTags = function (tags: Tag[]) {
     if (Array.isArray(tags)) {
       message.details.tags = tags;
     }
     return this;
   };
 
-  this.setRequestDetails = function (request) {
+  this.setRequestDetails = function (request: RequestParams) {
     if (request) {
       message.details.request = {
         hostName: request.hostname || request.host,
@@ -160,8 +191,8 @@ var RaygunMessageBuilder = function (options) {
     return this;
   };
 
-  var extractUserProperties = function(userData) {
-    var data = {};
+  var extractUserProperties = function(userData: RawUserData): UserDetails {
+    const data: UserDetails = {};
     if(userData.identifier) {
       data.identifier = userData.identifier;
     }
@@ -180,10 +211,12 @@ var RaygunMessageBuilder = function (options) {
     return data;
   };
 
-  this.setUser = function (user) {
-    var userData = user;
+  this.setUser = function (user: (() => RawUserData) | RawUserData) {
+    var userData: RawUserData;
     if (user instanceof Function) {
       userData = user();
+    } else {
+      userData = user;
     }
 
     if (userData instanceof Object) {
@@ -195,7 +228,7 @@ var RaygunMessageBuilder = function (options) {
     return this;
   };
 
-  this.setVersion = function (version) {
+  this.setVersion = function (version: string) {
     message.details.version = version;
     return this;
   };
