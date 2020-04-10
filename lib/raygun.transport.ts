@@ -8,12 +8,23 @@
 
 'use strict';
 
-var http = require('http');
-var https = require('https');
+import http from 'http';
+import https from 'https';
 
-var API_HOST = 'api.raygun.io';
+import {IncomingMessage} from 'http';
 
-var getFullPath = function(options) {
+const API_HOST = 'api.raygun.io';
+
+interface SendOptions {
+  message: string;
+  useSSL: boolean;
+  host: string | null;
+  port: number | null;
+  apiKey: string;
+  callback: Function;
+}
+
+function getFullPath(options: SendOptions) {
   var useSSL   = options.useSSL,
       port     = useSSL ? 443 : 80,
       protocol = useSSL ? 'https' : 'http';
@@ -21,7 +32,7 @@ var getFullPath = function(options) {
   return protocol + '://' + API_HOST + ':' + port + '/entries';
 };
 
-var send = function (options) {
+function send(options: SendOptions) {
   try {
     var data = Buffer.from(JSON.stringify(options.message));
     var fullPath = getFullPath(options);
@@ -38,7 +49,7 @@ var send = function (options) {
         'X-ApiKey': options.apiKey
       }
     };
-    var cb = function (response) {
+    var cb = function (response: IncomingMessage) {
       if (options.callback) {
         if (options.callback.length > 1) {
           options.callback(null, response);
