@@ -1,15 +1,15 @@
-export interface IndexableError extends Error {
+export type IndexableError = Error & {
   [key: string]: any;
 }
 
-export interface MessageBuilderOptions {
+export type MessageBuilderOptions = {
   reportColumnNumbers?: boolean;
   useHumanStringForObject?: boolean;
   innerErrorFieldName: string;
   filters: string[];
 }
 
-export interface StackFrame {
+export type StackFrame = {
   lineNumber: number;
   columnNumber?: number;
   className: string;
@@ -17,12 +17,12 @@ export interface StackFrame {
   methodName: string;
 }
 
-export interface Message {
+export type Message = {
   occurredOn: Date;
   details: MessageDetails;
 }
 
-export interface MessageBuilding {
+export type MessageBuilding = {
   occurredOn: Date;
   details: Partial<MessageDetails>;
 }
@@ -34,7 +34,7 @@ export type BuiltError = {
   innerError?: BuiltError;
 };
 
-export interface MessageDetails {
+export type MessageDetails = {
   client: {
     name: string;
     version: string;
@@ -62,7 +62,7 @@ export type Environment = {
 
 export type Tag = string
 
-export interface SendOptions {
+export type SendOptions = {
   message: Message;
   useSSL: boolean;
   host: string | undefined;
@@ -76,7 +76,7 @@ export type CustomData = any;
 export type RequestParams = ({ host: string } | { hostname: string }) &
   CommonRequestParams;
 
-interface CommonRequestParams {
+type CommonRequestParams = {
   hostname?: string;
   host: string;
   path: string;
@@ -87,7 +87,7 @@ interface CommonRequestParams {
   body: object;
 }
 
-export interface RequestDetails {
+export type RequestDetails = {
   hostName: string;
   url: string;
   httpMethod: string;
@@ -97,7 +97,7 @@ export interface RequestDetails {
   form: object;
 }
 
-export interface UserDetails {
+export type UserDetails = {
   identifier?: string;
   uuid?: string;
   firstName?: string;
@@ -106,7 +106,7 @@ export interface UserDetails {
   email?: string;
 }
 
-export interface RawUserData {
+export type RawUserData = {
   identifier?: string;
   uuid?: string;
   firstName?: string;
