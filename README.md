@@ -108,7 +108,7 @@ raygunClient.user = function (req) {
 }
 ```
 
-####raygunClient.user(req)
+#### raygunClient.user(req)
 
 **Param**: *req*: the current request.
 **Returns**: The current user's identifier, or an object that describes the user.
