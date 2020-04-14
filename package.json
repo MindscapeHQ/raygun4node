@@ -20,7 +20,7 @@
       "url": "https://github.com/MindscapeHQ/raygun4node/blob/master/LICENSE-MIT"
     }
   ],
-  "main": "lib/raygun",
+  "main": "build/raygun",
   "engines": {
     "node": ">= 0.10.0"
   },
