@@ -87,6 +87,8 @@ class Raygun {
     this._reportColumnNumbers = options.reportColumnNumbers;
     this._innerErrorFieldName = options.innerErrorFieldName; // VError function to retrieve inner error;
 
+    this.expressHandler = this.expressHandler.bind(this);
+
     if (this._isOffline) {
       this._offlineStorage.init(this._offlineStorageOptions);
     }
