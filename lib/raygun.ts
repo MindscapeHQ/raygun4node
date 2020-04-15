@@ -25,13 +25,13 @@ import { OfflineStorage } from "./raygun.offline";
 
 type SendCB = (error: Error | null, items: string[] | undefined) => void;
 
-type BeforeSendCB = (
+type Hook<T> = (
   message: Message,
   exception: Error | string,
   customData: CustomData,
   request?: RequestParams,
   tags?: Tag[]
-) => Message;
+) => T;
 
 type RaygunOptions = {
   apiKey: string;
@@ -39,11 +39,11 @@ type RaygunOptions = {
   host?: string;
   port?: number;
   useSSL?: boolean;
-  onBeforeSend?: BeforeSendCB;
+  onBeforeSend?: Hook<Message>;
   offlineStorage?: OfflineStorage;
   offlineStorageOptions?: OfflineStorageOptions;
   isOffline?: boolean;
-  groupingKey?: Function;
+  groupingKey?: Hook<string>;
   tags?: Tag[];
   useHumanStringForObject?: boolean;
   reportColumnNumbers?: boolean;
@@ -58,11 +58,11 @@ class Raygun {
   _host: string | undefined;
   _port: number | undefined;
   _useSSL: boolean | undefined;
-  _onBeforeSend: BeforeSendCB | undefined;
+  _onBeforeSend: Hook<Message> | undefined;
   _offlineStorage: OfflineStorage | undefined;
   _isOffline: boolean | undefined;
   _offlineStorageOptions: OfflineStorageOptions | undefined;
-  _groupingKey: Function | undefined; // TODO
+  _groupingKey: Hook<string> | undefined; // TODO
   _tags: Tag[] | undefined;
   _useHumanStringForObject: boolean | undefined;
   _reportColumnNumbers: boolean | undefined;
@@ -116,12 +116,12 @@ class Raygun {
     return this;
   }
 
-  onBeforeSend(onBeforeSend: BeforeSendCB) {
+  onBeforeSend(onBeforeSend: Hook<Message>) {
     this._onBeforeSend = onBeforeSend;
     return this;
   }
 
-  groupingKey(groupingKey: Function) {
+  groupingKey(groupingKey: Hook<string>) {
     this._groupingKey = groupingKey;
     return this;
   }
@@ -172,7 +172,7 @@ class Raygun {
       .setVersion(this._version)
       .setTags(mergedTags);
 
-    var message = builder.build();
+    let message = builder.build();
 
     if (this._groupingKey) {
       message.details.groupingKey =

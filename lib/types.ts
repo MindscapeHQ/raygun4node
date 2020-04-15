@@ -39,7 +39,7 @@ export type MessageDetails = {
     name: string;
     version: string;
   };
-  groupingKey: string;
+  groupingKey: string | null;
   error: BuiltError;
   version: string;
   user: UserDetails;
