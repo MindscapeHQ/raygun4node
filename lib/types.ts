@@ -50,6 +50,7 @@ export type MessageDetails = {
   userCustomData: CustomData;
   machineName: string;
   environment: Environment;
+  correlationId: string | null;
 };
 
 export type Environment = {
