@@ -224,7 +224,9 @@ class Raygun {
       customData = this.expressCustomData;
     }
 
-    this.send(err, customData || {}, function () {}, req);
+    this.send(err, customData || {}, function () {}, req, [
+      "UnhandledException",
+    ]);
     next();
   }
 
