@@ -28,7 +28,7 @@
     "tslint": "tslint --fix --project .",
     "prettier": "prettier --write lib/*.ts",
     "prepublish": "tsc",
-    "test": "tap --no-ts --node-arg=--require=ts-node/register --no-coverage test/*.js"
+    "test": "tap --no-ts --node-arg=-r --node-arg=ts-node/register --no-coverage test/*.js"
   },
   "devDependencies": {
     "@types/express": "^4.17.6",
