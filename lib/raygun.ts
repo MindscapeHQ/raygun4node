@@ -62,7 +62,7 @@ class Raygun {
   _offlineStorage: OfflineStorage | undefined;
   _isOffline: boolean | undefined;
   _offlineStorageOptions: OfflineStorageOptions | undefined;
-  _groupingKey: Hook<string> | undefined; // TODO
+  _groupingKey: Hook<string> | undefined;
   _tags: Tag[] | undefined;
   _useHumanStringForObject: boolean | undefined;
   _reportColumnNumbers: boolean | undefined;
@@ -75,7 +75,7 @@ class Raygun {
     this._port = options.port;
     this._useSSL = options.useSSL !== false;
     this._onBeforeSend = options.onBeforeSend;
-    this._offlineStorage = options.offlineStorage || new OfflineStorage(); // TODO - TypeScript only allows typesafe `new` use with TS
+    this._offlineStorage = options.offlineStorage || new OfflineStorage();
     this._offlineStorageOptions = options.offlineStorageOptions;
     this._isOffline = options.isOffline;
     this._groupingKey = options.groupingKey;
