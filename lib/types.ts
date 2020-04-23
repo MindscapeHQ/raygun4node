@@ -1,13 +1,13 @@
 export type IndexableError = Error & {
   [key: string]: any;
-}
+};
 
 export type MessageBuilderOptions = {
   reportColumnNumbers?: boolean;
   useHumanStringForObject?: boolean;
-  innerErrorFieldName: string;
-  filters: string[];
-}
+  innerErrorFieldName?: string;
+  filters?: string[];
+};
 
 export type StackFrame = {
   lineNumber: number;
@@ -15,17 +15,17 @@ export type StackFrame = {
   className: string;
   fileName: string;
   methodName: string;
-}
+};
 
 export type Message = {
   occurredOn: Date;
   details: MessageDetails;
-}
+};
 
 export type MessageBuilding = {
   occurredOn: Date;
   details: Partial<MessageDetails>;
-}
+};
 
 export type BuiltError = {
   message: string;
@@ -48,7 +48,7 @@ export type MessageDetails = {
   userCustomData: CustomData;
   machineName: string;
   environment: Environment;
-}
+};
 
 export type Environment = {
   osVersion: string;
@@ -60,7 +60,7 @@ export type Environment = {
   cpu?: string;
 };
 
-export type Tag = string
+export type Tag = string;
 
 export type SendOptions = {
   message: Message;
@@ -69,7 +69,7 @@ export type SendOptions = {
   port: number | undefined;
   apiKey: string;
   callback: Function;
-}
+};
 
 export type CustomData = any;
 
@@ -77,15 +77,13 @@ export type RequestParams = ({ host: string } | { hostname: string }) &
   CommonRequestParams;
 
 type CommonRequestParams = {
-  hostname?: string;
-  host: string;
   path: string;
   method: string;
   ip: string;
   query: object;
   headers: object;
   body: object;
-}
+};
 
 export type RequestDetails = {
   hostName: string;
@@ -95,7 +93,7 @@ export type RequestDetails = {
   queryString: object;
   headers: object;
   form: object;
-}
+};
 
 export type UserDetails = {
   identifier?: string;
@@ -104,7 +102,7 @@ export type UserDetails = {
   lastName?: string;
   fullName?: string;
   email?: string;
-}
+};
 
 export type RawUserData = {
   identifier?: string;
@@ -113,7 +111,7 @@ export type RawUserData = {
   lastName?: string;
   fullName?: string;
   email?: string;
-}
+};
 
 export type OfflineStorageOptions = {
   cachePath: string;

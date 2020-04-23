@@ -100,7 +100,7 @@ export class RaygunMessageBuilder {
   options: MessageBuilderOptions;
   message: MessageBuilding;
 
-  constructor(options: MessageBuilderOptions) {
+  constructor(options?: MessageBuilderOptions = {}) {
     options = options || {};
     this.options = options;
     this._filters = options.filters || [];
@@ -170,7 +170,7 @@ export class RaygunMessageBuilder {
     return this;
   }
 
-  setUserCustomData(customData: CustomData) {
+  setUserCustomData(customData?: CustomData) {
     this.message.details.userCustomData = customData;
     return this;
   }
