@@ -83,10 +83,14 @@ function buildError(
     className: error.name,
   };
 
-  const innerError =
-    typeof error[options.innerErrorFieldName] === "function"
-      ? error[options.innerErrorFieldName]()
-      : error[options.innerErrorFieldName];
+  let innerError: Error | undefined = undefined;
+
+  if (options.innerErrorFieldName) {
+    innerError =
+      typeof error[options.innerErrorFieldName!] === "function"
+        ? error[options.innerErrorFieldName!]()
+        : error[options.innerErrorFieldName!];
+  }
 
   if (innerError instanceof Error) {
     builtError.innerError = buildError(innerError, options);
@@ -100,7 +104,7 @@ export class RaygunMessageBuilder {
   options: MessageBuilderOptions;
   message: MessageBuilding;
 
-  constructor(options?: MessageBuilderOptions = {}) {
+  constructor(options: MessageBuilderOptions = {}) {
     options = options || {};
     this.options = options;
     this._filters = options.filters || [];
@@ -184,8 +188,10 @@ export class RaygunMessageBuilder {
 
   setRequestDetails(request: RequestParams | undefined) {
     if (request) {
+      const host = "hostname" in request ? request.hostname : request.host;
+
       this.message.details.request = {
-        hostName: request.hostname || request.host,
+        hostName: host,
         url: request.path,
         httpMethod: request.method,
         ipAddress: request.ip,
