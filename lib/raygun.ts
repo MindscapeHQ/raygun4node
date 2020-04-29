@@ -147,7 +147,7 @@ class Raygun {
     request?: Request,
     tags?: Tag[]
   ): Message {
-    var mergedTags: Tag[] = [];
+    let mergedTags: Tag[] = [];
 
     if (this._tags) {
       mergedTags = mergedTags.concat(this._tags);
@@ -216,7 +216,7 @@ class Raygun {
   }
 
   expressHandler(err: Error, req: Request, res: Response, next: NextFunction) {
-    var customData;
+    let customData;
 
     if (typeof this.expressCustomData === "function") {
       customData = this.expressCustomData(err, req);

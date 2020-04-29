@@ -204,7 +204,7 @@ export class RaygunMessageBuilder {
   }
 
   setUser(user: (() => UserMessageData) | UserMessageData) {
-    var userData: UserMessageData;
+    let userData: UserMessageData;
 
     if (user instanceof Function) {
       userData = user();

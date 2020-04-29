@@ -107,7 +107,7 @@ export class OfflineStorage {
         return callback(err);
       }
 
-      for (var i = 0; i < items.length; i++) {
+      for (let i = 0; i < items.length; i++) {
         storage._sendAndDelete(items[i]);
       }
 
