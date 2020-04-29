@@ -85,7 +85,7 @@ class Raygun {
         ? true
         : options.useHumanStringForObject;
     this._reportColumnNumbers = options.reportColumnNumbers;
-    this._innerErrorFieldName = options.innerErrorFieldName; // VError function to retrieve inner error;
+    this._innerErrorFieldName = options.innerErrorFieldName || "cause"; // VError function to retrieve inner error;
 
     this.expressHandler = this.expressHandler.bind(this);
 
@@ -161,7 +161,7 @@ class Raygun {
       filters: this._filters,
       useHumanStringForObject: this._useHumanStringForObject,
       reportColumnNumbers: this._reportColumnNumbers,
-      innerErrorFieldName: this._innerErrorFieldName || "cause",
+      innerErrorFieldName: this._innerErrorFieldName,
     })
       .setErrorDetails(exception)
       .setRequestDetails(request)
