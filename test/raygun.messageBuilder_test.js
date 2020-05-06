@@ -1,7 +1,7 @@
 "use strict";
 
 var test = require("tap").test;
-var MessageBuilder = require("../lib/raygun.messageBuilder.js");
+var MessageBuilder = require("../lib/raygun.messageBuilder.ts").RaygunMessageBuilder;
 var VError = require("verror");
 
 test("basic builder tests", function(t) {

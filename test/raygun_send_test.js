@@ -5,7 +5,7 @@ var semver = require("semver");
 var VError = require("verror");
 var nock = require("nock");
 
-var Raygun = require("../lib/raygun.js");
+var Raygun = require("../lib/raygun.ts");
 
 nock(/.*/)
   .post(/.*/, function() {
