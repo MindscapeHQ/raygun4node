@@ -15,32 +15,28 @@ import { IncomingMessage } from "http";
 import { SendOptions } from "./types";
 
 const API_HOST = "api.raygun.io";
+const DEFAULT_ENDPOINT = "/entries";
+const BATCH_ENDPOINT = "/entries/bulk";
 
-function getFullPath(options: SendOptions) {
-  const useSSL = options.useSSL;
-  const port = useSSL ? 443 : 80;
-  const protocol = useSSL ? "https" : "http";
-
-  return `${protocol}://${API_HOST}:${port}/entries`;
-}
 
 export function send(options: SendOptions) {
   try {
-    const data = Buffer.from(JSON.stringify(options.message));
-    const fullPath = getFullPath(options);
+    const data = Buffer.from(options.message);
+    const path = options.batch ? BATCH_ENDPOINT : DEFAULT_ENDPOINT;
 
     const httpOptions = {
-      host: options.host || API_HOST,
-      port: options.port || 443,
-      path: fullPath,
+      host: options.http.host || API_HOST,
+      port: options.http.port || 443,
+      path: path,
       method: "POST",
       headers: {
         Host: API_HOST,
         "Content-Type": "application/json",
         "Content-Length": data.length,
-        "X-ApiKey": options.apiKey,
+        "X-ApiKey": options.http.apiKey,
       },
     };
+
     const cb = function (response: IncomingMessage) {
       if (options.callback) {
         if (options.callback.length > 1) {
@@ -50,7 +46,8 @@ export function send(options: SendOptions) {
         }
       }
     };
-    const httpLib = options.useSSL ? https : http;
+
+    const httpLib = options.http.useSSL ? https : http;
     const request = httpLib.request(httpOptions, cb);
 
     request.on("error", function (e) {

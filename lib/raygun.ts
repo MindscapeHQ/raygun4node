@@ -22,6 +22,7 @@ import type { Request, Response, NextFunction } from "express";
 import * as raygunTransport from "./raygun.transport";
 import { RaygunMessageBuilder } from "./raygun.messageBuilder";
 import { OfflineStorage } from "./raygun.offline";
+import { RaygunBatchTransport } from "./raygun.batch";
 
 type SendCB = (error: Error | null, items: string[] | undefined) => void;
 
@@ -48,7 +49,11 @@ type RaygunOptions = {
   useHumanStringForObject?: boolean;
   reportColumnNumbers?: boolean;
   innerErrorFieldName?: string;
+  batch?: boolean;
+  batchFrequency?: number;
 };
+
+const DEFAULT_BATCH_FREQUENCY = 1000; // ms
 
 class Raygun {
   _apiKey: string | undefined;
@@ -67,6 +72,8 @@ class Raygun {
   _useHumanStringForObject: boolean | undefined;
   _reportColumnNumbers: boolean | undefined;
   _innerErrorFieldName: string | undefined;
+  _batch: boolean = false;
+  _batchTransport: RaygunBatchTransport | undefined;
 
   init(options: RaygunOptions) {
     this._apiKey = options.apiKey;
@@ -86,6 +93,20 @@ class Raygun {
         : options.useHumanStringForObject;
     this._reportColumnNumbers = options.reportColumnNumbers;
     this._innerErrorFieldName = options.innerErrorFieldName || "cause"; // VError function to retrieve inner error;
+
+    if (options.batch && this._apiKey) {
+      this._batch = options.batch;
+      this._batchTransport = new RaygunBatchTransport({
+        interval: options.batchFrequency || DEFAULT_BATCH_FREQUENCY,
+        httpOptions: {
+          host: this._host,
+          port: this._port,
+          useSSL: !!this._useSSL,
+          apiKey: this._apiKey,
+        }
+      });
+      this._batchTransport.startProcessing();
+    }
 
     this.expressHandler = this.expressHandler.bind(this);
 
@@ -197,19 +218,27 @@ class Raygun {
       return message;
     }
 
-    const transportMessage = {
-      message: message,
-      apiKey: apiKey,
-      callback: callback,
-      host: this._host,
-      port: this._port,
-      useSSL: this._useSSL || false,
-    };
-
-    if (this._isOffline) {
-      this.offlineStorage().save(transportMessage, callback);
+    if (this._batch && this._batchTransport) {
+      this._batchTransport.sendLater(
+        {
+          serializedMessage: JSON.stringify(message),
+          callback
+        }
+      );
+    } else if (this._isOffline) {
+      //this.offlineStorage().save(transportMessage, callback); TODO
     } else {
-      raygunTransport.send(transportMessage);
+      raygunTransport.send({
+        message: JSON.stringify(message),
+        callback,
+        batch: false,
+        http: {
+          host: this._host,
+          port: this._port,
+          useSSL: !!this._useSSL,
+          apiKey: apiKey,
+        }
+      });
     }
 
     return message;
@@ -228,6 +257,12 @@ class Raygun {
       "UnhandledException",
     ]);
     next();
+  }
+
+  stop() {
+    if (this._batchTransport) {
+      this._batchTransport.stopProcessing();
+    }
   }
 
   private offlineStorage(): OfflineStorage {

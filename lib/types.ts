@@ -63,13 +63,19 @@ export type Environment = {
 export type Tag = string;
 
 export type SendOptions = {
-  message: Message;
+  message: string;
+  callback: Function;
+  http: HTTPOptions;
+  batch: boolean;
+}
+
+export type HTTPOptions = {
   useSSL: boolean;
   host: string | undefined;
   port: number | undefined;
   apiKey: string;
-  callback: Function;
 };
+
 
 export type CustomData = any;
 
