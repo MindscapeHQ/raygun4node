@@ -1,5 +1,3 @@
-/*jshint unused:vars */
-
 /*
  * raygun
  * https://github.com/MindscapeHQ/raygun4node
@@ -17,6 +15,7 @@ import type {
   CustomData,
   RequestParams,
   Message,
+  Transport
 } from "./types";
 import type { Request, Response, NextFunction } from "express";
 import * as raygunTransport from "./raygun.transport";
@@ -111,7 +110,7 @@ class Raygun {
     this.expressHandler = this.expressHandler.bind(this);
 
     if (this._isOffline) {
-      this._offlineStorage.init(this._offlineStorageOptions);
+      this._offlineStorage.init(this._offlineStorageOptions, this.transport());
     }
 
     return this;
@@ -148,7 +147,7 @@ class Raygun {
   }
 
   offline() {
-    this.offlineStorage().init(this._offlineStorageOptions);
+    this.offlineStorage().init(this._offlineStorageOptions, this.transport());
     this._isOffline = true;
   }
 
@@ -159,6 +158,39 @@ class Raygun {
 
   setTags(tags: Tag[]) {
     this._tags = tags;
+  }
+
+  transport() {
+    if (this._batch && this._batchTransport) {
+      return this._batchTransport;
+    }
+
+    const client = this;
+
+    return {
+      send(message: string, callback: Function) {
+        const apiKey = client._apiKey;
+
+        if (!apiKey) {
+          console.error(
+            `Encountered an error sending an error to Raygun. No API key is configured, please ensure .init is called with api key. See docs for more info.`
+          );
+          return message;
+        }
+
+        return raygunTransport.send({
+          message,
+          callback,
+          batch: false,
+          http: {
+            host: client._host,
+            port: client._port,
+            useSSL: !!client._useSSL,
+            apiKey
+          }
+        });
+      }
+    }
   }
 
   send(
@@ -209,36 +241,10 @@ class Raygun {
           : message;
     }
 
-    const apiKey = this._apiKey;
-
-    if (!apiKey) {
-      console.error(
-        `Encountered an error sending an error to Raygun. No API key is configured, please ensure .init is called with api key. See docs for more info.`
-      );
-      return message;
-    }
-
-    if (this._batch && this._batchTransport) {
-      this._batchTransport.sendLater(
-        {
-          serializedMessage: JSON.stringify(message),
-          callback
-        }
-      );
-    } else if (this._isOffline) {
-      //this.offlineStorage().save(transportMessage, callback); TODO
+    if (this._isOffline) {
+      this.offlineStorage().save(JSON.stringify(message), callback);
     } else {
-      raygunTransport.send({
-        message: JSON.stringify(message),
-        callback,
-        batch: false,
-        http: {
-          host: this._host,
-          port: this._port,
-          useSSL: !!this._useSSL,
-          apiKey: apiKey,
-        }
-      });
+      this.transport().send(JSON.stringify(message), callback);
     }
 
     return message;
@@ -268,9 +274,11 @@ class Raygun {
   private offlineStorage(): OfflineStorage {
     let storage = this._offlineStorage;
 
-    if (!storage) {
-      storage = this._offlineStorage = new OfflineStorage();
+    if (storage) {
+      return storage;
     }
+
+    storage = this._offlineStorage = new OfflineStorage();
 
     return storage;
   }

@@ -21,8 +21,8 @@ export class RaygunBatchTransport {
     this.httpOptions = options.httpOptions;
   }
 
-  sendLater(messageAndCallback: MessageAndCallback) {
-    this.messageQueue.push(messageAndCallback);
+  send(message: string, callback: Function) {
+    this.messageQueue.push({serializedMessage: message, callback});
   }
 
   startProcessing() {

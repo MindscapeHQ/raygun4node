@@ -123,3 +123,7 @@ export type OfflineStorageOptions = {
   cachePath: string;
   cacheLimit?: number;
 };
+
+export type Transport = {
+  send(message: string, callback?: Function): void;
+}

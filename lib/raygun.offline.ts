@@ -1,5 +1,3 @@
-/*jshint unused:vars */
-
 /*
  * raygun
  * https://github.com/MindscapeHQ/raygun4node
@@ -13,15 +11,12 @@
 import fs from "fs";
 import path from "path";
 import * as raygunTransport from "./raygun.transport";
-import { OfflineStorageOptions } from "./types";
-
-type TransportItem = {
-  callback?: Function;
-};
+import { Transport, OfflineStorageOptions } from "./types";
 
 export class OfflineStorage {
   cachePath: string = "";
   cacheLimit: number = 100;
+  transport: Transport | undefined;
 
   private _sendAndDelete(item: string) {
     const storage = this;
@@ -30,18 +25,23 @@ export class OfflineStorage {
       err,
       cacheContents
     ) {
-      raygunTransport.send(JSON.parse(cacheContents));
+      if (!storage.transport) {
+        throw new Error("OfflineStorage was initialized without transport");
+      }
+
+      storage.transport.send(cacheContents);
       fs.unlink(path.join(storage.cachePath, item), () => {});
     });
   }
 
-  init(offlineStorageOptions: OfflineStorageOptions | undefined) {
+  init(offlineStorageOptions: OfflineStorageOptions | undefined, transport: Transport) {
     if (!offlineStorageOptions || !offlineStorageOptions.cachePath) {
       throw new Error("Cache Path must be set before Raygun can cache offline");
     }
 
     this.cachePath = offlineStorageOptions.cachePath;
     this.cacheLimit = offlineStorageOptions.cacheLimit || 100;
+    this.transport = transport;
 
     if (!fs.existsSync(this.cachePath)) {
       fs.mkdirSync(this.cachePath);
@@ -50,11 +50,10 @@ export class OfflineStorage {
     return this;
   }
 
-  save(transportItem: TransportItem, callback: (err: Error | null) => void) {
+  save(transportItem: string, callback: (err: Error | null) => void) {
     const storage = this;
 
     const filename = path.join(storage.cachePath, Date.now() + ".json");
-    delete transportItem.callback;
 
     if (!callback) {
       callback = function () {};
@@ -72,7 +71,7 @@ export class OfflineStorage {
         return callback(null);
       }
 
-      fs.writeFile(filename, JSON.stringify(transportItem), "utf8", function (
+      fs.writeFile(filename, transportItem, "utf8", function (
         err
       ) {
         if (!err) {
