@@ -55,7 +55,6 @@ function makeClientWithMockServer(clientOptions = {}) {
             server: listener
           }).terminate();
           client.stop();
-          console.log('trying to stop!');
         },
         nextRequest: (options = {maxWait: 10000}) =>
           new Promise((resolve, reject) => {
