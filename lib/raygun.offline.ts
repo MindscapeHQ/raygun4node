@@ -13,6 +13,8 @@ import path from "path";
 import * as raygunTransport from "./raygun.transport";
 import { Transport, OfflineStorageOptions } from "./types";
 
+const debug = require("debug")("raygun");
+
 export class OfflineStorage {
   cachePath: string = "";
   cacheLimit: number = 100;
@@ -34,7 +36,10 @@ export class OfflineStorage {
     });
   }
 
-  init(offlineStorageOptions: OfflineStorageOptions | undefined, transport: Transport) {
+  init(
+    offlineStorageOptions: OfflineStorageOptions | undefined,
+    transport: Transport
+  ) {
     if (!offlineStorageOptions || !offlineStorageOptions.cachePath) {
       throw new Error("Cache Path must be set before Raygun can cache offline");
     }
@@ -42,6 +47,8 @@ export class OfflineStorage {
     this.cachePath = offlineStorageOptions.cachePath;
     this.cacheLimit = offlineStorageOptions.cacheLimit || 100;
     this.transport = transport;
+
+    debug(`offline storage - initialized (cachePath=${this.cachePath}, cacheLimit=${this.cacheLimit}`);
 
     if (!fs.existsSync(this.cachePath)) {
       fs.mkdirSync(this.cachePath);
@@ -71,10 +78,9 @@ export class OfflineStorage {
         return callback(null);
       }
 
-      fs.writeFile(filename, transportItem, "utf8", function (
-        err
-      ) {
+      fs.writeFile(filename, transportItem, "utf8", function (err) {
         if (!err) {
+          debug(`offline storage - wrote message to ${filename}`);
           return callback(null);
         }
 
@@ -104,6 +110,10 @@ export class OfflineStorage {
         console.log("[Raygun] Error reading cache folder");
         console.log(err);
         return callback(err);
+      }
+
+      if (items.length > 0) {
+        debug("offline storage - transporting ${items.length} message(s) from cache");
       }
 
       for (let i = 0; i < items.length; i++) {

@@ -67,7 +67,7 @@ export type SendOptions = {
   callback: Function;
   http: HTTPOptions;
   batch: boolean;
-}
+};
 
 export type HTTPOptions = {
   useSSL: boolean;
@@ -75,7 +75,6 @@ export type HTTPOptions = {
   port: number | undefined;
   apiKey: string;
 };
-
 
 export type CustomData = any;
 
@@ -126,4 +125,39 @@ export type OfflineStorageOptions = {
 
 export type Transport = {
   send(message: string, callback?: Function): void;
+};
+
+export type Hook<T> = (
+  message: Message,
+  exception: Error | string,
+  customData: CustomData,
+  request?: RequestParams,
+  tags?: Tag[]
+) => T;
+
+// TODO - it would be nice to be more specific than Function, maybe a union type of the different callback types
+export type IOfflineStorage = {
+  init(options: OfflineStorageOptions | undefined, transport: Transport): void;
+  save(message: string, callback: Function): void;
+  retrieve(callback: Function): void;
+  send(callback: Function): void;
 }
+
+export type RaygunOptions = {
+  apiKey: string;
+  filters?: string[];
+  host?: string;
+  port?: number;
+  useSSL?: boolean;
+  onBeforeSend?: Hook<Message>;
+  offlineStorage?: IOfflineStorage;
+  offlineStorageOptions?: OfflineStorageOptions;
+  isOffline?: boolean;
+  groupingKey?: Hook<string>;
+  tags?: Tag[];
+  useHumanStringForObject?: boolean;
+  reportColumnNumbers?: boolean;
+  innerErrorFieldName?: string;
+  batch?: boolean;
+  batchFrequency?: number;
+};

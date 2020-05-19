@@ -9,13 +9,16 @@
 "use strict";
 
 import type {
-  RawUserData,
-  OfflineStorageOptions,
-  Tag,
   CustomData,
-  RequestParams,
+  Hook,
   Message,
-  Transport
+  IOfflineStorage,
+  OfflineStorageOptions,
+  RawUserData,
+  RaygunOptions,
+  RequestParams,
+  Tag,
+  Transport,
 } from "./types";
 import type { Request, Response, NextFunction } from "express";
 import * as raygunTransport from "./raygun.transport";
@@ -23,34 +26,9 @@ import { RaygunMessageBuilder } from "./raygun.messageBuilder";
 import { OfflineStorage } from "./raygun.offline";
 import { RaygunBatchTransport } from "./raygun.batch";
 
+const debug = require("debug")("raygun");
+
 type SendCB = (error: Error | null, items: string[] | undefined) => void;
-
-type Hook<T> = (
-  message: Message,
-  exception: Error | string,
-  customData: CustomData,
-  request?: RequestParams,
-  tags?: Tag[]
-) => T;
-
-type RaygunOptions = {
-  apiKey: string;
-  filters?: string[];
-  host?: string;
-  port?: number;
-  useSSL?: boolean;
-  onBeforeSend?: Hook<Message>;
-  offlineStorage?: OfflineStorage;
-  offlineStorageOptions?: OfflineStorageOptions;
-  isOffline?: boolean;
-  groupingKey?: Hook<string>;
-  tags?: Tag[];
-  useHumanStringForObject?: boolean;
-  reportColumnNumbers?: boolean;
-  innerErrorFieldName?: string;
-  batch?: boolean;
-  batchFrequency?: number;
-};
 
 const DEFAULT_BATCH_FREQUENCY = 1000; // ms
 
@@ -63,7 +41,7 @@ class Raygun {
   _port: number | undefined;
   _useSSL: boolean | undefined;
   _onBeforeSend: Hook<Message> | undefined;
-  _offlineStorage: OfflineStorage | undefined;
+  _offlineStorage: IOfflineStorage | undefined;
   _isOffline: boolean | undefined;
   _offlineStorageOptions: OfflineStorageOptions | undefined;
   _groupingKey: Hook<string> | undefined;
@@ -93,16 +71,19 @@ class Raygun {
     this._reportColumnNumbers = options.reportColumnNumbers;
     this._innerErrorFieldName = options.innerErrorFieldName || "cause"; // VError function to retrieve inner error;
 
+    debug(`client initialized`);
+
     if (options.batch && this._apiKey) {
+      const frequency = options.batchFrequency || DEFAULT_BATCH_FREQUENCY;
       this._batch = options.batch;
       this._batchTransport = new RaygunBatchTransport({
-        interval: options.batchFrequency || DEFAULT_BATCH_FREQUENCY,
+        interval: frequency,
         httpOptions: {
           host: this._host,
           port: this._port,
           useSSL: !!this._useSSL,
           apiKey: this._apiKey,
-        }
+        },
       });
       this._batchTransport.startProcessing();
     }
@@ -178,19 +159,42 @@ class Raygun {
           return message;
         }
 
+        debug(`sending message to raygun (${message.length} bytes)`);
+
+        function wrappedCallback<R>(error: Error | null, response: R) {
+          const [seconds, nanoseconds] = process.hrtime(startTime);
+          const durationInMs = Math.round(seconds / 1000 + nanoseconds / 1e6);
+          if (error) {
+            debug(
+              `error sending message (duration=${durationInMs}ms): ${error}`
+            );
+          } else {
+            debug(`successfully sent message (duration=${durationInMs}ms)`);
+          }
+          if (!callback) {
+            return;
+          }
+          if (callback.length > 1) {
+            return callback(error, response);
+          } else {
+            return callback(response);
+          }
+        }
+
+        const startTime = process.hrtime();
         return raygunTransport.send({
           message,
-          callback,
+          callback: wrappedCallback,
           batch: false,
           http: {
             host: client._host,
             port: client._port,
             useSSL: !!client._useSSL,
-            apiKey
-          }
+            apiKey,
+          },
         });
-      }
-    }
+      },
+    };
   }
 
   send(
@@ -267,11 +271,12 @@ class Raygun {
 
   stop() {
     if (this._batchTransport) {
+      debug("batch transport stopped");
       this._batchTransport.stopProcessing();
     }
   }
 
-  private offlineStorage(): OfflineStorage {
+  private offlineStorage(): IOfflineStorage {
     let storage = this._offlineStorage;
 
     if (storage) {
