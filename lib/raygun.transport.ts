@@ -12,7 +12,7 @@ import http from "http";
 import https from "https";
 
 import { IncomingMessage } from "http";
-import { SendOptions } from "./types";
+import { isCallbackWithError, SendOptions } from "./types";
 
 const debug = require("debug")("raygun");
 
@@ -40,7 +40,7 @@ export function send(options: SendOptions) {
 
     const cb = function (response: IncomingMessage) {
       if (options.callback) {
-        if (options.callback.length > 1) {
+        if (isCallbackWithError(options.callback)) {
           options.callback(null, response);
         } else {
           options.callback(response);
@@ -57,8 +57,8 @@ export function send(options: SendOptions) {
       );
 
       // If the callback has two parameters, it should expect an `error` value.
-      if (options.callback && options.callback.length > 1) {
-        options.callback(e);
+      if (options.callback && isCallbackWithError(options.callback)) {
+        options.callback(e, null);
       }
     });
 

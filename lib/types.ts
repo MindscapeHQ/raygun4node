@@ -1,3 +1,5 @@
+import type { IncomingMessage } from "http";
+
 export type IndexableError = Error & {
   [key: string]: any;
 };
@@ -64,7 +66,7 @@ export type Tag = string;
 
 export type SendOptions = {
   message: string;
-  callback: Function;
+  callback: Callback<IncomingMessage>;
   http: HTTPOptions;
   batch: boolean;
 };
@@ -135,13 +137,14 @@ export type Hook<T> = (
   tags?: Tag[]
 ) => T;
 
-// TODO - it would be nice to be more specific than Function, maybe a union type of the different callback types
 export type IOfflineStorage = {
   init(options: OfflineStorageOptions | undefined, transport: Transport): void;
-  save(message: string, callback: Function): void;
-  retrieve(callback: Function): void;
-  send(callback: Function): void;
-}
+  save(message: string, callback: (error: Error | null) => void): void;
+  retrieve(
+    callback: (error: NodeJS.ErrnoException | null, items: string[]) => void
+  ): void;
+  send(callback: (error: Error | null, items?: string[]) => void): void;
+};
 
 export type RaygunOptions = {
   apiKey: string;
@@ -161,3 +164,14 @@ export type RaygunOptions = {
   batch?: boolean;
   batchFrequency?: number;
 };
+
+export type CallbackNoError<T> = (t: T) => void;
+export type CallbackWithError<T> = (e: Error | null, t: T | null) => void;
+
+export function isCallbackWithError<T>(
+  cb: Callback<T>
+): cb is CallbackWithError<T> {
+  return cb.length > 1;
+}
+
+export type Callback<T> = CallbackNoError<T> | CallbackWithError<T>;

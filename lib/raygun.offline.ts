@@ -48,7 +48,9 @@ export class OfflineStorage {
     this.cacheLimit = offlineStorageOptions.cacheLimit || 100;
     this.transport = transport;
 
-    debug(`offline storage - initialized (cachePath=${this.cachePath}, cacheLimit=${this.cacheLimit}`);
+    debug(
+      `offline storage - initialized (cachePath=${this.cachePath}, cacheLimit=${this.cacheLimit}`
+    );
 
     if (!fs.existsSync(this.cachePath)) {
       fs.mkdirSync(this.cachePath);
@@ -113,7 +115,9 @@ export class OfflineStorage {
       }
 
       if (items.length > 0) {
-        debug("offline storage - transporting ${items.length} message(s) from cache");
+        debug(
+          "offline storage - transporting ${items.length} message(s) from cache"
+        );
       }
 
       for (let i = 0; i < items.length; i++) {
