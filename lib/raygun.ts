@@ -163,7 +163,7 @@ class Raygun {
 
         function wrappedCallback<R>(error: Error | null, response: R) {
           const [seconds, nanoseconds] = process.hrtime(startTime);
-          const durationInMs = Math.round(seconds / 1000 + nanoseconds / 1e6);
+          const durationInMs = Math.round(seconds * 1000 + nanoseconds / 1e6);
           if (error) {
             debug(
               `error sending message (duration=${durationInMs}ms): ${error}`

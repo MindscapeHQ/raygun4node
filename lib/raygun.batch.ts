@@ -91,7 +91,7 @@ export class RaygunBatchTransport {
     const payload = `[${batch.join(",")}]`;
     const runAllCallbacks = <E, R>(err: E, response: R) => {
       const [seconds, nanoseconds] = process.hrtime(startTime);
-      const durationInMs = Math.round(seconds / 1000 + nanoseconds / 1e6);
+      const durationInMs = Math.round(seconds * 1000 + nanoseconds / 1e6);
       if (err) {
         debug(
           `batch transport - error sending batch (id=${batchId}, duration=${durationInMs}ms): ${err}`
