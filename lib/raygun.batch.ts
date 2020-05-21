@@ -1,11 +1,13 @@
-import { Message, HTTPOptions } from "./types";
 import { send } from "./raygun.transport";
+import { startTimer } from './timer';
+import type { IncomingMessage } from "http";
+import { callVariadicCallback, Callback, Message, HTTPOptions } from "./types";
 
 const debug = require("debug")("raygun");
 
 export type MessageAndCallback = {
   serializedMessage: string;
-  callback: Function;
+  callback: Callback<IncomingMessage>;
 };
 
 const MAX_MESSAGES_IN_BATCH = 100;
@@ -24,7 +26,7 @@ export class RaygunBatchTransport {
     this.httpOptions = options.httpOptions;
   }
 
-  send(message: string, callback: Function) {
+  send(message: string, callback: Callback<IncomingMessage>) {
     this.messageQueue.push({ serializedMessage: message, callback });
   }
 
@@ -46,7 +48,7 @@ export class RaygunBatchTransport {
 
   private process() {
     const batch: string[] = [];
-    const callbacks: Function[] = [];
+    const callbacks: Callback<IncomingMessage>[] = [];
     let batchSizeBytes = 0;
 
     debug(
@@ -89,9 +91,8 @@ export class RaygunBatchTransport {
     this.batchId++;
 
     const payload = `[${batch.join(",")}]`;
-    const runAllCallbacks = <E, R>(err: E, response: R) => {
-      const [seconds, nanoseconds] = process.hrtime(startTime);
-      const durationInMs = Math.round(seconds * 1000 + nanoseconds / 1e6);
+    const runAllCallbacks = (err: Error | null, response: IncomingMessage | null) => {
+      const durationInMs = stopTimer();
       if (err) {
         debug(
           `batch transport - error sending batch (id=${batchId}, duration=${durationInMs}ms): ${err}`
@@ -102,11 +103,7 @@ export class RaygunBatchTransport {
         );
       }
       for (const callback of callbacks) {
-        if (callback.length > 1) {
-          callback(err, response);
-        } else {
-          callback(response);
-        }
+        callVariadicCallback(callback, err, response);
       }
     };
 
@@ -114,7 +111,7 @@ export class RaygunBatchTransport {
       `batch transport - sending batch (id=${batchId}) (${batch.length} messages, ${payload.length} bytes)`
     );
 
-    const startTime = process.hrtime();
+    const stopTimer = startTimer();
     send({
       message: payload,
       callback: runAllCallbacks,

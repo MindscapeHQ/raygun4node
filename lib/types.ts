@@ -126,7 +126,7 @@ export type OfflineStorageOptions = {
 };
 
 export type Transport = {
-  send(message: string, callback?: Function): void;
+  send(message: string, callback?: Callback<IncomingMessage>): void;
 };
 
 export type Hook<T> = (
@@ -165,13 +165,21 @@ export type RaygunOptions = {
   batchFrequency?: number;
 };
 
-export type CallbackNoError<T> = (t: T) => void;
+export type CallbackNoError<T> = (t: T | null) => void;
 export type CallbackWithError<T> = (e: Error | null, t: T | null) => void;
 
 export function isCallbackWithError<T>(
   cb: Callback<T>
 ): cb is CallbackWithError<T> {
   return cb.length > 1;
+}
+
+export function callVariadicCallback<T>(callback: Callback<T>, error: Error | null, result: T | null) {
+  if (isCallbackWithError(callback)) {
+    return callback(error, result);
+  } else {
+    return callback(result);
+  }
 }
 
 export type Callback<T> = CallbackNoError<T> | CallbackWithError<T>;

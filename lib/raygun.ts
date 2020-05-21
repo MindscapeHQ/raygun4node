@@ -8,7 +8,9 @@
 
 "use strict";
 
-import type {
+import {
+  callVariadicCallback,
+  Callback,
   CustomData,
   Hook,
   Message,
@@ -20,11 +22,13 @@ import type {
   Tag,
   Transport,
 } from "./types";
+import type { IncomingMessage } from "http";
 import type { Request, Response, NextFunction } from "express";
-import * as raygunTransport from "./raygun.transport";
+import { RaygunBatchTransport } from "./raygun.batch";
 import { RaygunMessageBuilder } from "./raygun.messageBuilder";
 import { OfflineStorage } from "./raygun.offline";
-import { RaygunBatchTransport } from "./raygun.batch";
+import { startTimer } from './timer';
+import * as raygunTransport from "./raygun.transport";
 
 const debug = require("debug")("raygun");
 
@@ -150,7 +154,7 @@ class Raygun {
     const client = this;
 
     return {
-      send(message: string, callback: Function) {
+      send(message: string, callback: Callback<IncomingMessage>) {
         const apiKey = client._apiKey;
 
         if (!apiKey) {
@@ -162,9 +166,8 @@ class Raygun {
 
         debug(`sending message to raygun (${message.length} bytes)`);
 
-        function wrappedCallback<R>(error: Error | null, response: R) {
-          const [seconds, nanoseconds] = process.hrtime(startTime);
-          const durationInMs = Math.round(seconds * 1000 + nanoseconds / 1e6);
+        function wrappedCallback(error: Error | null, response: IncomingMessage | null) {
+          const durationInMs = stopTimer();
           if (error) {
             debug(
               `error sending message (duration=${durationInMs}ms): ${error}`
@@ -175,14 +178,10 @@ class Raygun {
           if (!callback) {
             return;
           }
-          if (callback.length > 1) {
-            return callback(error, response);
-          } else {
-            return callback(response);
-          }
+          return callVariadicCallback(callback, error, response);
         }
 
-        const startTime = process.hrtime();
+        const stopTimer = startTimer();
         return raygunTransport.send({
           message,
           callback: wrappedCallback,
