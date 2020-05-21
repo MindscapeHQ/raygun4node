@@ -137,8 +137,8 @@ export type Hook<T> = (
   tags?: Tag[]
 ) => T;
 
-export type IOfflineStorage = {
-  init(options: OfflineStorageOptions | undefined, transport: Transport): void;
+export interface IOfflineStorage {
+  init(options: OfflineStorageOptions | undefined): void;
   save(message: string, callback: (error: Error | null) => void): void;
   retrieve(
     callback: (error: NodeJS.ErrnoException | null, items: string[]) => void

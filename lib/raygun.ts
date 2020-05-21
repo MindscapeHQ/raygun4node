@@ -59,8 +59,6 @@ class Raygun {
     this._port = options.port;
     this._useSSL = options.useSSL !== false;
     this._onBeforeSend = options.onBeforeSend;
-    this._offlineStorage = options.offlineStorage || new OfflineStorage();
-    this._offlineStorageOptions = options.offlineStorageOptions;
     this._isOffline = options.isOffline;
     this._groupingKey = options.groupingKey;
     this._tags = options.tags;
@@ -90,8 +88,11 @@ class Raygun {
 
     this.expressHandler = this.expressHandler.bind(this);
 
+    this._offlineStorage = options.offlineStorage || new OfflineStorage(this.transport());
+    this._offlineStorageOptions = options.offlineStorageOptions;
+
     if (this._isOffline) {
-      this._offlineStorage.init(this._offlineStorageOptions, this.transport());
+      this._offlineStorage.init(this._offlineStorageOptions);
     }
 
     return this;
@@ -128,7 +129,7 @@ class Raygun {
   }
 
   offline() {
-    this.offlineStorage().init(this._offlineStorageOptions, this.transport());
+    this.offlineStorage().init(this._offlineStorageOptions);
     this._isOffline = true;
   }
 
@@ -141,7 +142,7 @@ class Raygun {
     this._tags = tags;
   }
 
-  transport() {
+  transport(): Transport {
     if (this._batch && this._batchTransport) {
       return this._batchTransport;
     }
@@ -283,7 +284,7 @@ class Raygun {
       return storage;
     }
 
-    storage = this._offlineStorage = new OfflineStorage();
+    storage = this._offlineStorage = new OfflineStorage(this.transport());
 
     return storage;
   }

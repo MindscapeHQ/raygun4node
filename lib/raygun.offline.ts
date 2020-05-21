@@ -11,14 +11,18 @@
 import fs from "fs";
 import path from "path";
 import * as raygunTransport from "./raygun.transport";
-import { Transport, OfflineStorageOptions } from "./types";
+import { Transport, IOfflineStorage, OfflineStorageOptions } from "./types";
 
 const debug = require("debug")("raygun");
 
-export class OfflineStorage {
+export class OfflineStorage implements IOfflineStorage {
   cachePath: string = "";
   cacheLimit: number = 100;
-  transport: Transport | undefined;
+  transport: Transport;
+
+  constructor(transport: Transport) {
+    this.transport = transport;
+  }
 
   private _sendAndDelete(item: string) {
     const storage = this;
@@ -27,18 +31,13 @@ export class OfflineStorage {
       err,
       cacheContents
     ) {
-      if (!storage.transport) {
-        throw new Error("OfflineStorage was initialized without transport");
-      }
-
       storage.transport.send(cacheContents);
       fs.unlink(path.join(storage.cachePath, item), () => {});
     });
   }
 
   init(
-    offlineStorageOptions: OfflineStorageOptions | undefined,
-    transport: Transport
+    offlineStorageOptions: OfflineStorageOptions | undefined
   ) {
     if (!offlineStorageOptions || !offlineStorageOptions.cachePath) {
       throw new Error("Cache Path must be set before Raygun can cache offline");
@@ -46,7 +45,6 @@ export class OfflineStorage {
 
     this.cachePath = offlineStorageOptions.cachePath;
     this.cacheLimit = offlineStorageOptions.cacheLimit || 100;
-    this.transport = transport;
 
     debug(
       `offline storage - initialized (cachePath=${this.cachePath}, cacheLimit=${this.cacheLimit}`
