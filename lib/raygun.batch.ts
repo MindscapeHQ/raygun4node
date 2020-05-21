@@ -7,11 +7,17 @@ const debug = require("debug")("raygun");
 
 export type MessageAndCallback = {
   serializedMessage: string;
-  callback: Callback<IncomingMessage>;
+  callback: Callback<IncomingMessage> | null;
 };
 
-const MAX_MESSAGES_IN_BATCH = 100;
-const MAX_BATCH_SIZE_BYTES = 1638400;
+export type PreparedBatch = {
+  payload: string,
+  messageCount: number,
+  callbacks: Callback<IncomingMessage>[]
+};
+
+export const MAX_MESSAGES_IN_BATCH = 100;
+export const MAX_BATCH_SIZE_BYTES = 1638400;
 const MAX_BATCH_INNER_SIZE_BYTES = MAX_BATCH_SIZE_BYTES - 2; // for the starting and ending byte
 
 export class RaygunBatchTransport {
@@ -47,50 +53,19 @@ export class RaygunBatchTransport {
   }
 
   private process() {
-    const batch: string[] = [];
-    const callbacks: Callback<IncomingMessage>[] = [];
-    let batchSizeBytes = 0;
-
     debug(
       `batch transport - processing (${this.messageQueue.length} message(s) in queue)`
     );
 
-    for (let i = 0; i < MAX_MESSAGES_IN_BATCH; i++) {
-      if (this.messageQueue.length === 0) {
-        break;
-      }
+    const {payload, messageCount, callbacks} = prepareBatch(this.messageQueue);
 
-      const { serializedMessage, callback } = this.messageQueue[0];
-
-      if (
-        batchSizeBytes + serializedMessage.length >
-        MAX_BATCH_INNER_SIZE_BYTES
-      ) {
-        break;
-      }
-
-      batch.push(serializedMessage);
-      if (callback) {
-        callbacks.push(callback);
-      }
-
-      if (i === 0) {
-        batchSizeBytes += serializedMessage.length;
-      } else {
-        batchSizeBytes += serializedMessage.length + 1; // to account for the commas between items
-      }
-
-      this.messageQueue.shift();
-    }
-
-    if (batch.length === 0) {
+    if (messageCount === 0) {
       return;
     }
 
     const batchId = this.batchId;
     this.batchId++;
 
-    const payload = `[${batch.join(",")}]`;
     const runAllCallbacks = (err: Error | null, response: IncomingMessage | null) => {
       const durationInMs = stopTimer();
       if (err) {
@@ -108,7 +83,7 @@ export class RaygunBatchTransport {
     };
 
     debug(
-      `batch transport - sending batch (id=${batchId}) (${batch.length} messages, ${payload.length} bytes)`
+      `batch transport - sending batch (id=${batchId}) (${messageCount} messages, ${payload.length} bytes)`
     );
 
     const stopTimer = startTimer();
@@ -118,5 +93,45 @@ export class RaygunBatchTransport {
       http: this.httpOptions,
       batch: true,
     });
+  }
+}
+
+export function prepareBatch(messageQueue: MessageAndCallback[]): PreparedBatch {
+  const batch: string[] = [];
+  const callbacks: Callback<IncomingMessage>[] = [];
+  let batchSizeBytes = 0;
+
+  for (let i = 0; i < MAX_MESSAGES_IN_BATCH; i++) {
+    if (messageQueue.length === 0) {
+      break;
+    }
+
+    const { serializedMessage, callback } = messageQueue[0];
+
+    if (
+      batchSizeBytes + serializedMessage.length >
+      MAX_BATCH_INNER_SIZE_BYTES
+    ) {
+      break;
+    }
+
+    batch.push(serializedMessage);
+    if (callback) {
+      callbacks.push(callback);
+    }
+
+    if (i === 0) {
+      batchSizeBytes += serializedMessage.length;
+    } else {
+      batchSizeBytes += serializedMessage.length + 1; // to account for the commas between items
+    }
+
+    messageQueue.shift();
+  }
+
+  return {
+    payload: `[${batch.join(",")}]`,
+    messageCount: batch.length,
+    callbacks
   }
 }

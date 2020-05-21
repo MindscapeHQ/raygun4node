@@ -85,7 +85,7 @@ class Raygun {
           port: this._port,
           useSSL: !!this._useSSL,
           apiKey: this._apiKey,
-        },
+        }
       });
       this._batchTransport.startProcessing();
     }
