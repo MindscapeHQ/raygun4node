@@ -1,3 +1,5 @@
+import type { IncomingMessage } from "http";
+
 export type IndexableError = Error & {
   [key: string]: any;
 };
@@ -63,12 +65,17 @@ export type Environment = {
 export type Tag = string;
 
 export type SendOptions = {
-  message: Message;
+  message: string;
+  callback: Callback<IncomingMessage>;
+  http: HTTPOptions;
+  batch: boolean;
+};
+
+export type HTTPOptions = {
   useSSL: boolean;
   host: string | undefined;
   port: number | undefined;
   apiKey: string;
-  callback: Function;
 };
 
 export type CustomData = any;
@@ -117,3 +124,62 @@ export type OfflineStorageOptions = {
   cachePath: string;
   cacheLimit?: number;
 };
+
+export type Transport = {
+  send(message: string, callback?: Callback<IncomingMessage>): void;
+};
+
+export type Hook<T> = (
+  message: Message,
+  exception: Error | string,
+  customData: CustomData,
+  request?: RequestParams,
+  tags?: Tag[]
+) => T;
+
+export interface IOfflineStorage {
+  init(options: OfflineStorageOptions | undefined): void;
+  save(message: string, callback: (error: Error | null) => void): void;
+  retrieve(
+    callback: (error: NodeJS.ErrnoException | null, items: string[]) => void
+  ): void;
+  send(callback: (error: Error | null, items?: string[]) => void): void;
+};
+
+export type RaygunOptions = {
+  apiKey: string;
+  filters?: string[];
+  host?: string;
+  port?: number;
+  useSSL?: boolean;
+  onBeforeSend?: Hook<Message>;
+  offlineStorage?: IOfflineStorage;
+  offlineStorageOptions?: OfflineStorageOptions;
+  isOffline?: boolean;
+  groupingKey?: Hook<string>;
+  tags?: Tag[];
+  useHumanStringForObject?: boolean;
+  reportColumnNumbers?: boolean;
+  innerErrorFieldName?: string;
+  batch?: boolean;
+  batchFrequency?: number;
+};
+
+export type CallbackNoError<T> = (t: T | null) => void;
+export type CallbackWithError<T> = (e: Error | null, t: T | null) => void;
+
+export function isCallbackWithError<T>(
+  cb: Callback<T>
+): cb is CallbackWithError<T> {
+  return cb.length > 1;
+}
+
+export function callVariadicCallback<T>(callback: Callback<T>, error: Error | null, result: T | null) {
+  if (isCallbackWithError(callback)) {
+    return callback(error, result);
+  } else {
+    return callback(result);
+  }
+}
+
+export type Callback<T> = CallbackNoError<T> | CallbackWithError<T>;

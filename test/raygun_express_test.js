@@ -1,32 +1,9 @@
 var express = require("express");
-var http = require("http");
 var test = require("tap").test;
 
-var { makeClientWithMockServer } = require("./utils");
+var { listen, request, makeClientWithMockServer, sleep } = require("./utils");
 
 var API_KEY = "apikey";
-
-function request(url) {
-  return new Promise((resolve, reject) => {
-    const req = http.request(url, (res) => {
-      res.on("end", resolve);
-      res.resume();
-    });
-
-    req.on("error", reject);
-    req.write("");
-    req.end();
-    req.shouldKeepAlive = false;
-  });
-}
-
-function listen(app) {
-  return new Promise((resolve, reject) => {
-    const server = app.listen(0, "localhost", () => {
-      resolve(server);
-    });
-  });
-}
 
 test("reporting express errors", async function (t) {
   const app = express();
@@ -51,5 +28,31 @@ test("reporting express errors", async function (t) {
   t.assert(
     message.details.tags.includes("UnhandledException"),
     `Expected message to include tag "UnhandledException" but instead found: ${message.details.tags}`
+  );
+});
+
+test("batch reporting errors", async function (t) {
+  const {client, server, stop, nextBatchRequest} = await makeClientWithMockServer({
+    batch: true,
+    batchFrequency: 1000
+  });
+
+  client.send(new Error('a'));
+  client.send(new Error('b'));
+  client.send(new Error('c'));
+
+  try {
+    const message = await nextBatchRequest({maxWait: 2000});
+  } catch (e) {
+    throw e;
+  } finally {
+    stop();
+  }
+
+  t.equals(server.entries.length, 0);
+  t.equals(server.bulkEntries.length, 1);
+  t.deepEquals(
+    server.bulkEntries[0].map(e => e.details.error.message),
+    ["a" , "b", "c"]
   );
 });

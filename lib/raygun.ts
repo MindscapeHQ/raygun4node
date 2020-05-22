@@ -1,5 +1,3 @@
-/*jshint unused:vars */
-
 /*
  * raygun
  * https://github.com/MindscapeHQ/raygun4node
@@ -10,45 +8,33 @@
 
 "use strict";
 
-import type {
-  RawUserData,
-  OfflineStorageOptions,
-  Tag,
+import {
+  callVariadicCallback,
+  Callback,
   CustomData,
-  RequestParams,
+  Hook,
   Message,
+  IOfflineStorage,
+  OfflineStorageOptions,
+  RawUserData,
+  RaygunOptions,
+  RequestParams,
+  Tag,
+  Transport,
 } from "./types";
+import type { IncomingMessage } from "http";
 import type { Request, Response, NextFunction } from "express";
-import * as raygunTransport from "./raygun.transport";
+import { RaygunBatchTransport } from "./raygun.batch";
 import { RaygunMessageBuilder } from "./raygun.messageBuilder";
 import { OfflineStorage } from "./raygun.offline";
+import { startTimer } from './timer';
+import * as raygunTransport from "./raygun.transport";
+
+const debug = require("debug")("raygun");
 
 type SendCB = (error: Error | null, items: string[] | undefined) => void;
 
-type Hook<T> = (
-  message: Message,
-  exception: Error | string,
-  customData: CustomData,
-  request?: RequestParams,
-  tags?: Tag[]
-) => T;
-
-type RaygunOptions = {
-  apiKey: string;
-  filters?: string[];
-  host?: string;
-  port?: number;
-  useSSL?: boolean;
-  onBeforeSend?: Hook<Message>;
-  offlineStorage?: OfflineStorage;
-  offlineStorageOptions?: OfflineStorageOptions;
-  isOffline?: boolean;
-  groupingKey?: Hook<string>;
-  tags?: Tag[];
-  useHumanStringForObject?: boolean;
-  reportColumnNumbers?: boolean;
-  innerErrorFieldName?: string;
-};
+const DEFAULT_BATCH_FREQUENCY = 1000; // ms
 
 class Raygun {
   _apiKey: string | undefined;
@@ -59,7 +45,7 @@ class Raygun {
   _port: number | undefined;
   _useSSL: boolean | undefined;
   _onBeforeSend: Hook<Message> | undefined;
-  _offlineStorage: OfflineStorage | undefined;
+  _offlineStorage: IOfflineStorage | undefined;
   _isOffline: boolean | undefined;
   _offlineStorageOptions: OfflineStorageOptions | undefined;
   _groupingKey: Hook<string> | undefined;
@@ -67,6 +53,8 @@ class Raygun {
   _useHumanStringForObject: boolean | undefined;
   _reportColumnNumbers: boolean | undefined;
   _innerErrorFieldName: string | undefined;
+  _batch: boolean = false;
+  _batchTransport: RaygunBatchTransport | undefined;
 
   init(options: RaygunOptions) {
     this._apiKey = options.apiKey;
@@ -75,8 +63,6 @@ class Raygun {
     this._port = options.port;
     this._useSSL = options.useSSL !== false;
     this._onBeforeSend = options.onBeforeSend;
-    this._offlineStorage = options.offlineStorage || new OfflineStorage();
-    this._offlineStorageOptions = options.offlineStorageOptions;
     this._isOffline = options.isOffline;
     this._groupingKey = options.groupingKey;
     this._tags = options.tags;
@@ -87,7 +73,27 @@ class Raygun {
     this._reportColumnNumbers = options.reportColumnNumbers;
     this._innerErrorFieldName = options.innerErrorFieldName || "cause"; // VError function to retrieve inner error;
 
+    debug(`client initialized`);
+
+    if (options.batch && this._apiKey) {
+      const frequency = options.batchFrequency || DEFAULT_BATCH_FREQUENCY;
+      this._batch = options.batch;
+      this._batchTransport = new RaygunBatchTransport({
+        interval: frequency,
+        httpOptions: {
+          host: this._host,
+          port: this._port,
+          useSSL: !!this._useSSL,
+          apiKey: this._apiKey,
+        }
+      });
+      this._batchTransport.startProcessing();
+    }
+
     this.expressHandler = this.expressHandler.bind(this);
+
+    this._offlineStorage = options.offlineStorage || new OfflineStorage(this.transport());
+    this._offlineStorageOptions = options.offlineStorageOptions;
 
     if (this._isOffline) {
       this._offlineStorage.init(this._offlineStorageOptions);
@@ -140,6 +146,57 @@ class Raygun {
     this._tags = tags;
   }
 
+  transport(): Transport {
+    if (this._batch && this._batchTransport) {
+      return this._batchTransport;
+    }
+
+    const client = this;
+
+    return {
+      send(message: string, callback: Callback<IncomingMessage>) {
+        const apiKey = client._apiKey;
+
+        if (!apiKey) {
+          console.error(
+            `Encountered an error sending an error to Raygun. No API key is configured, please ensure .init is called with api key. See docs for more info.`
+          );
+          return message;
+        }
+
+        debug(`sending message to raygun (${message.length} bytes)`);
+
+        function wrappedCallback(error: Error | null, response: IncomingMessage | null) {
+          const durationInMs = stopTimer();
+          if (error) {
+            debug(
+              `error sending message (duration=${durationInMs}ms): ${error}`
+            );
+          } else {
+            debug(`successfully sent message (duration=${durationInMs}ms)`);
+          }
+          if (!callback) {
+            return;
+          }
+          return callVariadicCallback(callback, error, response);
+        }
+
+        const stopTimer = startTimer();
+        return raygunTransport.send({
+          message,
+          callback: wrappedCallback,
+          batch: false,
+          http: {
+            host: client._host,
+            port: client._port,
+            useSSL: !!client._useSSL,
+            apiKey,
+          },
+        });
+      },
+    };
+  }
+
   send(
     exception: Error | string,
     customData: CustomData,
@@ -188,28 +245,10 @@ class Raygun {
           : message;
     }
 
-    const apiKey = this._apiKey;
-
-    if (!apiKey) {
-      console.error(
-        `Encountered an error sending an error to Raygun. No API key is configured, please ensure .init is called with api key. See docs for more info.`
-      );
-      return message;
-    }
-
-    const transportMessage = {
-      message: message,
-      apiKey: apiKey,
-      callback: callback,
-      host: this._host,
-      port: this._port,
-      useSSL: this._useSSL || false,
-    };
-
     if (this._isOffline) {
-      this.offlineStorage().save(transportMessage, callback);
+      this.offlineStorage().save(JSON.stringify(message), callback);
     } else {
-      raygunTransport.send(transportMessage);
+      this.transport().send(JSON.stringify(message), callback);
     }
 
     return message;
@@ -230,12 +269,21 @@ class Raygun {
     next();
   }
 
-  private offlineStorage(): OfflineStorage {
+  stop() {
+    if (this._batchTransport) {
+      debug("batch transport stopped");
+      this._batchTransport.stopProcessing();
+    }
+  }
+
+  private offlineStorage(): IOfflineStorage {
     let storage = this._offlineStorage;
 
-    if (!storage) {
-      storage = this._offlineStorage = new OfflineStorage();
+    if (storage) {
+      return storage;
     }
+
+    storage = this._offlineStorage = new OfflineStorage(this.transport());
 
     return storage;
   }
