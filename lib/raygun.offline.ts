@@ -62,10 +62,6 @@ export class OfflineStorage implements IOfflineStorage {
 
     const filename = path.join(storage.cachePath, Date.now() + ".json");
 
-    if (!callback) {
-      callback = function () {};
-    }
-
     fs.readdir(storage.cachePath, function (err, files) {
       if (err) {
         console.log("[Raygun] Error reading cache folder");
@@ -100,10 +96,6 @@ export class OfflineStorage implements IOfflineStorage {
 
   send(callback: (error: Error | null, items?: string[]) => void) {
     const storage = this;
-
-    if (!callback) {
-      callback = function () {};
-    }
 
     storage.retrieve(function (err, items) {
       if (err) {

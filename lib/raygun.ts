@@ -36,6 +36,8 @@ type SendCB = (error: Error | null, items: string[] | undefined) => void;
 
 const DEFAULT_BATCH_FREQUENCY = 1000; // ms
 
+function emptyCallback() {}
+
 class Raygun {
   _apiKey: string | undefined;
   _filters: string[] = [];
@@ -138,9 +140,9 @@ class Raygun {
     this._isOffline = true;
   }
 
-  online(callback: SendCB) {
+  online(callback?: SendCB) {
     this._isOffline = false;
-    this.offlineStorage().send(callback);
+    this.offlineStorage().send(callback || emptyCallback);
   }
 
   setTags(tags: Tag[]) {
@@ -200,8 +202,8 @@ class Raygun {
 
   send(
     exception: Error | string,
-    customData: CustomData,
-    callback: (err: Error | null) => void,
+    customData?: CustomData,
+    callback?: (err: Error | null) => void,
     request?: Request,
     tags?: Tag[]
   ): Message {
@@ -247,7 +249,7 @@ class Raygun {
     }
 
     if (this._isOffline) {
-      this.offlineStorage().save(JSON.stringify(message), callback);
+      this.offlineStorage().save(JSON.stringify(message), callback || emptyCallback);
     } else {
       this.transport().send(JSON.stringify(message), callback);
     }
