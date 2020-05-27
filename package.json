@@ -24,10 +24,15 @@
   "engines": {
     "node": ">= 0.10.0"
   },
+  "files": [
+    "build/",
+    "README.md",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "tslint": "tslint --fix --project .",
     "prettier": "prettier --write lib/*.ts test/*.js",
-    "prepublish": "tsc",
+    "prepare": "tsc",
     "test": "tap --no-ts --node-arg=-r --node-arg=ts-node/register --no-coverage test/*.js"
   },
   "devDependencies": {
