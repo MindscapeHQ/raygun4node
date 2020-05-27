@@ -293,3 +293,4 @@ class Raygun {
 }
 
 export const Client = Raygun;
+export default {Client};
