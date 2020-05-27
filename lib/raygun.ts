@@ -91,6 +91,7 @@ class Raygun {
     }
 
     this.expressHandler = this.expressHandler.bind(this);
+    this.send = this.send.bind(this);
 
     this._offlineStorage = options.offlineStorage || new OfflineStorage(this.transport());
     this._offlineStorageOptions = options.offlineStorageOptions;

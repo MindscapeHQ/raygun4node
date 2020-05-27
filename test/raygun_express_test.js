@@ -56,3 +56,13 @@ test("batch reporting errors", async function (t) {
     ["a" , "b", "c"]
   );
 });
+
+test("send is bound and can be passed directly", async function (t) {
+  const {client, stop, nextRequest} = await makeClientWithMockServer();
+
+  setTimeout(client.send, 1, new Error('test!'));
+
+  await nextRequest();
+
+  stop();
+});
