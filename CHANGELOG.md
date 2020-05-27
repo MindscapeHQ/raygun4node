@@ -1,3 +1,10 @@
+## 0.11.0
+- Overhaul project to TypeScript, type definitions included in package
+- Unhandled exceptions are now correctly tagged
+- Add support for batch error reporting
+- Add debug logging
+- Fix Node buffer deprecation warning
+
 ## 0.10.2
 - Move nock to devDependencies due to CVE
 - Fix Travis Node v4 build

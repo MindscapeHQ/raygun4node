@@ -1,7 +1,7 @@
 {
   "name": "raygun",
-  "description": "Raygun.io plugin for Node",
-  "version": "0.10.2",
+  "description": "Raygun.io package for Node, written in TypeScript",
+  "version": "0.11.0",
   "homepage": "https://github.com/MindscapeHQ/raygun4node",
   "author": {
     "name": "MindscapeHQ",
@@ -20,7 +20,8 @@
       "url": "https://github.com/MindscapeHQ/raygun4node/blob/master/LICENSE-MIT"
     }
   ],
-  "main": "build/raygun",
+  "main": "build/raygun.js",
+  "types": "build/raygun.d.ts",
   "engines": {
     "node": ">= 0.10.0"
   },
