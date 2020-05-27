@@ -1,3 +1,7 @@
+## 0.11.1
+- Fix send annotations requiring too many arguments
+- Add default export to module
+
 ## 0.11.0
 - Overhaul project to TypeScript, type definitions included in package
 - Unhandled exceptions are now correctly tagged
