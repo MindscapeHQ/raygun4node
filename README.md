@@ -2,18 +2,73 @@
 
 [![Build Status](https://travis-ci.org/MindscapeHQ/raygun4node.svg?branch=master)](https://travis-ci.org/MindscapeHQ/raygun4node)
 
-Raygun.io plugin for Node
+Raygun.io package for Node, written in TypeScript.
 
 ## Getting Started
 Install the module with: `npm install raygun`
 
 ```javascript
-var raygun = require('raygun');
-var raygunClient = new raygun.Client().init({ apiKey: 'your API key' });
-raygunClient.send(theError);
+const raygun = require('raygun');
 
-// For express, at the end of the middleware definitions, just above app.listen:
+const raygunClient = new raygun.Client().init({
+  apiKey: 'your API key'
+});
+```
+
+You can also use `import`, which is useful for loading TypeScript definitions.<a href="#1---typescript-require-support" title="Note that TypeScript v3.9+ supports type definitions for modules loaded via `require`">¹</a>
+
+```typescript
+import raygun from 'raygun';
+
+const raygunClient = new raygun.Client().init({
+  apiKey: 'your API key'
+});
+```
+
+You can directly send errors to Raygun, either by making the error yourself or passing a caught error.
+
+```javascript
+raygunClient.send(new Error('Something impossible happened!'));
+```
+
+If you use express, you can report the errors that express catches to Raygun by using the middleware.
+
+```javascript
+// Add at the end of the middleware definitions, just above app.listen:
 app.use(raygunClient.expressHandler);
+```
+
+You can directly catch errors in your application code and report them to Raygun.
+
+```javascript
+try {
+  // run some code that might throw an error we want to report
+} catch (e) {
+  raygunClient.send(e);
+}
+```
+
+A similar example for Node style callbacks:
+```javascript
+function handleResult(error, result) {
+  if (error) {
+    raygunClient.send(error);
+    return;
+  }
+
+  // process result
+}
+```
+
+If you're working directly with promises, you can pass `raygunClient.send` directly to `.catch`.
+
+```javascript
+const axios = require('axios');
+
+axios
+  .get('example.com')
+  .then(handleResponse)
+  .catch(raygunClient.send);
 ```
 
 ### Expressjs 4.0 and above
@@ -44,7 +99,7 @@ client.send(new Error(), { 'mykey': 'beta' }, function (response){ });
 If you're using the `raygunClient.expressHandler`, you can send custom data along by setting `raygunClient.expressCustomData` to a function. The function will get two parameters, the error being thrown, and the request object.
 
 ```javascript
-var raygunClient = new raygun.Client().init({apiKey: "yourkey"});
+const raygunClient = new raygun.Client().init({apiKey: "yourkey"});
 
 raygunClient.expressCustomData = function (err, req) {
   return { 'level': err.level };
@@ -69,8 +124,8 @@ client.send(new Error(), {}, function () {}, request);
 If you want to filter any of the request data then you can pass in an array of keys to filter when
 you init the client. For example:
 ```javascript
-var raygun = require('raygun');
-var raygunClient = new raygun.Client().init({ apiKey: 'your API key', filters: ['password', 'creditcard'] });
+const raygun = require('raygun');
+const raygunClient = new raygun.Client().init({ apiKey: 'your API key', filters: ['password', 'creditcard'] });
 ```
 
 ### Tags
@@ -93,7 +148,7 @@ New in 0.4: You can set **raygunClient.user** to a function that returns the use
 An example, using the Passport.js middleware:
 
 ```javascript
-var raygunClient = new raygun.Client().init({apiKey: "yourkey"});
+const raygunClient = new raygun.Client().init({apiKey: "yourkey"});
 
 raygunClient.user = function (req) {
   if (req.user) {
@@ -161,12 +216,34 @@ If, after inspecting the payload, you wish to discard it and abort the send to R
 
 By example:
 
-    var myBeforeSend = function (payload, exception, customData, request, tags) {
-      console.log(payload); // Modify the payload here if necessary
-      return payload; // Return false here to abort the send
-    }
+```javascript
+const myBeforeSend = function (payload, exception, customData, request, tags) {
+  console.log(payload); // Modify the payload here if necessary
+  return payload; // Return false here to abort the send
+}
 
-    Raygun.onBeforeSend(myBeforeSend);
+Raygun.onBeforeSend(myBeforeSend);
+```
+
+### Batched error transport
+
+You can enable a batched transport mode for the Raygun client by passing `{batch: true}` when initializing.
+
+```javascript
+const raygunClient = new raygun.Client().init({
+  apiKey: 'API-KEY',
+  batch: true,
+  batchFrequency: 5000 // defaults to 1000ms (every second)
+});
+```
+
+The batch transport mode will collect errors in a queue and process them asynchronously. Rather than sending each error one at a time as they occur, errors will be batched and sent at regular intervals.
+
+If your application generates and reports large volumes of errors, especially in a short duration, the batch transport mode will perform better and operate with less network overhead.
+
+You can control how often batches are processed and sent by providing a `batchFrequency` option, which is a number in milliseconds.
+
+In a future version the batch transport will likely be enabled by default.
 
 ### Offline caching
 
@@ -174,20 +251,20 @@ Raygun can cache errors thrown by your Node application when it's running in 'of
 
 Raygun includes an on-disk cache provider out of the box, which required write permissions to the folder you wish to use. You cal also pass in your own cache storage.
 
-##### Getting setup with the default offline provider
+##### Getting setup with the default offline provide
 
 When creating your Raygun client you need to pass through a cache path
 
-    var raygunClient = new raygun.Client().init(
-        {
-            apiKey: 'API-KEY',
-            isOffline: false,
-            offlineStorageOptions: {
-              cachePath: 'raygunCache/',
-              cacheLimit: 1000 // defaults to 100 errors if you don't set this
-            }
-        }
-    );
+```javascript
+const raygunClient = new raygun.Client().init({
+  apiKey: 'API-KEY',
+  isOffline: false,
+  offlineStorageOptions: {
+    cachePath: 'raygunCache/',
+    cacheLimit: 1000 // defaults to 100 errors if you don't set this
+  }
+});
+```
 
 ##### Changing online/offline state
 
@@ -209,18 +286,18 @@ You're able to provide your own cache provider if you can't access to the disk. 
 
 Example:
 
-     var sqlStorageProvider = new SQLStorageProvider();
+```javascript
+const sqlStorageProvider = new SQLStorageProvider();
 
-     var raygunClient = new raygun.Client().init(
-            {
-                apiKey: 'API-KEY',
-                isOffline: false,
-                offlineStorage: sqlStorageProvider,
-                offlineStorageOptions: {
-                    table: 'RaygunCache'
-                }
-            }
-        );
+const raygunClient = new raygun.Client().init({
+  apiKey: 'API-KEY',
+  isOffline: false,
+  offlineStorage: sqlStorageProvider,
+  offlineStorageOptions: {
+    table: 'RaygunCache'
+  }
+});
+```
 
 *Required methods*
 
@@ -229,7 +306,7 @@ Example:
 * retrieve(callback) - Returns an array of cached item filenames/ids
 * send(callback) - Sends the backlog of errors to Raygun
 
-See [lib/raygun.offline.js](lib/raygun.offline.js) for an example.
+See [lib/raygun.offline.ts](lib/raygun.offline.ts) for an example.
 
 We recommend that you limit the number of errors that you are caching so that you don't swamp the clients internet connection sending errors.
 
@@ -239,12 +316,14 @@ You can provide your own grouping key if you wish. We only recommend this you're
 
 When initializing Raygun, pass through a `groupingKey` function.
 
-    var raygunClient = new raygun.Client().init({
-        apiKey: 'YOUR_KEY',
-        groupingKey: function(message, exception, customData, request, tags) {
-            return "CUSTOMKEY";
-        }
-    });
+```javascript
+const raygunClient = new raygun.Client().init({
+  apiKey: 'YOUR_KEY',
+  groupingKey: function(message, exception, customData, request, tags) {
+    return "CUSTOMKEY";
+  }
+});
+```
 
 ### Custom error objects
 
@@ -252,10 +331,12 @@ By default Raygun4Node tries to convert unknown objects into a human readable st
 
 To disable it:
 
-    var raygunClient = new raygun.Client().init({
-        apiKey: 'YOUR_KEY',
-        useHumanStringForObject: false
-    });
+```javascript
+const raygunClient = new raygun.Client().init({
+  apiKey: 'YOUR_KEY',
+  useHumanStringForObject: false
+});
+```
 
 If your custom error object inherits from `Error` as its parent prototype, this isn't necessary however and these will be sent correctly.
 
@@ -263,20 +344,28 @@ If your custom error object inherits from `Error` as its parent prototype, this 
 
 By default Raygun4Node doesn't include column numbers in the stack trace. To include column numbers add the option `reportColumnNumbers` set to true to the configuration.
 
-    var raygunClient = new raygun.Client().init({
-        apiKey: 'YOUR_KEY',
-        reportColumnNumbers: true
-    });
+```javascript
+const raygunClient = new raygun.Client().init({
+  apiKey: 'YOUR_KEY',
+  reportColumnNumbers: true
+});
+```
 
 Including column numbers can enable source mapping if you have minified or transpiled code in your stack traces.
 
 ### Examples
 View a screencast on creating an app with Node.js and Express.js, then hooking up the error handling and sending them at [http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/](http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/)
 
+### Debug Logging
+You can enable logging of debug information from the Raygun client by setting the environment variable `DEBUG=raygun`. The client will then log information about transporting and storing errors, including timing information.
+
+## Notes
+
+### 1 - Typescript Require Support
+As of version 3.9, TypeScript supports loading type definitions via require statements, so it's not necessary to use `import`.
+
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using "npm test".
-
-To get the functional sending tests passing, set a `RAYGUN_APIKEY` environment variable to a valid apikey, e.g `export RAYGUN_APIKEY=your_apikey`.
 
 ## Release History
 
