@@ -34,8 +34,10 @@ import { v4 as uuidv4 } from "uuid";
 
 const debug = require("debug")("raygun");
 
-
-let apmBridge: undefined | null | {notify(e: string | Error, s: string): void} = undefined;
+let apmBridge:
+  | undefined
+  | null
+  | { notify(e: string | Error, s: string): void } = undefined;
 
 try {
   if (module.parent) {
@@ -222,12 +224,6 @@ class Raygun {
     request?: Request,
     tags?: Tag[]
   ): Message {
-    const correlationId = uuidv4();
-
-    if (apmBridge) {
-      apmBridge.notify(exception, correlationId);
-    }
-
     let mergedTags: Tag[] = [];
 
     if (this._tags) {
@@ -269,7 +265,13 @@ class Raygun {
           : message;
     }
 
-    message.details.correlationId = correlationId;
+    if (apmBridge) {
+      const correlationId = uuidv4();
+
+      apmBridge.notify(exception, correlationId);
+
+      message.details.correlationId = correlationId;
+    }
 
     if (this._isOffline) {
       this.offlineStorage().save(JSON.stringify(message), callback || emptyCallback);
