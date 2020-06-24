@@ -30,7 +30,24 @@ import { OfflineStorage } from "./raygun.offline";
 import { startTimer } from './timer';
 import * as raygunTransport from "./raygun.transport";
 
+import { v4 as uuidv4 } from "uuid";
+
 const debug = require("debug")("raygun");
+
+let apmBridge:
+  | undefined
+  | null
+  | { notify(e: string | Error, s: string): void } = undefined;
+
+try {
+  if (module.parent) {
+    apmBridge = module.parent.require('raygun-apm/lib/src/crash_reporting');
+  } else {
+    apmBridge = require('raygun-apm/lib/src/crash_reporting');
+  }
+} catch (e) {
+  apmBridge = null;
+}
 
 type SendCB = (error: Error | null, items: string[] | undefined) => void;
 
@@ -246,6 +263,14 @@ class Raygun {
         typeof this._onBeforeSend === "function"
           ? this._onBeforeSend(message, exception, customData, request, tags)
           : message;
+    }
+
+    if (apmBridge) {
+      const correlationId = uuidv4();
+
+      apmBridge.notify(exception, correlationId);
+
+      message.details.correlationId = correlationId;
     }
 
     if (this._isOffline) {
