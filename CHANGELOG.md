@@ -1,3 +1,6 @@
+## 0.12.0
+- Add integration with raygun-apm, errors reported during a trace should link between trace and error
+
 ## 0.11.1
 - Fix send annotations requiring too many arguments
 - Add default export to module
