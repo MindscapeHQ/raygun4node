@@ -114,7 +114,7 @@ test("batched offline message storage and sending", async function (t) {
   );
 
   t.deepEquals(
-    batch.map((e) => e.details.error.message),
+    batch.map((e) => e.details.error.message).sort(),
     ["offline error", "offline error 2"]
   );
 
