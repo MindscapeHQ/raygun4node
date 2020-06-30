@@ -1,3 +1,6 @@
+## 0.12.1
+- Include @types/express as dependency
+
 ## 0.12.0
 - Add integration with raygun-apm, errors reported during a trace should link between trace and error
 
