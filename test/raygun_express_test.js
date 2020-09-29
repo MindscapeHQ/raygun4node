@@ -66,3 +66,30 @@ test("send is bound and can be passed directly", async function (t) {
 
   stop();
 });
+
+test("exceptions are propagated by middleware", async function (t) {
+  t.plan(1);
+  const app = express();
+
+  const testEnvironment = await makeClientWithMockServer();
+  const raygunClient = testEnvironment.client;
+
+  app.get("/", (req, res) => {
+    throw new Error("surprise error!");
+    res.send("response!");
+  });
+
+  function testErrorHandler(err, req, res, next) {
+    t.assert(err.message === "surprise error!");
+    next(err);
+  }
+
+  app.use(raygunClient.expressHandler);
+  app.use(testErrorHandler);
+
+  const server = await listen(app);
+  await request(`http://localhost:${server.address().port}`);
+
+  server.close();
+  testEnvironment.stop();
+});

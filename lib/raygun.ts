@@ -294,7 +294,7 @@ class Raygun {
     this.send(err, customData || {}, function () {}, req, [
       "UnhandledException",
     ]);
-    next();
+    next(err);
   }
 
   stop() {
