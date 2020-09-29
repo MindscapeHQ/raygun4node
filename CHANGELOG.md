@@ -1,3 +1,6 @@
+## 0.12.2
+- Fix regression where express middleware would not pass error to next middleware
+
 ## 0.12.1
 - Include @types/express as dependency
 
