@@ -21,9 +21,10 @@ const DEFAULT_ENDPOINT = "/entries";
 const BATCH_ENDPOINT = "/entries/bulk";
 
 export function send(options: SendOptions) {
+  console.log('send options #### ', options);
   try {
     const data = Buffer.from(options.message);
-    const path = options.batch ? BATCH_ENDPOINT : DEFAULT_ENDPOINT;
+    const path = `${options.path}${options.batch ? BATCH_ENDPOINT : DEFAULT_ENDPOINT}`;
 
     const httpOptions = {
       host: options.http.host || API_HOST,

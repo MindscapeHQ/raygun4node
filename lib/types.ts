@@ -70,6 +70,7 @@ export type SendOptions = {
   callback: Callback<IncomingMessage>;
   http: HTTPOptions;
   batch: boolean;
+  path: string;
 };
 
 export type HTTPOptions = {
