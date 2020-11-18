@@ -51,6 +51,7 @@ export type MessageDetails = {
   machineName: string;
   environment: Environment;
   correlationId: string | null;
+  breadcrumbs?: InternalBreadcrumb[];
 };
 
 export type Environment = {
@@ -194,3 +195,27 @@ export function callVariadicCallback<T>(
 }
 
 export type Callback<T> = CallbackNoError<T> | CallbackWithError<T>;
+
+export type Serializable =
+  | number
+  | null
+  | string
+  | Serializable[]
+  | { [key: string]: Serializable };
+
+export type InternalBreadcrumb = {
+  timestamp: number;
+  level: "debug" | "info" | "warning" | "error";
+  type: "manual" | "navigation" | "click-event" | "request" | "console";
+  category: string;
+  message: string;
+  customData?: Serializable;
+  className?: string;
+  methodName?: string;
+  lineNumber?: number;
+};
+
+export type Breadcrumb = Pick<
+  InternalBreadcrumb,
+  "level" | "category" | "message" | "customData"
+>;

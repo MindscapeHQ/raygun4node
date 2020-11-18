@@ -62,9 +62,11 @@ export class RaygunBatchTransport {
   }
 
   private process() {
-    debug(
-      `batch transport - processing (${this.messageQueue.length} message(s) in queue)`
-    );
+    if (this.messageQueue.length > 0) {
+      debug(
+        `batch transport - processing (${this.messageQueue.length} message(s) in queue)`
+      );
+    }
 
     const { payload, messageCount, callbacks } = prepareBatch(
       this.messageQueue

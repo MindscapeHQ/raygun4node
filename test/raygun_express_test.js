@@ -1,9 +1,7 @@
 var express = require("express");
 var test = require("tap").test;
 
-var { listen, request, makeClientWithMockServer, sleep } = require("./utils");
-
-var API_KEY = "apikey";
+var { listen, request, makeClientWithMockServer } = require("./utils");
 
 test("reporting express errors", async function (t) {
   const app = express();
