@@ -1,6 +1,5 @@
 const express = require("express");
 const test = require("tap").test;
-const { runWithBreadcrumbs } = require("../lib/raygun");
 const { listen, makeClientWithMockServer, request } = require("./utils");
 
 test("capturing breadcrumbs", async function (t) {
@@ -8,9 +7,7 @@ test("capturing breadcrumbs", async function (t) {
   const testEnv = await makeClientWithMockServer();
   const raygun = testEnv.client;
 
-  app.use((req, res, next) => {
-    runWithBreadcrumbs(next);
-  });
+  app.use(raygun.breadcrumbs);
 
   function requestHandler(req, res) {
     raygun.addBreadcrumb("first!");
@@ -48,6 +45,6 @@ test("capturing breadcrumbs", async function (t) {
 
   t.deepEquals(
     message.details.breadcrumbs.map((b) => b.lineNumber),
-    [16, 18]
+    [13, 15]
   );
 });

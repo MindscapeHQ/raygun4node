@@ -296,6 +296,14 @@ class Raygun {
     }
   }
 
+  breadcrumbs(req: Request, res: Response, next: NextFunction) {
+    runWithBreadcrumbs(next);
+  }
+
+  addBreadcrumb(b: string | Breadcrumb) {
+    addBreadcrumb(b);
+  }
+
   private buildSendOptions(
     exception: Error | string,
     customData?: CustomData,
@@ -412,11 +420,6 @@ class Raygun {
       },
     };
   }
-
-  addBreadcrumb(b: string | Breadcrumb) {
-    addBreadcrumb(b);
-  }
-
   private offlineStorage(): IOfflineStorage {
     let storage = this._offlineStorage;
 
