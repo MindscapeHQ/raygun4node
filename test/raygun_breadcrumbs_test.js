@@ -12,14 +12,16 @@ test("capturing breadcrumbs", async function (t) {
     runWithBreadcrumbs(next);
   });
 
-  app.get("/", (req, res) => {
+  function requestHandler(req, res) {
     raygun.addBreadcrumb("first!");
     setTimeout(() => {
       raygun.addBreadcrumb("second!");
       raygun.send(new Error("test end"));
       res.send("done!");
     }, 1);
-  });
+  }
+
+  app.get("/", requestHandler);
 
   const server = await listen(app);
 
@@ -29,9 +31,23 @@ test("capturing breadcrumbs", async function (t) {
   server.close();
   testEnv.stop();
 
-  t.assert(
+  t.deepEquals(
     message.details.breadcrumbs.map((b) => b.message),
     ["first!", "second!"]
   );
-  t.pass();
+
+  t.deepEquals(
+    message.details.breadcrumbs.map((b) => b.methodName),
+    [requestHandler.name, "<anonymous>"]
+  );
+
+  t.deepEquals(
+    message.details.breadcrumbs.map((b) => b.className),
+    [__filename, __filename]
+  );
+
+  t.deepEquals(
+    message.details.breadcrumbs.map((b) => b.lineNumber),
+    [16, 18]
+  );
 });
