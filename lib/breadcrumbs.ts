@@ -1,5 +1,6 @@
 import type { AsyncLocalStorage } from "async_hooks";
 import type { Breadcrumb, InternalBreadcrumb } from "./types";
+import type { Request, Response, NextFunction } from "express";
 import path from "path";
 const debug = require("debug")("raygun").bind(null, "[breadcrumbs]");
 
@@ -79,6 +80,9 @@ export function addBreadcrumb(breadcrumb: string | Breadcrumb) {
 
   const internalCrumb: InternalBreadcrumb = {
     ...(breadcrumb as Breadcrumb),
+    category: breadcrumb.category || "",
+    message: breadcrumb.message || "",
+    level: breadcrumb.level || "info",
     timestamp: Number(new Date()),
     type: "manual",
     className: callsite?.fileName,
@@ -89,6 +93,24 @@ export function addBreadcrumb(breadcrumb: string | Breadcrumb) {
   };
 
   debug("recorded breadcrumb:", internalCrumb);
+
+  crumbs.push(internalCrumb);
+}
+
+export function addRequestBreadcrumb(request: Request) {
+  const crumbs = getBreadcrumbs();
+
+  if (!crumbs) {
+    return;
+  }
+
+  const internalCrumb: InternalBreadcrumb = {
+    category: "http",
+    message: `${request.method} ${request.url}`,
+    level: "info",
+    timestamp: Number(new Date()),
+    type: "request",
+  };
 
   crumbs.push(internalCrumb);
 }

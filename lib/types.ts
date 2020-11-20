@@ -215,7 +215,6 @@ export type InternalBreadcrumb = {
   lineNumber?: number;
 };
 
-export type Breadcrumb = Pick<
-  InternalBreadcrumb,
-  "level" | "category" | "message" | "customData"
+export type Breadcrumb = Partial<
+  Pick<InternalBreadcrumb, "level" | "category" | "message" | "customData">
 >;

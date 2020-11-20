@@ -59,19 +59,21 @@ function makeClientWithMockServer(clientOptions = {}) {
         },
         nextRequest: (options = { maxWait: 10000 }) =>
           new Promise((resolve, reject) => {
-            messageCallback = resolve;
-            setTimeout(
+            const cancelId = setTimeout(
               () =>
                 reject(
                   new Error(`nextRequest timed out after ${options.maxWait}ms`)
                 ),
               options.maxWait
             );
+            messageCallback = function (message) {
+              clearTimeout(cancelId);
+              resolve(message);
+            };
           }),
         nextBatchRequest: (options = { maxWait: 10000 }) =>
           new Promise((resolve, reject) => {
-            batchMessageCallback = resolve;
-            setTimeout(
+            const cancelId = setTimeout(
               () =>
                 reject(
                   new Error(
@@ -80,6 +82,10 @@ function makeClientWithMockServer(clientOptions = {}) {
                 ),
               options.maxWait
             );
+            batchMessageCallback = function (message) {
+              clearTimeout(cancelId);
+              resolve(message);
+            };
           }),
       });
     });
