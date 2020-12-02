@@ -57,9 +57,10 @@ function getCallsite(): SourceFile | null {
   return callsite;
 }
 
-export function addBreadcrumb(breadcrumb: string | Breadcrumb) {
-  debug("adding breadcrumb:", breadcrumb);
-
+export function addBreadcrumb(
+  breadcrumb: string | Breadcrumb,
+  type: InternalBreadcrumb["type"] = "manual"
+) {
   const crumbs = getBreadcrumbs();
 
   if (!crumbs) {
@@ -84,7 +85,7 @@ export function addBreadcrumb(breadcrumb: string | Breadcrumb) {
     message: breadcrumb.message || "",
     level: breadcrumb.level || "info",
     timestamp: Number(new Date()),
-    type: "manual",
+    type,
     className: callsite?.fileName,
     methodName: callsite?.functionName,
 
@@ -131,4 +132,23 @@ export function runWithBreadcrumbs(f: () => void) {
   debug("running function with breadcrumbs");
 
   asyncLocalStorage.run([], f);
+}
+
+const consoleMethods: [keyof typeof console, InternalBreadcrumb["level"]][] = [
+  ["debug", "debug"],
+  ["log", "info"],
+  ["info", "info"],
+  ["warn", "warning"],
+  ["error", "error"],
+];
+
+for (const [method, level] of consoleMethods) {
+  const oldMethod = (console as any)[method];
+  (console as any)[method] = function logWithBreadcrumb<T>(
+    this: T,
+    ...args: any[]
+  ) {
+    addBreadcrumb({ message: args.join(" "), level }, "console");
+    return oldMethod.apply(this, args);
+  };
 }
