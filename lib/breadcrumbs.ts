@@ -121,7 +121,17 @@ export function getBreadcrumbs(): InternalBreadcrumb[] | null {
     return null;
   }
 
-  return asyncLocalStorage.getStore() || null;
+  const store = asyncLocalStorage.getStore();
+
+  if (store) {
+    return store;
+  }
+
+  const newStore: InternalBreadcrumb[] = [];
+
+  asyncLocalStorage.enterWith(newStore);
+
+  return newStore;
 }
 
 export function runWithBreadcrumbs(f: () => void) {
