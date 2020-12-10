@@ -30,21 +30,21 @@ test("capturing breadcrumbs", async function (t) {
 
   t.deepEquals(
     message.details.breadcrumbs.map((b) => b.message),
-    ["first!", "second!"]
+    ["GET /", "first!", "second!"]
   );
 
   t.deepEquals(
     message.details.breadcrumbs.map((b) => b.methodName),
-    [requestHandler.name, "<anonymous>"]
+    [undefined, requestHandler.name, "<anonymous>"]
   );
 
   t.deepEquals(
     message.details.breadcrumbs.map((b) => b.className),
-    [__filename, __filename]
+    [undefined, __filename, __filename]
   );
 
   t.deepEquals(
     message.details.breadcrumbs.map((b) => b.lineNumber),
-    [13, 15]
+    [undefined, 13, 15]
   );
 });
