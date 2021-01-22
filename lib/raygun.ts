@@ -122,7 +122,7 @@ class Raygun {
     return this;
   }
 
-  user(req: Request): RawUserData | null {
+  user(req?: Request): RawUserData | null {
     return null;
   }
 
@@ -245,7 +245,7 @@ class Raygun {
       .setMachineName()
       .setEnvironmentDetails()
       .setUserCustomData(customData)
-      .setUser((request && this.user(request)) || this._user)
+      .setUser(this.user(request) || this._user)
       .setVersion(this._version)
       .setTags(mergedTags);
 

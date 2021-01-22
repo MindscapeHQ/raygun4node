@@ -93,3 +93,22 @@ test("exceptions are propagated by middleware", async function (t) {
   server.close();
   testEnvironment.stop();
 });
+
+test("user function is called even if request is not present", async function (t) {
+  t.plan(1);
+
+  const testEnvironment = await makeClientWithMockServer();
+  const raygunClient = testEnvironment.client;
+
+  raygunClient.user = () => ({ email: "test@null.null" });
+
+  const nextRequest = testEnvironment.nextRequest();
+
+  raygunClient.send(new Error("example error"));
+
+  const message = await nextRequest;
+
+  testEnvironment.stop();
+
+  t.deepEquals(message.details.user, { email: "test@null.null" });
+});
