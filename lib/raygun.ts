@@ -318,4 +318,5 @@ class Raygun {
 }
 
 export const Client = Raygun;
-export default {Client};
+export type Client = Raygun;
+export default { Client };
