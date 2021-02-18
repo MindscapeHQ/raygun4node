@@ -1,3 +1,6 @@
+## 0.12.3
+- Fix regression where user function would not always be called
+
 ## 0.12.2
 - Fix regression where express middleware would not pass error to next middleware
 
@@ -21,7 +24,7 @@
 ## 0.10.2
 - Move nock to devDependencies due to CVE
 - Fix Travis Node v4 build
-- Add jshint to Travis build  
+- Add jshint to Travis build
 
 ## 0.10.1
 - Bump nock dependency to v9 as v8 has a dependency on a version of lodash with a security issue
