@@ -172,7 +172,7 @@ This will be transmitted with each message sent, and a count of affected custome
 
 If you return an object, it may have any of the following properties (only identifier is required):
 
-`identifier` is the user identifier. This will be used to uniquely identify the user within Raygun. This is the only required parameter, but is only required if you are using Customers.
+`identifier` is the user identifier. This will be used to uniquely identify the user within Raygun. This is the only required parameter, but is only required if you are using customers tracking.
 
 `isAnonymous` is a bool indicating whether the user is anonymous or actually has a user account. Even if this is set to true, you should still give the user a unique identifier of some kind.
 
