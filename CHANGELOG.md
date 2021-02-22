@@ -79,7 +79,7 @@
 - Added ability to send tags with exception reports
 
 ## 0.5.0
-- Added filters for sensitive request data, and better affected user tracking
+- Added filters for sensitive request data, and better affected user tracking/Customers
 
 ## 0.4.2
 - Minor test refactor
@@ -91,7 +91,7 @@
 - Added *user* function, deprecated setUser
 
 ## 0.3.0
-- Added version and user tracking functionality; bump jshint version, update test
+- Added version and user tracking/Customers functionality; bump jshint version, update test
 
 ## 0.2.0
 - Added Express handler, bug fixes
