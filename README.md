@@ -15,12 +15,12 @@ const raygunClient = new raygun.Client().init({
 });
 ```
 
-You can also use `import`, which is useful for loading TypeScript definitions.<a href="#1---typescript-require-support" title="Note that TypeScript v3.9+ supports type definitions for modules loaded via `require`">¹</a>
+You can also use `import`, which is useful for loading TypeScript definitions. In order to load type definitions, you can use `import * as Raygun from 'raygun'`, or import the `Client` class directly from the module.
 
 ```typescript
-import raygun from 'raygun';
+import * as Raygun from 'raygun';
 
-const raygunClient = new raygun.Client().init({
+const raygunClient = new Raygun.Client().init({
   apiKey: 'your API key'
 });
 ```
@@ -75,7 +75,7 @@ axios
 
 The [Express documentation](http://expressjs.com/guide/error-handling.html) says `Though not strictly required, by convention you define error-handling middleware last, after other app.use() calls`, but that is incorrect. If the `app.use(raygunClient.expressHandler);` call is not immediately before the `app.listen` call, then errors will not be handled by Raygun.
 
-Note that the Express middleware handler will pick up and transmit any `err` objects that reach it. If the app code itself chooses to handle states that result in 4xx/5xx status codes, these will not result in an error payload sent to Raygun. 
+Note that the Express middleware handler will pick up and transmit any `err` objects that reach it. If the app code itself chooses to handle states that result in 4xx/5xx status codes, these will not result in an error payload sent to Raygun.
 
 ## Documentation
 
@@ -358,11 +358,6 @@ View a screencast on creating an app with Node.js and Express.js, then hooking u
 
 ### Debug Logging
 You can enable logging of debug information from the Raygun client by setting the environment variable `DEBUG=raygun`. The client will then log information about transporting and storing errors, including timing information.
-
-## Notes
-
-### 1 - Typescript Require Support
-As of version 3.9, TypeScript supports loading type definitions via require statements, so it's not necessary to use `import`.
 
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using "npm test".
