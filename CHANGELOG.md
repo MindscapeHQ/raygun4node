@@ -1,3 +1,6 @@
+## 0.12.4
+- Expose Raygun Client types for use in TypeScript projects
+
 ## 0.12.3
 - Fix regression where user function would not always be called
 
