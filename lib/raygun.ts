@@ -14,11 +14,13 @@ import {
   CustomData,
   Hook,
   Message,
+  MessageTransport,
   IOfflineStorage,
   OfflineStorageOptions,
   RawUserData,
   RaygunOptions,
   RequestParams,
+  SendOptions,
   Tag,
   Transport,
 } from "./types";
@@ -27,10 +29,15 @@ import type { Request, Response, NextFunction } from "express";
 import { RaygunBatchTransport } from "./raygun.batch";
 import { RaygunMessageBuilder } from "./raygun.messageBuilder";
 import { OfflineStorage } from "./raygun.offline";
-import { startTimer } from './timer';
+import { startTimer } from "./timer";
 import * as raygunTransport from "./raygun.transport";
+import * as raygunSyncTransport from "./raygun.sync.transport";
 
 import { v4 as uuidv4 } from "uuid";
+
+type SendOptionsResult =
+  | { valid: true; message: Message; options: SendOptions }
+  | { valid: false; message: Message };
 
 const debug = require("debug")("raygun");
 
@@ -41,9 +48,9 @@ let apmBridge:
 
 try {
   if (module.parent) {
-    apmBridge = module.parent.require('raygun-apm/lib/src/crash_reporting');
+    apmBridge = module.parent.require("raygun-apm/lib/src/crash_reporting");
   } else {
-    apmBridge = require('raygun-apm/lib/src/crash_reporting');
+    apmBridge = require("raygun-apm/lib/src/crash_reporting");
   }
 } catch (e) {
   apmBridge = null;
@@ -104,7 +111,7 @@ class Raygun {
           port: this._port,
           useSSL: !!this._useSSL,
           apiKey: this._apiKey,
-        }
+        },
       });
       this._batchTransport.startProcessing();
     }
@@ -112,7 +119,8 @@ class Raygun {
     this.expressHandler = this.expressHandler.bind(this);
     this.send = this.send.bind(this);
 
-    this._offlineStorage = options.offlineStorage || new OfflineStorage(this.transport());
+    this._offlineStorage =
+      options.offlineStorage || new OfflineStorage(this.offlineTransport());
     this._offlineStorageOptions = options.offlineStorageOptions;
 
     if (this._isOffline) {
@@ -171,50 +179,7 @@ class Raygun {
       return this._batchTransport;
     }
 
-    const client = this;
-
-    return {
-      send(message: string, callback: Callback<IncomingMessage>) {
-        const apiKey = client._apiKey;
-
-        if (!apiKey) {
-          console.error(
-            `Encountered an error sending an error to Raygun. No API key is configured, please ensure .init is called with api key. See docs for more info.`
-          );
-          return message;
-        }
-
-        debug(`sending message to raygun (${message.length} bytes)`);
-
-        function wrappedCallback(error: Error | null, response: IncomingMessage | null) {
-          const durationInMs = stopTimer();
-          if (error) {
-            debug(
-              `error sending message (duration=${durationInMs}ms): ${error}`
-            );
-          } else {
-            debug(`successfully sent message (duration=${durationInMs}ms)`);
-          }
-          if (!callback) {
-            return;
-          }
-          return callVariadicCallback(callback, error, response);
-        }
-
-        const stopTimer = startTimer();
-        return raygunTransport.send({
-          message,
-          callback: wrappedCallback,
-          batch: false,
-          http: {
-            host: client._host,
-            port: client._port,
-            useSSL: !!client._useSSL,
-            apiKey,
-          },
-        });
-      },
-    };
+    return raygunTransport;
   }
 
   send(
@@ -224,6 +189,86 @@ class Raygun {
     request?: Request,
     tags?: Tag[]
   ): Message {
+    const sendOptionsResult = this.buildSendOptions(
+      exception,
+      customData,
+      callback,
+      request,
+      tags
+    );
+
+    const message = sendOptionsResult.message;
+
+    if (!sendOptionsResult.valid) {
+      console.error(
+        `Encountered an error sending an error to Raygun. No API key is configured, please ensure .init is called with api key. See docs for more info.`
+      );
+      return sendOptionsResult.message;
+    }
+
+    const sendOptions = sendOptionsResult.options;
+
+    if (this._isOffline) {
+      this.offlineStorage().save(
+        JSON.stringify(message),
+        callback || emptyCallback
+      );
+    } else {
+      this.transport().send(sendOptions);
+    }
+
+    return message;
+  }
+
+  sendSync(
+    exception: Error | string,
+    customData?: CustomData,
+    callback?: (err: Error | null) => void,
+    request?: Request,
+    tags?: Tag[]
+  ): void {
+    const result = this.buildSendOptions(
+      exception,
+      customData,
+      callback,
+      request,
+      tags
+    );
+
+    if (result.valid) {
+      raygunSyncTransport.send(result.options);
+    }
+  }
+
+  expressHandler(err: Error, req: Request, res: Response, next: NextFunction) {
+    let customData;
+
+    if (typeof this.expressCustomData === "function") {
+      customData = this.expressCustomData(err, req);
+    } else {
+      customData = this.expressCustomData;
+    }
+
+    this.send(err, customData || {}, function () {}, req, [
+      "UnhandledException",
+    ]);
+    next(err);
+  }
+
+  stop() {
+    if (this._batchTransport) {
+      debug("batch transport stopped");
+      this._batchTransport.stopProcessing();
+    }
+  }
+
+  private buildSendOptions(
+    exception: Error | string,
+    customData?: CustomData,
+    callback?: Callback<IncomingMessage>,
+    request?: Request,
+    tags?: Tag[]
+  ): SendOptionsResult {
     let mergedTags: Tag[] = [];
 
     if (this._tags) {
@@ -272,36 +317,64 @@ class Raygun {
 
       message.details.correlationId = correlationId;
     }
+    const apiKey = this._apiKey;
 
-    if (this._isOffline) {
-      this.offlineStorage().save(JSON.stringify(message), callback || emptyCallback);
-    } else {
-      this.transport().send(JSON.stringify(message), callback);
+    if (!apiKey) {
+      return { valid: false, message };
     }
 
-    return message;
+    function wrappedCallback(
+      error: Error | null,
+      response: IncomingMessage | null
+    ) {
+      const durationInMs = stopTimer();
+      if (error) {
+        debug(`error sending message (duration=${durationInMs}ms): ${error}`);
+      } else {
+        debug(`successfully sent message (duration=${durationInMs}ms)`);
+      }
+      if (!callback) {
+        return;
+      }
+      return callVariadicCallback(callback, error, response);
+    }
+
+    const stopTimer = startTimer();
+
+    return {
+      valid: true,
+      message,
+      options: {
+        message: JSON.stringify(message),
+        callback: wrappedCallback,
+        http: {
+          host: this._host,
+          port: this._port,
+          useSSL: !!this._useSSL,
+          apiKey,
+        },
+      },
+    };
   }
 
-  expressHandler(err: Error, req: Request, res: Response, next: NextFunction) {
-    let customData;
+  private offlineTransport(): MessageTransport {
+    const transport = this.transport();
+    const client = this;
 
-    if (typeof this.expressCustomData === "function") {
-      customData = this.expressCustomData(err, req);
-    } else {
-      customData = this.expressCustomData;
-    }
-
-    this.send(err, customData || {}, function () {}, req, [
-      "UnhandledException",
-    ]);
-    next(err);
-  }
-
-  stop() {
-    if (this._batchTransport) {
-      debug("batch transport stopped");
-      this._batchTransport.stopProcessing();
-    }
+    return {
+      send(message: string) {
+        transport.send({
+          message,
+          callback: () => {},
+          http: {
+            host: client._host,
+            port: client._port,
+            useSSL: !!client._useSSL,
+            apiKey: client._apiKey || "",
+          },
+        });
+      },
+    };
   }
 
   private offlineStorage(): IOfflineStorage {
@@ -311,7 +384,9 @@ class Raygun {
       return storage;
     }
 
-    storage = this._offlineStorage = new OfflineStorage(this.transport());
+    storage = this._offlineStorage = new OfflineStorage(
+      this.offlineTransport()
+    );
 
     return storage;
   }

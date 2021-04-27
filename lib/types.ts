@@ -69,8 +69,9 @@ export type SendOptions = {
   message: string;
   callback: Callback<IncomingMessage>;
   http: HTTPOptions;
-  batch: boolean;
 };
+
+export type SendOptionsWithoutCB = Omit<SendOptions, "callback">;
 
 export type HTTPOptions = {
   useSSL: boolean;
@@ -127,7 +128,11 @@ export type OfflineStorageOptions = {
 };
 
 export type Transport = {
-  send(message: string, callback?: Callback<IncomingMessage>): void;
+  send(options: SendOptions): void;
+};
+
+export type MessageTransport = {
+  send(message: string): void;
 };
 
 export type Hook<T> = (
@@ -145,7 +150,7 @@ export interface IOfflineStorage {
     callback: (error: NodeJS.ErrnoException | null, items: string[]) => void
   ): void;
   send(callback: (error: Error | null, items?: string[]) => void): void;
-};
+}
 
 export type RaygunOptions = {
   apiKey: string;
@@ -175,7 +180,11 @@ export function isCallbackWithError<T>(
   return cb.length > 1;
 }
 
-export function callVariadicCallback<T>(callback: Callback<T>, error: Error | null, result: T | null) {
+export function callVariadicCallback<T>(
+  callback: Callback<T>,
+  error: Error | null,
+  result: T | null
+) {
   if (isCallbackWithError(callback)) {
     return callback(error, result);
   } else {

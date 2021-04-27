@@ -12,7 +12,11 @@ import http from "http";
 import https from "https";
 
 import { IncomingMessage } from "http";
-import { isCallbackWithError, callVariadicCallback, SendOptions } from "./types";
+import {
+  isCallbackWithError,
+  callVariadicCallback,
+  SendOptions,
+} from "./types";
 
 const debug = require("debug")("raygun");
 
@@ -20,10 +24,13 @@ const API_HOST = "api.raygun.io";
 const DEFAULT_ENDPOINT = "/entries";
 const BATCH_ENDPOINT = "/entries/bulk";
 
-export function send(options: SendOptions) {
+export function sendBatch(options: SendOptions) {
+  return send(options, BATCH_ENDPOINT);
+}
+
+export function send(options: SendOptions, path = DEFAULT_ENDPOINT) {
   try {
     const data = Buffer.from(options.message);
-    const path = options.batch ? BATCH_ENDPOINT : DEFAULT_ENDPOINT;
 
     const httpOptions = {
       host: options.http.host || API_HOST,

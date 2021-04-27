@@ -1,7 +1,13 @@
-import { send } from "./raygun.transport";
-import { startTimer } from './timer';
+import { sendBatch } from "./raygun.transport";
+import { startTimer } from "./timer";
 import type { IncomingMessage } from "http";
-import { callVariadicCallback, Callback, Message, HTTPOptions } from "./types";
+import {
+  callVariadicCallback,
+  Callback,
+  Message,
+  HTTPOptions,
+  SendOptions,
+} from "./types";
 
 const debug = require("debug")("raygun");
 
@@ -11,9 +17,9 @@ export type MessageAndCallback = {
 };
 
 export type PreparedBatch = {
-  payload: string,
-  messageCount: number,
-  callbacks: Callback<IncomingMessage>[]
+  payload: string;
+  messageCount: number;
+  callbacks: Callback<IncomingMessage>[];
 };
 
 export const MAX_MESSAGES_IN_BATCH = 100;
@@ -32,8 +38,11 @@ export class RaygunBatchTransport {
     this.httpOptions = options.httpOptions;
   }
 
-  send(message: string, callback: Callback<IncomingMessage>) {
-    this.messageQueue.push({ serializedMessage: message, callback });
+  send(options: SendOptions) {
+    this.messageQueue.push({
+      serializedMessage: options.message,
+      callback: options.callback,
+    });
   }
 
   startProcessing() {
@@ -57,7 +66,9 @@ export class RaygunBatchTransport {
       `batch transport - processing (${this.messageQueue.length} message(s) in queue)`
     );
 
-    const {payload, messageCount, callbacks} = prepareBatch(this.messageQueue);
+    const { payload, messageCount, callbacks } = prepareBatch(
+      this.messageQueue
+    );
 
     if (messageCount === 0) {
       return;
@@ -66,7 +77,10 @@ export class RaygunBatchTransport {
     const batchId = this.batchId;
     this.batchId++;
 
-    const runAllCallbacks = (err: Error | null, response: IncomingMessage | null) => {
+    const runAllCallbacks = (
+      err: Error | null,
+      response: IncomingMessage | null
+    ) => {
       const durationInMs = stopTimer();
       if (err) {
         debug(
@@ -87,16 +101,17 @@ export class RaygunBatchTransport {
     );
 
     const stopTimer = startTimer();
-    send({
+    sendBatch({
       message: payload,
       callback: runAllCallbacks,
       http: this.httpOptions,
-      batch: true,
     });
   }
 }
 
-export function prepareBatch(messageQueue: MessageAndCallback[]): PreparedBatch {
+export function prepareBatch(
+  messageQueue: MessageAndCallback[]
+): PreparedBatch {
   const batch: string[] = [];
   const callbacks: Callback<IncomingMessage>[] = [];
   let batchSizeBytes = 0;
@@ -132,6 +147,6 @@ export function prepareBatch(messageQueue: MessageAndCallback[]): PreparedBatch 
   return {
     payload: `[${batch.join(",")}]`,
     messageCount: batch.length,
-    callbacks
-  }
+    callbacks,
+  };
 }
