@@ -1,6 +1,6 @@
 const express = require("express");
 const http = require("http");
-const httpTerminator = require('http-terminator').createHttpTerminator;
+const httpTerminator = require("http-terminator").createHttpTerminator;
 
 const Raygun = require("../lib/raygun");
 
@@ -44,27 +44,42 @@ function makeClientWithMockServer(clientOptions = {}) {
         host: "localhost",
         port: address.port,
         useSSL: false,
-        ...clientOptions
+        ...clientOptions,
       });
 
       resolve({
         client,
         server: { entries, bulkEntries },
+        address,
         stop: () => {
           httpTerminator({
-            server: listener
+            server: listener,
           }).terminate();
           client.stop();
         },
-        nextRequest: (options = {maxWait: 10000}) =>
+        nextRequest: (options = { maxWait: 10000 }) =>
           new Promise((resolve, reject) => {
             messageCallback = resolve;
-            setTimeout(() => reject(new Error(`nextRequest timed out after ${options.maxWait}ms`)), options.maxWait);
+            setTimeout(
+              () =>
+                reject(
+                  new Error(`nextRequest timed out after ${options.maxWait}ms`)
+                ),
+              options.maxWait
+            );
           }),
-        nextBatchRequest: (options = {maxWait: 10000}) =>
+        nextBatchRequest: (options = { maxWait: 10000 }) =>
           new Promise((resolve, reject) => {
             batchMessageCallback = resolve;
-            setTimeout(() => reject(new Error(`nextBatchRequest timed out after ${options.maxWait}ms`)), options.maxWait);
+            setTimeout(
+              () =>
+                reject(
+                  new Error(
+                    `nextBatchRequest timed out after ${options.maxWait}ms`
+                  )
+                ),
+              options.maxWait
+            );
           }),
       });
     });
@@ -103,5 +118,5 @@ module.exports = {
   makeClientWithMockServer,
   request,
   listen,
-  sleep
+  sleep,
 };

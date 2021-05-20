@@ -32,17 +32,22 @@ test("reporting express errors", async function (t) {
 });
 
 test("batch reporting errors", async function (t) {
-  const {client, server, stop, nextBatchRequest} = await makeClientWithMockServer({
+  const {
+    client,
+    server,
+    stop,
+    nextBatchRequest,
+  } = await makeClientWithMockServer({
     batch: true,
-    batchFrequency: 1000
+    batchFrequency: 1000,
   });
 
-  client.send(new Error('a'));
-  client.send(new Error('b'));
-  client.send(new Error('c'));
+  client.send(new Error("a"));
+  client.send(new Error("b"));
+  client.send(new Error("c"));
 
   try {
-    const message = await nextBatchRequest({maxWait: 2000});
+    const message = await nextBatchRequest({ maxWait: 2000 });
   } catch (e) {
     throw e;
   } finally {
@@ -52,15 +57,15 @@ test("batch reporting errors", async function (t) {
   t.equals(server.entries.length, 0);
   t.equals(server.bulkEntries.length, 1);
   t.deepEquals(
-    server.bulkEntries[0].map(e => e.details.error.message),
-    ["a" , "b", "c"]
+    server.bulkEntries[0].map((e) => e.details.error.message),
+    ["a", "b", "c"]
   );
 });
 
 test("send is bound and can be passed directly", async function (t) {
-  const {client, stop, nextRequest} = await makeClientWithMockServer();
+  const { client, stop, nextRequest } = await makeClientWithMockServer();
 
-  setTimeout(client.send, 1, new Error('test!'));
+  setTimeout(client.send, 1, new Error("test!"));
 
   await nextRequest();
 
