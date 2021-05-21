@@ -225,6 +225,22 @@ class Raygun {
   }
 
   private reportUncaughtExceptions() {
+    const [major, minor, patch, ...rest] = process.versions.node
+      .split(".")
+      .map((part) => parseInt(part, 10));
+
+    if (
+      major < 12 ||
+      (major === 12 && minor < 17) ||
+      (major === 13 && minor < 7)
+    ) {
+      console.log(
+        "[Raygun] Warning: reportUncaughtExceptions requires at least Node v12.17.0 or v13.7.0. Uncaught exceptions will not be automatically reported."
+      );
+
+      return;
+    }
+
     const client = this;
 
     process.on("uncaughtExceptionMonitor", function (e) {
