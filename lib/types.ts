@@ -169,6 +169,7 @@ export type RaygunOptions = {
   innerErrorFieldName?: string;
   batch?: boolean;
   batchFrequency?: number;
+  reportUncaughtExceptions?: boolean;
 };
 
 export type CallbackNoError<T> = (t: T | null) => void;

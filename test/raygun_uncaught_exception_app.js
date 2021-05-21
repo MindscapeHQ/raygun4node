@@ -7,10 +7,7 @@ const raygunClient = new Raygun.Client().init({
   host: "localhost",
   port: API_PORT,
   useSSL: false,
-});
-
-process.on("uncaughtExceptionMonitor", function (e) {
-  raygunClient.sendSync(e);
+  reportUncaughtExceptions: true,
 });
 
 throw new Error("test");

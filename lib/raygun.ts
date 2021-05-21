@@ -101,6 +101,10 @@ class Raygun {
 
     debug(`client initialized`);
 
+    if (options.reportUncaughtExceptions) {
+      this.reportUncaughtExceptions();
+    }
+
     if (options.batch && this._apiKey) {
       const frequency = options.batchFrequency || DEFAULT_BATCH_FREQUENCY;
       this._batch = options.batch;
@@ -220,7 +224,15 @@ class Raygun {
     return message;
   }
 
-  sendSync(
+  private reportUncaughtExceptions() {
+    const client = this;
+
+    process.on("uncaughtExceptionMonitor", function (e) {
+      client.sendSync(e);
+    });
+  }
+
+  private sendSync(
     exception: Error | string,
     customData?: CustomData,
     callback?: (err: Error | null) => void,
