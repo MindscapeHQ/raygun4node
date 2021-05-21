@@ -54,9 +54,9 @@ test("batch reporting errors", async function (t) {
     stop();
   }
 
-  t.equals(server.entries.length, 0);
-  t.equals(server.bulkEntries.length, 1);
-  t.deepEquals(
+  t.equal(server.entries.length, 0);
+  t.equal(server.bulkEntries.length, 1);
+  t.same(
     server.bulkEntries[0].map((e) => e.details.error.message),
     ["a", "b", "c"]
   );
@@ -115,5 +115,5 @@ test("user function is called even if request is not present", async function (t
 
   testEnvironment.stop();
 
-  t.deepEquals(message.details.user, { email: "test@null.null" });
+  t.same(message.details.user, { email: "test@null.null" });
 });

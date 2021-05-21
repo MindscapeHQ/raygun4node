@@ -32,7 +32,7 @@ test("offline message storage and sending", async function (t) {
 
   const files = fs.readdirSync(cachePath);
 
-  t.equals(
+  t.equal(
     files.length,
     1,
     `Expected to find 1 error file but instead found ${files.length}`
@@ -42,7 +42,7 @@ test("offline message storage and sending", async function (t) {
   const contents = fs.readFileSync(path.join(cachePath, file), "utf-8");
   const data = JSON.parse(contents);
 
-  t.equals(data.details.error.message, "offline error");
+  t.equal(data.details.error.message, "offline error");
 
   await send(new Error("offline error 2"));
 
@@ -52,7 +52,7 @@ test("offline message storage and sending", async function (t) {
 
   const filesAfterSend = fs.readdirSync(cachePath);
 
-  t.equals(
+  t.equal(
     filesAfterSend.length,
     0,
     `Expected to find no stored error files but instead found ${filesAfterSend.length}`
@@ -88,7 +88,7 @@ test("batched offline message storage and sending", async function (t) {
 
   const files = fs.readdirSync(cachePath);
 
-  t.equals(
+  t.equal(
     files.length,
     1,
     `Expected to find 1 error file but instead found ${files.length}`
@@ -98,7 +98,7 @@ test("batched offline message storage and sending", async function (t) {
   const contents = fs.readFileSync(path.join(cachePath, file), "utf-8");
   const data = JSON.parse(contents);
 
-  t.equals(data.details.error.message, "offline error");
+  t.equal(data.details.error.message, "offline error");
 
   await send(new Error("offline error 2"));
 
@@ -107,16 +107,16 @@ test("batched offline message storage and sending", async function (t) {
 
   const filesAfterSend = fs.readdirSync(cachePath);
 
-  t.equals(
+  t.equal(
     filesAfterSend.length,
     0,
     `Expected to find no stored error files but instead found ${filesAfterSend.length}`
   );
 
-  t.deepEquals(
-    batch.map((e) => e.details.error.message).sort(),
-    ["offline error", "offline error 2"]
-  );
+  t.same(batch.map((e) => e.details.error.message).sort(), [
+    "offline error",
+    "offline error 2",
+  ]);
 
   testEnvironment.stop();
   fs.rmdirSync(cachePath);

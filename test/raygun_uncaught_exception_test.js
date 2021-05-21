@@ -28,6 +28,6 @@ test("reporting uncaught exceptions", async function (t) {
 
   testEnvironment.stop();
 
-  t.assert(message.details.error.message === "test");
+  t.equal(message.details.error.message, "test");
   t.end();
 });
