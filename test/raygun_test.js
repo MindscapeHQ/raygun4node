@@ -1,18 +1,18 @@
-'use strict';
+"use strict";
 
 var test = require("tap").test;
-var Raygun = require('../lib/raygun.ts');
+var Raygun = require("../lib/raygun.ts");
 
 var options = {
-  apiKey: process.env.RAYGUN_APIKEY
+  apiKey: process.env.RAYGUN_APIKEY,
 };
 
-test('init', function (t) {
+test("init", function (t) {
   t.ok(new Raygun.Client().init(options));
   t.end();
 });
 
-test('user', function (t) {
+test("user", function (t) {
   var client = new Raygun.Client().init(options);
 
   client.user = function (req) {
@@ -20,9 +20,9 @@ test('user', function (t) {
   };
 
   var req = {
-    user: "theuser"
+    user: "theuser",
   };
 
-  t.equals(client.user(req), "theuser");
+  t.equal(client.user(req), "theuser");
   t.end();
 });

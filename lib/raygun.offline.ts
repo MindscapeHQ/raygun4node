@@ -11,16 +11,20 @@
 import fs from "fs";
 import path from "path";
 import * as raygunTransport from "./raygun.transport";
-import { Transport, IOfflineStorage, OfflineStorageOptions } from "./types";
+import {
+  MessageTransport,
+  IOfflineStorage,
+  OfflineStorageOptions,
+} from "./types";
 
 const debug = require("debug")("raygun");
 
 export class OfflineStorage implements IOfflineStorage {
   cachePath: string = "";
   cacheLimit: number = 100;
-  transport: Transport;
+  transport: MessageTransport;
 
-  constructor(transport: Transport) {
+  constructor(transport: MessageTransport) {
     this.transport = transport;
   }
 
@@ -36,9 +40,7 @@ export class OfflineStorage implements IOfflineStorage {
     });
   }
 
-  init(
-    offlineStorageOptions: OfflineStorageOptions | undefined
-  ) {
+  init(offlineStorageOptions: OfflineStorageOptions | undefined) {
     if (!offlineStorageOptions || !offlineStorageOptions.cachePath) {
       throw new Error("Cache Path must be set before Raygun can cache offline");
     }

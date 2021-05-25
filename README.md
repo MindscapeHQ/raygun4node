@@ -198,6 +198,25 @@ Call setVersion(*string*) on a RaygunClient to set the version of the calling ap
 
 Starting from 0.10.0 support for inner errors was added. Provide option `innerErrorFieldName` to specify a field or a function on the error object to use for retrieval of an inner error. Inner errors will be retrieved recursively until there is no more errors. Option `innerErrorFieldName` defaults to `cause` which is used in [VError](https://github.com/joyent/node-verror), therefore `VError` is supported out of the box.
 
+### Reporting uncaught exceptions
+
+You can enable reporting uncaught exceptions to Raygun by setting the `reportUncaughtExceptions` option to `true` when initializing the client.
+
+```js
+const {Raygun} = require('raygun');
+
+const raygunClient = new Raygun.Client().init({
+  apiKey: process.env.RAYGUN_API_KEY,
+  reportUncaughtExceptions: true
+});
+```
+
+This will cause any uncaught exceptions to be sent to Raygun prior to the process exiting.
+
+Please note that this feature requires raygun>=0.13.0 and at least Node v12.17.0 or v13.7.0. This is due to the use of the `uncaughtExceptionMonitor` event, which allows monitoring uncaught exceptions without impacting standard process exit logic.
+
+This feature is preferable to using the `domains` module for this purpose, as `domains` is both deprecated and carries a heavy performance overhead.
+
 ### Changing the API endpoint
 
 You can change the endpoint that error messages are sent to by specifying the `host`, `port`, and `useSSL` properties in the `raygunClient.init()` options hash. By default, `host` is `api.raygun.io`, `port` is `443`, and `useSSL` is `true`.
