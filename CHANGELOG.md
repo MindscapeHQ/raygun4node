@@ -1,3 +1,6 @@
+## 0.13.0
+- Fatal errors can now be reported to Raygun by enabling the  `reportUncaughtExceptions` when initializing the client
+
 ## 0.12.4
 - Expose Raygun Client types for use in TypeScript projects
 
