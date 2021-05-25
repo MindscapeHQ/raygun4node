@@ -9,24 +9,9 @@
 "use strict";
 
 import { spawnSync } from "child_process";
-
-import type { IncomingMessage, RequestOptions } from "http";
-import {
-  isCallbackWithError,
-  callVariadicCallback,
-  SendOptionsWithoutCB,
-} from "./types";
+import { SendOptionsWithoutCB } from "./types";
 
 const debug = require("debug")("raygun");
-
-const API_HOST = "api.raygun.io";
-const DEFAULT_ENDPOINT = "/entries";
-const BATCH_ENDPOINT = "/entries/bulk";
-
-const childCode = `
-import http from "http";
-import https from "https";
-`;
 
 const requestProcessSource = require.resolve("./raygun.sync.worker");
 
