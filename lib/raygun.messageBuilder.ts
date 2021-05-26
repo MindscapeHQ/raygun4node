@@ -127,7 +127,11 @@ export class RaygunMessageBuilder {
   }
 
   setErrorDetails(error: any) {
-    if (!(error instanceof Error) && this.options.useHumanStringForObject) {
+    if (
+      !(error instanceof Error) &&
+      typeof error !== "string" &&
+      this.options.useHumanStringForObject
+    ) {
       error = humanString(error);
       this.message.details.groupingKey = error
         .replace(/\W+/g, "")

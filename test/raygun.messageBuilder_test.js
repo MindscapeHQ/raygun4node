@@ -58,6 +58,16 @@ test("basic builder tests", function (t) {
     tt.end();
   });
 
+  t.test("humanise leaves strings intact", function (tt) {
+    var builder = new MessageBuilder({ useHumanStringForObject: true });
+    builder.setErrorDetails("my awesome error");
+
+    var message = builder.build();
+    tt.notOk(message.details.groupingKey);
+    tt.equal("my awesome error", message.details.error.message);
+    tt.end();
+  });
+
   t.test("dont humanise string", function (tt) {
     var builder = new MessageBuilder({ useHumanStringForObject: false });
     builder.setErrorDetails({ name: "Test" });
