@@ -1,3 +1,6 @@
+## 0.13.1
+- Fix format of exceptions when calling `raygunClient.send` with a string value
+
 ## 0.13.0
 - Fatal errors can now be reported to Raygun by enabling the  `reportUncaughtExceptions` when initializing the client
 
