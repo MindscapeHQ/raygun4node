@@ -141,6 +141,8 @@ export class RaygunMessageBuilder {
     if (typeof error === "string") {
       this.message.details.error = {
         message: error,
+        stackTrace: [],
+        className: "Error",
       };
 
       return this;
