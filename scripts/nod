@@ -1,0 +1,94 @@
+#!/usr/bin/env node
+
+const { spawn, exec } = require('child_process');
+const os = require('os');
+const fs = require('fs');
+const path = require('path');
+
+const args = process.argv.slice(2);
+const version = args.shift();
+
+const nodPath = path.resolve(os.homedir(), '.nod');
+const versionsPath = path.join(nodPath, 'versions');
+const vPath = path.join(versionsPath, version);
+
+const IS_WINDOWS = process.platform === "win32";
+const PATH_VAR_SEPARATOR = IS_WINDOWS ? ';' : ':';
+const binPath = IS_WINDOWS ? vPath : path.join(vPath, 'bin');
+const nodePath = path.join(binPath, 'node');
+
+function ensureDirExists(path) {
+  if (!fs.existsSync(path)) {
+    fs.mkdirSync(path);
+  }
+}
+
+ensureDirExists(nodPath);
+ensureDirExists(versionsPath);
+ensureDirExists(vPath);
+
+function runInstall(cb) {
+  const install = exec(`npm install node@${version} --prefix ${vPath} -g`);
+
+  install.stdout.on('data', data => {
+    console.log(data.toString('utf-8'));
+  });
+
+  install.stderr.on('data', data => {
+    console.error(data.toString('utf-8'));
+  });
+
+  install.on('close', code => {
+    if (code === 0) {
+      fs.writeFileSync(path.join(vPath, '.complete'), 'true');
+    }
+    cb(code);
+  });
+}
+
+function runCommand() {
+  const nodeModulesBinPath = path.join(process.cwd(), 'node_modules', '.bin');
+  const pathEnv = [binPath, nodeModulesBinPath, process.env.PATH].join(PATH_VAR_SEPARATOR);
+
+  const env = {
+    ...process.env,
+    NOD_BINARY: nodePath,
+    PATH: pathEnv,
+    Path: pathEnv
+  };
+
+  if (process.env.CI) {
+    console.log("Using PATH:", pathEnv);
+  }
+
+  const command = args.join(' ');
+  const p = spawn(command, { shell: true, stdio: 'inherit', env });
+
+  p.on('close', code => {
+    process.exit(code);
+  });
+}
+
+function currentNodeVersionOkay() {
+  return process.versions.node.startsWith(version);
+}
+
+if (currentNodeVersionOkay()) {
+  runCommand();
+} else if (!fs.existsSync(nodePath)) {
+  runInstall(code => {
+    if (code !== 0) {
+      throw new Error(`Failed to installed node@${version}`);
+    }
+
+    runCommand();
+  });
+} else {
+  if (!fs.existsSync(path.join(vPath, '.complete'))) {
+    console.error(
+      `Node ${version} installation is incomplete. Please delete ${versionPath} and try again.`,
+    );
+    process.exit(1);
+  }
+  runCommand();
+}
