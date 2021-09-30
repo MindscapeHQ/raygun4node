@@ -1,19 +1,17 @@
 var express = require("express");
 var test = require("tap").test;
 
-var { listen, request, makeClientWithMockServer, sleep } = require("./utils");
-
-var API_KEY = "apikey";
+var { listen, request, makeClientWithMockServer } = require("./utils");
 
 test("reporting express errors", async function (t) {
+  t.plan(1);
   const app = express();
 
   const testEnvironment = await makeClientWithMockServer();
   const raygunClient = testEnvironment.client;
 
-  app.get("/", (req, res) => {
+  app.get("/", () => {
     throw new Error("surprise error!");
-    res.send("response!");
   });
 
   app.use(raygunClient.expressHandler);

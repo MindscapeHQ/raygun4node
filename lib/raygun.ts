@@ -9,6 +9,7 @@
 "use strict";
 
 import {
+  Breadcrumb,
   callVariadicCallback,
   Callback,
   CustomData,
@@ -27,6 +28,12 @@ import {
 import type { IncomingMessage } from "http";
 import type { Request, Response, NextFunction } from "express";
 import { RaygunBatchTransport } from "./raygun.batch";
+import {
+  addBreadcrumb,
+  addRequestBreadcrumb,
+  getBreadcrumbs,
+  runWithBreadcrumbs,
+} from "./breadcrumbs";
 import { RaygunMessageBuilder } from "./raygun.messageBuilder";
 import { OfflineStorage } from "./raygun.offline";
 import { startTimer } from "./timer";
@@ -290,6 +297,17 @@ class Raygun {
     }
   }
 
+  breadcrumbs(req: Request, res: Response, next: NextFunction) {
+    runWithBreadcrumbs(() => {
+      addRequestBreadcrumb(req);
+      next();
+    });
+  }
+
+  addBreadcrumb(b: string | Breadcrumb) {
+    addBreadcrumb(b);
+  }
+
   private buildSendOptions(
     exception: Error | string,
     customData?: CustomData,
@@ -351,6 +369,8 @@ class Raygun {
       return { valid: false, message };
     }
 
+    message.details.breadcrumbs = getBreadcrumbs() || [];
+
     function wrappedCallback(
       error: Error | null,
       response: IncomingMessage | null
@@ -404,7 +424,6 @@ class Raygun {
       },
     };
   }
-
   private offlineStorage(): IOfflineStorage {
     let storage = this._offlineStorage;
 
@@ -422,4 +441,5 @@ class Raygun {
 
 export const Client = Raygun;
 export type Client = Raygun;
-export default { Client };
+export { addBreadcrumb, runWithBreadcrumbs };
+export default { Client, addBreadcrumb, runWithBreadcrumbs };
