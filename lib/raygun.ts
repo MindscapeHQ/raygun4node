@@ -117,7 +117,6 @@ class Raygun {
           apiKey: this._apiKey,
         },
       });
-      this._batchTransport.startProcessing();
     }
 
     this.expressHandler = this.expressHandler.bind(this);
