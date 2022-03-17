@@ -28,7 +28,7 @@ const MAX_BATCH_INNER_SIZE_BYTES = MAX_BATCH_SIZE_BYTES - 2; // for the starting
 
 export class RaygunBatchTransport {
   private messageQueue: MessageAndCallback[] = [];
-  private intervalId: any | null = null;
+  private timerId: any | null = null;
   private httpOptions: HTTPOptions;
   private interval: number;
   private batchId: number = 0;
@@ -43,21 +43,18 @@ export class RaygunBatchTransport {
       serializedMessage: options.message,
       callback: options.callback,
     });
-  }
 
-  startProcessing() {
-    debug(
-      `batch transport - starting message processor (frequency=${this.interval})`
-    );
-    this.intervalId = setInterval(this.process.bind(this), this.interval);
+    if (!this.timerId) {
+      this.timerId = setTimeout(this.process.bind(this), 1);
+    }
   }
 
   stopProcessing() {
-    if (this.intervalId) {
+    if (this.timerId) {
       debug("batch transport - stopping");
-      clearInterval(this.intervalId);
+      clearInterval(this.timerId);
 
-      this.intervalId = null;
+      this.timerId = null;
     }
   }
 
@@ -101,11 +98,18 @@ export class RaygunBatchTransport {
     );
 
     const stopTimer = startTimer();
+
     sendBatch({
       message: payload,
       callback: runAllCallbacks,
       http: this.httpOptions,
     });
+
+    if (this.messageQueue.length > 0) {
+      this.timerId = setTimeout(this.process.bind(this), 1000);
+    } else {
+      this.timerId = null;
+    }
   }
 }
 
