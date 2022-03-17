@@ -127,6 +127,18 @@ export function prepareBatch(
 
     const { serializedMessage, callback } = messageQueue[0];
 
+    if (serializedMessage.length >= MAX_BATCH_INNER_SIZE_BYTES) {
+      const messageSize = Math.ceil(serializedMessage.length / 1024);
+      const startOfMessage = serializedMessage.slice(0, 1000);
+
+      console.warn(
+        `[raygun4node] Error is too large to send to Raygun (${messageSize}kb)\nStart of error: ${startOfMessage}`
+      );
+
+      messageQueue.shift();
+      continue;
+    }
+
     if (
       batchSizeBytes + serializedMessage.length >
       MAX_BATCH_INNER_SIZE_BYTES
@@ -135,6 +147,7 @@ export function prepareBatch(
     }
 
     batch.push(serializedMessage);
+
     if (callback) {
       callbacks.push(callback);
     }
