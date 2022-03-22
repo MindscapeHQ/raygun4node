@@ -1,6 +1,7 @@
 var express = require("express");
 var test = require("tap").test;
 
+const { MAX_BATCH_SIZE_BYTES } = require("../lib/raygun.batch.ts");
 var { listen, request, makeClientWithMockServer, sleep } = require("./utils");
 
 var API_KEY = "apikey";
@@ -59,6 +60,36 @@ test("batch reporting errors", async function (t) {
   t.same(
     server.bulkEntries[0].map((e) => e.details.error.message),
     ["a", "b", "c"]
+  );
+});
+
+test("batch transport discards massive errors", async function (t) {
+  const {
+    client,
+    server,
+    stop,
+    nextBatchRequest,
+  } = await makeClientWithMockServer({
+    batch: true,
+    batchFrequency: 1000,
+  });
+
+  client.send(new Error("a".repeat(MAX_BATCH_SIZE_BYTES)));
+  client.send(new Error("b"));
+
+  try {
+    await nextBatchRequest({ maxWait: 2000 });
+  } catch (e) {
+    throw e;
+  } finally {
+    stop();
+  }
+
+  t.equal(server.entries.length, 0);
+  t.equal(server.bulkEntries.length, 1);
+  t.same(
+    server.bulkEntries[0].map((e) => e.details.error.message),
+    ["b"]
   );
 });
 
