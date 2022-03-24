@@ -66,7 +66,7 @@ export class RaygunBatchTransport {
 
   private onIncomingMessage(messageAndCallback: MessageAndCallback) {
     const { serializedMessage, callback } = messageAndCallback;
-    const messageLength = serializedMessage.length;
+    const messageLength = Buffer.byteLength(serializedMessage, "utf-8");
 
     if (messageLength >= MAX_BATCH_INNER_SIZE_BYTES) {
       const messageSize = Math.ceil(messageLength / 1024);
