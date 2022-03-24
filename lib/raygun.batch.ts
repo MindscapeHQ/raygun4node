@@ -50,7 +50,9 @@ export class RaygunBatchTransport {
       callback: options.callback,
     });
 
-    this.timerId = setTimeout(() => this.processBatch(), 1000);
+    if (!this.timerId) {
+      this.timerId = setTimeout(() => this.processBatch(), 1000);
+    }
   }
 
   stopProcessing() {
@@ -115,10 +117,7 @@ export class RaygunBatchTransport {
 
     this.batchState = { messages: [], messageSizeInBytes: 0 };
 
-    if (this.timerId) {
-      clearInterval(this.timerId);
-      this.timerId = null;
-    }
+    this.stopProcessing();
   }
 
   private sendBatch(batch: PreparedBatch) {
