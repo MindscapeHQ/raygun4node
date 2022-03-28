@@ -19,7 +19,12 @@ export type MessageAndCallback = {
 export type PreparedBatch = {
   payload: string;
   messageCount: number;
-  callbacks: Callback<IncomingMessage>[];
+  callbacks: Array<Callback<IncomingMessage> | null>;
+};
+
+export type BatchState = {
+  messages: MessageAndCallback[];
+  messageSizeInBytes: number;
 };
 
 export const MAX_MESSAGES_IN_BATCH = 100;
@@ -27,11 +32,12 @@ export const MAX_BATCH_SIZE_BYTES = 1638400;
 const MAX_BATCH_INNER_SIZE_BYTES = MAX_BATCH_SIZE_BYTES - 2; // for the starting and ending byte
 
 export class RaygunBatchTransport {
-  private messageQueue: MessageAndCallback[] = [];
   private timerId: any | null = null;
   private httpOptions: HTTPOptions;
   private interval: number;
   private batchId: number = 0;
+
+  private batchState: BatchState = { messages: [], messageSizeInBytes: 0 };
 
   constructor(options: { interval: number; httpOptions: HTTPOptions }) {
     this.interval = options.interval;
@@ -39,13 +45,13 @@ export class RaygunBatchTransport {
   }
 
   send(options: SendOptions) {
-    this.messageQueue.push({
+    this.onIncomingMessage({
       serializedMessage: options.message,
       callback: options.callback,
     });
 
     if (!this.timerId) {
-      this.timerId = setTimeout(this.process.bind(this), 1);
+      this.timerId = setTimeout(() => this.processBatch(), 1000);
     }
   }
 
@@ -58,20 +64,71 @@ export class RaygunBatchTransport {
     }
   }
 
-  private process() {
-    debug(
-      `batch transport - processing (${this.messageQueue.length} message(s) in queue)`
-    );
+  private onIncomingMessage(messageAndCallback: MessageAndCallback) {
+    const { serializedMessage, callback } = messageAndCallback;
+    const messageLength = Buffer.byteLength(serializedMessage, "utf-8");
 
-    const { payload, messageCount, callbacks } = prepareBatch(
-      this.messageQueue
-    );
+    if (messageLength >= MAX_BATCH_INNER_SIZE_BYTES) {
+      const messageSize = Math.ceil(messageLength / 1024);
+      const startOfMessage = serializedMessage.slice(0, 1000);
 
-    if (messageCount === 0) {
+      console.warn(
+        `[raygun4node] Error is too large to send to Raygun (${messageSize}kb)\nStart of error: ${startOfMessage}`
+      );
+
       return;
     }
 
+    const messageIsTooLargeToAddToBatch =
+      this.batchState.messageSizeInBytes + messageLength >
+      MAX_BATCH_INNER_SIZE_BYTES;
+
+    if (messageIsTooLargeToAddToBatch) {
+      this.processBatch();
+    }
+
+    if (this.batchState.messages.length === 0) {
+      this.batchState.messageSizeInBytes += messageLength;
+    } else {
+      this.batchState.messageSizeInBytes += messageLength + 1; // to account for the commas between items
+    }
+
+    this.batchState.messages.push(messageAndCallback);
+
+    const batchIsFull = this.batchState.messages.length === 100;
+
+    if (batchIsFull) {
+      this.processBatch();
+    }
+  }
+
+  private processBatch() {
+    const payload = this.batchState.messages
+      .map((m) => m.serializedMessage)
+      .join(",");
+
+    const batch: PreparedBatch = {
+      payload: `[${payload}]`,
+      messageCount: this.batchState.messages.length,
+      callbacks: this.batchState.messages.map((m) => m.callback),
+    };
+
+    this.sendBatch(batch);
+
+    this.batchState = { messages: [], messageSizeInBytes: 0 };
+
+    this.stopProcessing();
+  }
+
+  private sendBatch(batch: PreparedBatch) {
+    const { payload, messageCount, callbacks } = batch;
+
+    debug(
+      `batch transport - processing ( ${messageCount} message(s) in batch)`
+    );
+
     const batchId = this.batchId;
+
     this.batchId++;
 
     const runAllCallbacks = (
@@ -88,8 +145,11 @@ export class RaygunBatchTransport {
           `batch transport - successfully sent batch (id=${batchId}, duration=${durationInMs}ms)`
         );
       }
+
       for (const callback of callbacks) {
-        callVariadicCallback(callback, err, response);
+        if (callback) {
+          callVariadicCallback(callback, err, response);
+        }
       }
     };
 
@@ -104,66 +164,5 @@ export class RaygunBatchTransport {
       callback: runAllCallbacks,
       http: this.httpOptions,
     });
-
-    if (this.messageQueue.length > 0) {
-      this.timerId = setTimeout(this.process.bind(this), 1000);
-    } else {
-      this.timerId = null;
-    }
   }
-}
-
-export function prepareBatch(
-  messageQueue: MessageAndCallback[]
-): PreparedBatch {
-  const batch: string[] = [];
-  const callbacks: Callback<IncomingMessage>[] = [];
-  let batchSizeBytes = 0;
-
-  for (let i = 0; i < MAX_MESSAGES_IN_BATCH; i++) {
-    if (messageQueue.length === 0) {
-      break;
-    }
-
-    const { serializedMessage, callback } = messageQueue[0];
-
-    if (serializedMessage.length >= MAX_BATCH_INNER_SIZE_BYTES) {
-      const messageSize = Math.ceil(serializedMessage.length / 1024);
-      const startOfMessage = serializedMessage.slice(0, 1000);
-
-      console.warn(
-        `[raygun4node] Error is too large to send to Raygun (${messageSize}kb)\nStart of error: ${startOfMessage}`
-      );
-
-      messageQueue.shift();
-      continue;
-    }
-
-    if (
-      batchSizeBytes + serializedMessage.length >
-      MAX_BATCH_INNER_SIZE_BYTES
-    ) {
-      break;
-    }
-
-    batch.push(serializedMessage);
-
-    if (callback) {
-      callbacks.push(callback);
-    }
-
-    if (i === 0) {
-      batchSizeBytes += serializedMessage.length;
-    } else {
-      batchSizeBytes += serializedMessage.length + 1; // to account for the commas between items
-    }
-
-    messageQueue.shift();
-  }
-
-  return {
-    payload: `[${batch.join(",")}]`,
-    messageCount: batch.length,
-    callbacks,
-  };
 }
