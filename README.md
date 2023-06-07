@@ -4,6 +4,13 @@
 
 Raygun.io package for Node, written in TypeScript.
 
+# Where is my app API key?
+
+When sending exceptions to the Raygun service, an app API key is required to map the messages to your application.
+
+When you create a new application in your Raygun dashboard, your app API key is displayed within the instructions page. You can also find the API key by clicking the "Application Settings" button in the side bar of the Raygun dashboard.
+
+
 ## Getting Started
 Install the module with: `npm install raygun`
 
@@ -11,7 +18,7 @@ Install the module with: `npm install raygun`
 const raygun = require('raygun');
 
 const raygunClient = new raygun.Client().init({
-  apiKey: 'your API key'
+  apiKey: 'YOUR_API_KEY'
 });
 ```
 
@@ -21,7 +28,7 @@ You can also use `import`, which is useful for loading TypeScript definitions. I
 import * as Raygun from 'raygun';
 
 const raygunClient = new Raygun.Client().init({
-  apiKey: 'your API key'
+  apiKey: 'YOUR_API_KEY'
 });
 ```
 
@@ -99,7 +106,7 @@ client.send(new Error(), { 'mykey': 'beta' }, function (response){ });
 If you're using the `raygunClient.expressHandler`, you can send custom data along by setting `raygunClient.expressCustomData` to a function. The function will get two parameters, the error being thrown, and the request object.
 
 ```javascript
-const raygunClient = new raygun.Client().init({apiKey: "yourkey"});
+const raygunClient = new raygun.Client().init({apiKey: "YOUR_API_KEY"});
 
 raygunClient.expressCustomData = function (err, req) {
   return { 'level': err.level };
@@ -125,14 +132,14 @@ If you want to filter any of the request data then you can pass in an array of k
 you init the client. For example:
 ```javascript
 const raygun = require('raygun');
-const raygunClient = new raygun.Client().init({ apiKey: 'your API key', filters: ['password', 'creditcard'] });
+const raygunClient = new raygun.Client().init({ apiKey: 'YOUR_API_KEY', filters: ['password', 'creditcard'] });
 ```
 
 ### Tags
 
 You can add tags to your error in the Send() function, as the fifth parameter. For example:
 ```javascript
-client.send(new Error(), {}, function () {}, {}, ['custom tag 1', 'important error']);
+client.send(new Error(), {}, function () {}, {}, ['Custom Tag 1', 'Important Error']);
 ```
 
 Tags can also be set globally using setTags
@@ -148,7 +155,7 @@ New in 0.4: You can set **raygunClient.user** to a function that returns the use
 An example, using the Passport.js middleware:
 
 ```javascript
-const raygunClient = new raygun.Client().init({apiKey: "yourkey"});
+const raygunClient = new raygun.Client().init({apiKey: "YOUR_API_KEY"});
 
 raygunClient.user = function (req) {
   if (req.user) {
@@ -206,7 +213,7 @@ You can enable reporting uncaught exceptions to Raygun by setting the `reportUnc
 const {Raygun} = require('raygun');
 
 const raygunClient = new Raygun.Client().init({
-  apiKey: process.env.RAYGUN_API_KEY,
+  apiKey: 'YOUR_API_KEY',
   reportUncaughtExceptions: true
 });
 ```
@@ -250,7 +257,7 @@ You can enable a batched transport mode for the Raygun client by passing `{batch
 
 ```javascript
 const raygunClient = new raygun.Client().init({
-  apiKey: 'API-KEY',
+  apiKey: 'YOUR_API_KEY',
   batch: true,
   batchFrequency: 5000 // defaults to 1000ms (every second)
 });
@@ -276,7 +283,7 @@ When creating your Raygun client you need to pass through a cache path
 
 ```javascript
 const raygunClient = new raygun.Client().init({
-  apiKey: 'API-KEY',
+  apiKey: 'YOUR_API_KEY',
   isOffline: false,
   offlineStorageOptions: {
     cachePath: 'raygunCache/',
@@ -309,7 +316,7 @@ Example:
 const sqlStorageProvider = new SQLStorageProvider();
 
 const raygunClient = new raygun.Client().init({
-  apiKey: 'API-KEY',
+  apiKey: 'YOUR_API_KEY',
   isOffline: false,
   offlineStorage: sqlStorageProvider,
   offlineStorageOptions: {
@@ -337,7 +344,7 @@ When initializing Raygun, pass through a `groupingKey` function.
 
 ```javascript
 const raygunClient = new raygun.Client().init({
-  apiKey: 'YOUR_KEY',
+  apiKey: 'YOUR_API_KEY',
   groupingKey: function(message, exception, customData, request, tags) {
     return "CUSTOMKEY";
   }
@@ -352,7 +359,7 @@ To disable it:
 
 ```javascript
 const raygunClient = new raygun.Client().init({
-  apiKey: 'YOUR_KEY',
+  apiKey: 'YOUR_API_KEY',
   useHumanStringForObject: false
 });
 ```
@@ -365,12 +372,70 @@ By default Raygun4Node doesn't include column numbers in the stack trace. To inc
 
 ```javascript
 const raygunClient = new raygun.Client().init({
-  apiKey: 'YOUR_KEY',
+  apiKey: 'YOUR_API_KEY',
   reportColumnNumbers: true
 });
 ```
 
 Including column numbers can enable source mapping if you have minified or transpiled code in your stack traces.
+
+### Source maps
+
+Raygun supports source mapping for Node.js stacktraces which include column numbers. To enable this feature you will need to upload your map files to the JavaScript Source Map Center and enable the processing of Node.js error stacktraces.
+
+##### Using Private Source Maps with Node.js apps
+Raygun supports source mapping for Node.js stacktraces which include column numbers. To enable this feature simply upload your map files as per the instructions on this page and enable the processing of Node.js errors with this setting in Raygun.
+
+### Node.js source maps
+
+Managing files in the JavaScript Source Map Center
+Files in the JavaScript Source Map Center can be managed via a few API calls.
+
+A GET request to `https://app.raygun.com/jssymbols/[applicationIdentifier]` will return a JSON object listing all files within the center. eg.
+
+```bash
+curl
+  -X GET
+  -u my@email.com:mypassword
+  https://app.raygun.com/jssymbols/[applicationIdentifier]
+```
+
+Returns:
+
+```json
+{
+  "Count": totalNumberOfItems,
+  "Items": [
+    {
+       "Url": "https://urlOfItem",
+       "FileName": "fileName.js",
+       "UploadedOn": "2016-01-01..."
+    },
+    ...
+  ]
+}
+```
+
+A DELETE request to `https://app.raygun.com/jssymbols/[applicationIdentifier]/all` will remove all files within the center. eg.
+
+```bash
+curl
+  -X DELETE
+  -u my@email.com:mypassword
+  https://app.raygun.com/jssymbols/[applicationIdentifier]/all
+```
+
+A DELETE request to `https://app.raygun.com/jssymbols/[applicationIdentifier]` will remove files with the specified URLS from the center. eg.
+
+```bash
+curl
+  -X DELETE
+  -u my@email.com:mypassword
+  -F "url=https://example.com/js/myjs.min.map"
+  https://app.raygun.com/jssymbols/[applicationIdentifier]
+```
+
+All requests use the same authentication methods as the upload call (Basic Authentication and Token Authentication).
 
 ### Examples
 View a screencast on creating an app with Node.js and Express.js, then hooking up the error handling and sending them at [http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/](http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/)
