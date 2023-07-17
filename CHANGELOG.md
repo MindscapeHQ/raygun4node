@@ -1,3 +1,8 @@
+## 0.13.2
+- Fix batch transport keeping process alive
+- Fix batch transport stalling on huge errors
+- Improve batch transport performance with high error rates
+
 ## 0.13.1
 - Fix format of exceptions when calling `raygunClient.send` with a string value
 
