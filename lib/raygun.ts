@@ -276,8 +276,18 @@ class Raygun {
       customData = this.expressCustomData;
     }
 
-    // TODO: Convert the res Request to a RequestParams
-    this.send(err, customData || {}, function () {}, req, [
+    // Convert the Express Request to an object that can be sent to Raygun
+    const requestParams: RequestParams = {
+      hostname: req.hostname,
+      path: req.path,
+      method: req.method,
+      ip: req.ip ?? '',
+      query: req.query,
+      headers: req.headers,
+      body: req.body,
+    };
+
+    this.send(err, customData || {}, function () {}, requestParams, [
       "UnhandledException",
     ]);
     next(err);
