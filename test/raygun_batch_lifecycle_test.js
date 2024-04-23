@@ -12,7 +12,7 @@ test("batch transport doesn't keep processes alive", async (t) => {
           return reject(error);
         }
 
-        t.assert(process.exitCode === 0);
+        t.ok(process.exitCode === 0);
         resolve();
       }
     );

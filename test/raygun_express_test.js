@@ -26,7 +26,7 @@ test("reporting express errors", async function (t) {
   server.close();
   testEnvironment.stop();
 
-  t.assert(
+  t.ok(
     message.details.tags.includes("UnhandledException"),
     `Expected message to include tag "UnhandledException" but instead found: ${message.details.tags}`
   );
@@ -116,7 +116,7 @@ test("exceptions are propagated by middleware", async function (t) {
   });
 
   function testErrorHandler(err, req, res, next) {
-    t.assert(err.message === "surprise error!");
+    t.equal(err.message, "surprise error!");
     next(err);
   }
 
