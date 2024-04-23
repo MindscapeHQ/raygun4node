@@ -34,7 +34,7 @@
     "tslint": "tslint --fix --project .",
     "prettier": "prettier --write lib/*.ts test/*.js",
     "prepare": "tsc",
-    "test": "tap --no-ts --node-arg=-r --node-arg=ts-node/register --no-coverage test/*_test.js"
+    "test": "tap --node-arg=-r --node-arg=ts-node/register --disable-coverage test/*_test.js"
   },
   "devDependencies": {
     "@types/node": "^20.12.7",
