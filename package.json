@@ -44,7 +44,7 @@
     "http-terminator": "^2.0.3",
     "jshint": "^2.5.6",
     "nock": "~9",
-    "prettier": "^2.0.4",
+    "prettier": "^3.2.5",
     "semver": "^5.0.3",
     "tap": "^15.0.9",
     "ts-node": "^8.8.2",
