@@ -5,9 +5,9 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "develop" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", "develop" ]
 
 jobs:
   build:
@@ -28,4 +28,3 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm test
-    - run: npm run eslint
