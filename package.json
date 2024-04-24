@@ -31,7 +31,7 @@
     "CHANGELOG.md"
   ],
   "scripts": {
-    "eslint": "eslint --fix lib/*.ts test/*.js",
+    "eslint": "eslint --fix lib/*.ts test/*.js examples/**/*.js",
     "prettier": "prettier --write lib/*.ts test/*.js",
     "prepare": "tsc",
     "test": "tap --node-arg=-r --node-arg=ts-node/register --disable-coverage test/*_test.js"
