@@ -1,33 +1,33 @@
-const util = require("util");
-var childProcess = require("child_process");
+const util = require('util')
+const childProcess = require('child_process')
 
-var test = require("tap").test;
+const test = require('tap').test
 
-var { makeClientWithMockServer } = require("./utils");
+const { makeClientWithMockServer } = require('./utils')
 
-test("reporting uncaught exceptions", async function (t) {
-  const testEnvironment = await makeClientWithMockServer();
-  const messagePromise = testEnvironment.nextRequest();
+test('reporting uncaught exceptions', async function (t) {
+  const testEnvironment = await makeClientWithMockServer()
+  const messagePromise = testEnvironment.nextRequest()
 
   await util
     .promisify(childProcess.exec)(
-      `node -r ts-node/register ./raygun_uncaught_exception_app.js`,
+      'node -r ts-node/register ./raygun_uncaught_exception_app.js',
       {
         cwd: __dirname,
-        stdio: "inherit",
+        stdio: 'inherit',
         env: {
           ...process.env,
-          RAYGUN_API_KEY: "test",
-          RAYGUN_API_PORT: testEnvironment.address.port,
-        },
+          RAYGUN_API_KEY: 'test',
+          RAYGUN_API_PORT: testEnvironment.address.port
+        }
       }
     )
-    .catch(() => {});
+    .catch(() => {})
 
-  const message = await messagePromise;
+  const message = await messagePromise
 
-  testEnvironment.stop();
+  testEnvironment.stop()
 
-  t.equal(message.details.error.message, "test");
-  t.end();
-});
+  t.equal(message.details.error.message, 'test')
+  t.end()
+})

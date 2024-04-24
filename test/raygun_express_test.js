@@ -1,167 +1,167 @@
-var express = require("express");
-var test = require("tap").test;
+const express = require('express')
+const test = require('tap').test
 
-const { MAX_BATCH_SIZE_BYTES } = require("../lib/raygun.batch.ts");
-var { listen, request, makeClientWithMockServer, sleep } = require("./utils");
+const { MAX_BATCH_SIZE_BYTES } = require('../lib/raygun.batch.ts')
+const { listen, request, makeClientWithMockServer, sleep } = require('./utils')
 
-var API_KEY = "apikey";
+const API_KEY = 'apikey'
 
-test("reporting express errors", async function (t) {
-  const app = express();
+test('reporting express errors', async function (t) {
+  const app = express()
 
-  const testEnvironment = await makeClientWithMockServer();
-  const raygunClient = testEnvironment.client;
+  const testEnvironment = await makeClientWithMockServer()
+  const raygunClient = testEnvironment.client
 
-  app.get("/", (req, res) => {
-    throw new Error("surprise error!");
-    res.send("response!");
-  });
+  app.get('/', (req, res) => {
+    throw new Error('surprise error!')
+    res.send('response!')
+  })
 
-  app.use(raygunClient.expressHandler);
+  app.use(raygunClient.expressHandler)
 
-  const server = await listen(app);
-  await request(`http://localhost:${server.address().port}`);
-  const message = await testEnvironment.nextRequest();
+  const server = await listen(app)
+  await request(`http://localhost:${server.address().port}`)
+  const message = await testEnvironment.nextRequest()
 
-  server.close();
-  testEnvironment.stop();
+  server.close()
+  testEnvironment.stop()
 
   t.ok(
-    message.details.tags.includes("UnhandledException"),
+    message.details.tags.includes('UnhandledException'),
     `Expected message to include tag "UnhandledException" but instead found: ${message.details.tags}`
-  );
-});
+  )
+})
 
-test("batch reporting errors", async function (t) {
+test('batch reporting errors', async function (t) {
   const {
     client,
     server,
     stop,
-    nextBatchRequest,
+    nextBatchRequest
   } = await makeClientWithMockServer({
     batch: true,
-    batchFrequency: 1000,
-  });
+    batchFrequency: 1000
+  })
 
-  client.send(new Error("a"));
-  client.send(new Error("b"));
-  client.send(new Error("c"));
+  client.send(new Error('a'))
+  client.send(new Error('b'))
+  client.send(new Error('c'))
 
   try {
-    const message = await nextBatchRequest({ maxWait: 2000 });
+    const message = await nextBatchRequest({ maxWait: 2000 })
   } catch (e) {
-    throw e;
+    throw e
   } finally {
-    stop();
+    stop()
   }
 
-  t.equal(server.entries.length, 0);
-  t.equal(server.bulkEntries.length, 1);
+  t.equal(server.entries.length, 0)
+  t.equal(server.bulkEntries.length, 1)
   t.same(
     server.bulkEntries[0].map((e) => e.details.error.message),
-    ["a", "b", "c"]
-  );
-});
+    ['a', 'b', 'c']
+  )
+})
 
-test("batch transport discards massive errors", async function (t) {
+test('batch transport discards massive errors', async function (t) {
   const {
     client,
     server,
     stop,
-    nextBatchRequest,
+    nextBatchRequest
   } = await makeClientWithMockServer({
     batch: true,
-    batchFrequency: 1000,
-  });
+    batchFrequency: 1000
+  })
 
-  client.send(new Error("a".repeat(MAX_BATCH_SIZE_BYTES)));
-  client.send(new Error("b"));
+  client.send(new Error('a'.repeat(MAX_BATCH_SIZE_BYTES)))
+  client.send(new Error('b'))
 
   try {
-    await nextBatchRequest({ maxWait: 2000 });
+    await nextBatchRequest({ maxWait: 2000 })
   } catch (e) {
-    throw e;
+    throw e
   } finally {
-    stop();
+    stop()
   }
 
-  t.equal(server.entries.length, 0);
-  t.equal(server.bulkEntries.length, 1);
+  t.equal(server.entries.length, 0)
+  t.equal(server.bulkEntries.length, 1)
   t.same(
     server.bulkEntries[0].map((e) => e.details.error.message),
-    ["b"]
-  );
-});
+    ['b']
+  )
+})
 
-test("send is bound and can be passed directly", async function (t) {
-  const { client, stop, nextRequest } = await makeClientWithMockServer();
+test('send is bound and can be passed directly', async function (t) {
+  const { client, stop, nextRequest } = await makeClientWithMockServer()
 
-  setTimeout(client.send, 1, new Error("test!"));
+  setTimeout(client.send, 1, new Error('test!'))
 
-  await nextRequest();
+  await nextRequest()
 
-  stop();
-});
+  stop()
+})
 
-test("exceptions are propagated by middleware", async function (t) {
-  t.plan(1);
-  const app = express();
+test('exceptions are propagated by middleware', async function (t) {
+  t.plan(1)
+  const app = express()
 
-  const testEnvironment = await makeClientWithMockServer();
-  const raygunClient = testEnvironment.client;
+  const testEnvironment = await makeClientWithMockServer()
+  const raygunClient = testEnvironment.client
 
-  app.get("/", (req, res) => {
-    throw new Error("surprise error!");
-    res.send("response!");
-  });
+  app.get('/', (req, res) => {
+    throw new Error('surprise error!')
+    res.send('response!')
+  })
 
-  function testErrorHandler(err, req, res, next) {
-    t.equal(err.message, "surprise error!");
-    next(err);
+  function testErrorHandler (err, req, res, next) {
+    t.equal(err.message, 'surprise error!')
+    next(err)
   }
 
-  app.use(raygunClient.expressHandler);
-  app.use(testErrorHandler);
+  app.use(raygunClient.expressHandler)
+  app.use(testErrorHandler)
 
-  const server = await listen(app);
-  await request(`http://localhost:${server.address().port}`);
+  const server = await listen(app)
+  await request(`http://localhost:${server.address().port}`)
 
-  server.close();
-  testEnvironment.stop();
-});
+  server.close()
+  testEnvironment.stop()
+})
 
-test("user function is called even if request is not present", async function (t) {
-  t.plan(1);
+test('user function is called even if request is not present', async function (t) {
+  t.plan(1)
 
-  const testEnvironment = await makeClientWithMockServer();
-  const raygunClient = testEnvironment.client;
+  const testEnvironment = await makeClientWithMockServer()
+  const raygunClient = testEnvironment.client
 
-  raygunClient.user = () => ({ email: "test@null.null" });
+  raygunClient.user = () => ({ email: 'test@null.null' })
 
-  const nextRequest = testEnvironment.nextRequest();
+  const nextRequest = testEnvironment.nextRequest()
 
-  raygunClient.send(new Error("example error"));
+  raygunClient.send(new Error('example error'))
 
-  const message = await nextRequest;
+  const message = await nextRequest
 
-  testEnvironment.stop();
+  testEnvironment.stop()
 
-  t.same(message.details.user, { email: "test@null.null" });
-});
+  t.same(message.details.user, { email: 'test@null.null' })
+})
 
-test("string exceptions are sent intact", async function (t) {
-  t.plan(1);
+test('string exceptions are sent intact', async function (t) {
+  t.plan(1)
 
-  const testEnvironment = await makeClientWithMockServer();
-  const raygunClient = testEnvironment.client;
+  const testEnvironment = await makeClientWithMockServer()
+  const raygunClient = testEnvironment.client
 
-  const nextRequest = testEnvironment.nextRequest();
+  const nextRequest = testEnvironment.nextRequest()
 
-  raygunClient.send("my string error");
+  raygunClient.send('my string error')
 
-  const message = await nextRequest;
+  const message = await nextRequest
 
-  testEnvironment.stop();
+  testEnvironment.stop()
 
-  t.same(message.details.error.message, "my string error");
-});
+  t.same(message.details.error.message, 'my string error')
+})

@@ -1,28 +1,28 @@
-"use strict";
+'use strict'
 
-var test = require("tap").test;
-var Raygun = require("../lib/raygun.ts");
+const test = require('tap').test
+const Raygun = require('../lib/raygun.ts')
 
-var options = {
-  apiKey: process.env.RAYGUN_APIKEY,
-};
+const options = {
+  apiKey: process.env.RAYGUN_APIKEY
+}
 
-test("init", function (t) {
-  t.ok(new Raygun.Client().init(options));
-  t.end();
-});
+test('init', function (t) {
+  t.ok(new Raygun.Client().init(options))
+  t.end()
+})
 
-test("user", function (t) {
-  var client = new Raygun.Client().init(options);
+test('user', function (t) {
+  const client = new Raygun.Client().init(options)
 
   client.user = function (req) {
-    return req.user;
-  };
+    return req.user
+  }
 
-  var req = {
-    user: "theuser",
-  };
+  const req = {
+    user: 'theuser'
+  }
 
-  t.equal(client.user(req), "theuser");
-  t.end();
-});
+  t.equal(client.user(req), 'theuser')
+  t.end()
+})
