@@ -39,7 +39,7 @@
   "devDependencies": {
     "@types/node": "^13.11.1",
     "@types/stack-trace": "0.0.29",
-    "@types/uuid": "^7.0.2",
+    "@types/uuid": "^9.0.8",
     "express": "^4.17.1",
     "http-terminator": "^2.0.3",
     "jshint": "^2.5.6",
@@ -59,7 +59,7 @@
     "debug": "^4.1.1",
     "object-to-human-string": "0.0.3",
     "stack-trace": "0.0.6",
-    "uuid": "^7.0.3"
+    "uuid": "^9.0.1"
   },
   "keywords": []
 }
