@@ -133,7 +133,7 @@ class Raygun {
     return this;
   }
 
-  user(req?: Request): RawUserData | null {
+  user(req?: RequestParams): RawUserData | null {
     return null;
   }
 
@@ -189,7 +189,7 @@ class Raygun {
     exception: Error | string,
     customData?: CustomData,
     callback?: (err: Error | null) => void,
-    request?: Request,
+    request?: RequestParams,
     tags?: Tag[]
   ): Message {
     const sendOptionsResult = this.buildSendOptions(
@@ -251,7 +251,7 @@ class Raygun {
     exception: Error | string,
     customData?: CustomData,
     callback?: (err: Error | null) => void,
-    request?: Request,
+    request?: RequestParams,
     tags?: Tag[]
   ): void {
     const result = this.buildSendOptions(
@@ -276,7 +276,18 @@ class Raygun {
       customData = this.expressCustomData;
     }
 
-    this.send(err, customData || {}, function () {}, req, [
+    // Convert the Express Request to an object that can be sent to Raygun
+    const requestParams: RequestParams = {
+      hostname: req.hostname,
+      path: req.path,
+      method: req.method,
+      ip: req.ip ?? '',
+      query: req.query,
+      headers: req.headers,
+      body: req.body,
+    };
+
+    this.send(err, customData || {}, function () {}, requestParams, [
       "UnhandledException",
     ]);
     next(err);
@@ -293,7 +304,7 @@ class Raygun {
     exception: Error | string,
     customData?: CustomData,
     callback?: Callback<IncomingMessage>,
-    request?: Request,
+    request?: RequestParams,
     tags?: Tag[]
   ): SendOptionsResult {
     let mergedTags: Tag[] = [];
