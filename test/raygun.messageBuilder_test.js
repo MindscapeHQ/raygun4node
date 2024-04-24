@@ -1,5 +1,6 @@
 "use strict";
 
+const deepEqual = require("assert").deepEqual;
 var test = require("tap").test;
 var MessageBuilder = require("../lib/raygun.messageBuilder.ts")
   .RaygunMessageBuilder;
@@ -404,7 +405,7 @@ test("custom tags", function (t) {
     builder.setTags(["a", "bb", "c"]);
     var message = builder.build();
 
-    tt.deepEqual(message.details.tags, ["a", "bb", "c"]);
+    deepEqual(message.details.tags, ["a", "bb", "c"]);
     tt.end();
   });
 
