@@ -1,7 +1,8 @@
 ## [{ticket number/type}:] {title}
 
 ### Description :memo:
-{Description}
+- **Purpose**: What issue does this PR address or what feature does it implement?
+- **Approach**: How does this PR tackle the problem?
 
 **Type of change**
 
