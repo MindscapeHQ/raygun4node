@@ -31,18 +31,21 @@ type UserMessageData = RawUserData | string | undefined;
 const humanString = require("object-to-human-string");
 const packageDetails = require("../package.json");
 
-function filterKeys(obj: { [key: string]: any }, filters: string[]) {
+function filterKeys(obj: object, filters: string[]): object {
   if (!obj || !filters || typeof obj !== "object") {
     return obj;
   }
+  // Make temporary copy of the object to avoid mutating the original
+  // Cast to Record<string, object> to enforce type check and avoid using any
+  const _obj = { ...obj } as Record<string, object>;
   Object.keys(obj).forEach(function (i) {
     if (filters.indexOf(i) > -1) {
-      delete obj[i];
+      delete _obj[i];
     } else {
-      obj[i] = filterKeys(obj[i], filters);
+      _obj[i] = filterKeys(_obj[i], filters);
     }
   });
-  return obj;
+  return _obj;
 }
 
 function getStackTrace(
