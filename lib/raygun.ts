@@ -240,10 +240,8 @@ class Raygun {
       return;
     }
 
-    const client = this;
-
-    process.on("uncaughtExceptionMonitor", function (e) {
-      client.sendSync(e);
+    process.on("uncaughtExceptionMonitor", (e) => {
+      this.sendSync(e);
     });
   }
 
