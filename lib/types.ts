@@ -81,6 +81,8 @@ export type HTTPOptions = {
   apiKey: string;
 };
 
+// Allow any because users are free to set anything as CustomData
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type CustomData = any;
 
 export type RequestParams = ({ host: string } | { hostname: string }) &
