@@ -129,7 +129,8 @@ export class RaygunMessageBuilder {
     return this.message as Message;
   }
 
-  setErrorDetails(error: any) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  setErrorDetails(error: Error | string | any) {
     if (
       !(error instanceof Error) &&
       typeof error !== "string" &&
