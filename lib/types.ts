@@ -1,8 +1,9 @@
 import type { IncomingMessage } from "http";
 
-export type IndexableError = Error & {
-  [key: string]: any;
-};
+// IndexableError is a type that extends the Error type
+// and allows for any additional properties to be added to it.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type IndexableError = Error & Record<string, any>;
 
 export type MessageBuilderOptions = {
   reportColumnNumbers?: boolean;
