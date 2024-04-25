@@ -30,5 +30,8 @@ If applicable, add screenshots to help explain your problem.
  - SDK version: [e.g. 10.5.2]
  - Node/npm versions: [e.g. 21.7.3]
 
-**Additional context**
-Add any other context about the problem here.
+## Logs
+If applicable, include relevant logs or error messages here (please use code blocks to format properly).
+
+## Possible Solution
+If you have suggestions for how the issue might be resolved or investigated, please describe them here.
