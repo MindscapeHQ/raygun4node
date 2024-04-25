@@ -395,19 +395,19 @@ class Raygun {
 
   private offlineTransport(): MessageTransport {
     const transport = this.transport();
-    const client = this;
+    const httpOptions = {
+      host: this._host,
+      port: this._port,
+      useSSL: this._useSSL || false,
+      apiKey: this._apiKey || "",
+    }
 
     return {
       send(message: string) {
         transport.send({
           message,
           callback: () => {},
-          http: {
-            host: client._host,
-            port: client._port,
-            useSSL: !!client._useSSL,
-            apiKey: client._apiKey || "",
-          },
+          http: httpOptions,
         });
       },
     };
