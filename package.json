@@ -31,15 +31,17 @@
     "CHANGELOG.md"
   ],
   "scripts": {
-    "tslint": "tslint --fix --project .",
+    "eslint": "eslint --fix lib/*.ts test/*.js examples/**/*.js",
     "prettier": "prettier --write lib/*.ts test/*.js",
     "prepare": "tsc",
     "test": "tap --node-arg=-r --node-arg=ts-node/register --disable-coverage test/*_test.js"
   },
   "devDependencies": {
+    "@eslint/js": "^9.1.1",
     "@types/node": "^20.12.7",
     "@types/stack-trace": "0.0.33",
     "@types/uuid": "^9.0.8",
+    "eslint": "^8.57.0",
     "express": "^4.19.2",
     "http-terminator": "^3.2.0",
     "jshint": "^2.13.6",
@@ -48,10 +50,8 @@
     "semver": "^7.6.0",
     "tap": "^18.7.2",
     "ts-node": "^10.9.2",
-    "tslint": "^6.1.1",
-    "tslint-config-prettier": "^1.18.0",
-    "tslint-react": "^5.0.0",
     "typescript": "^5.4.5",
+    "typescript-eslint": "^7.7.1",
     "verror": "^1.10.1"
   },
   "dependencies": {
