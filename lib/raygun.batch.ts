@@ -64,7 +64,7 @@ export class RaygunBatchTransport {
   }
 
   private onIncomingMessage(messageAndCallback: MessageAndCallback) {
-    const { serializedMessage} = messageAndCallback;
+    const { serializedMessage } = messageAndCallback;
     const messageLength = Buffer.byteLength(serializedMessage, "utf-8");
 
     if (messageLength >= MAX_BATCH_INNER_SIZE_BYTES) {
@@ -72,7 +72,7 @@ export class RaygunBatchTransport {
       const startOfMessage = serializedMessage.slice(0, 1000);
 
       console.warn(
-        `[raygun4node] Error is too large to send to Raygun (${messageSize}kb)\nStart of error: ${startOfMessage}`
+        `[raygun4node] Error is too large to send to Raygun (${messageSize}kb)\nStart of error: ${startOfMessage}`,
       );
 
       return;
@@ -123,7 +123,7 @@ export class RaygunBatchTransport {
     const { payload, messageCount, callbacks } = batch;
 
     debug(
-      `batch transport - processing ( ${messageCount} message(s) in batch)`
+      `batch transport - processing ( ${messageCount} message(s) in batch)`,
     );
 
     const batchId = this.batchId;
@@ -132,16 +132,16 @@ export class RaygunBatchTransport {
 
     const runAllCallbacks = (
       err: Error | null,
-      response: IncomingMessage | null
+      response: IncomingMessage | null,
     ) => {
       const durationInMs = stopTimer();
       if (err) {
         debug(
-          `batch transport - error sending batch (id=${batchId}, duration=${durationInMs}ms): ${err}`
+          `batch transport - error sending batch (id=${batchId}, duration=${durationInMs}ms): ${err}`,
         );
       } else {
         debug(
-          `batch transport - successfully sent batch (id=${batchId}, duration=${durationInMs}ms)`
+          `batch transport - successfully sent batch (id=${batchId}, duration=${durationInMs}ms)`,
         );
       }
 
@@ -153,7 +153,7 @@ export class RaygunBatchTransport {
     };
 
     debug(
-      `batch transport - sending batch (id=${batchId}) (${messageCount} messages, ${payload.length} bytes)`
+      `batch transport - sending batch (id=${batchId}) (${messageCount} messages, ${payload.length} bytes)`,
     );
 
     const stopTimer = startTimer();

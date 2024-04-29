@@ -35,7 +35,7 @@ test("offline message storage and sending", async function (t) {
   t.equal(
     files.length,
     1,
-    `Expected to find 1 error file but instead found ${files.length}`
+    `Expected to find 1 error file but instead found ${files.length}`,
   );
 
   const file = files[0];
@@ -55,7 +55,7 @@ test("offline message storage and sending", async function (t) {
   t.equal(
     filesAfterSend.length,
     0,
-    `Expected to find no stored error files but instead found ${filesAfterSend.length}`
+    `Expected to find no stored error files but instead found ${filesAfterSend.length}`,
   );
 
   testEnvironment.stop();
@@ -91,7 +91,7 @@ test("batched offline message storage and sending", async function (t) {
   t.equal(
     files.length,
     1,
-    `Expected to find 1 error file but instead found ${files.length}`
+    `Expected to find 1 error file but instead found ${files.length}`,
   );
 
   const file = files[0];
@@ -110,7 +110,7 @@ test("batched offline message storage and sending", async function (t) {
   t.equal(
     filesAfterSend.length,
     0,
-    `Expected to find no stored error files but instead found ${filesAfterSend.length}`
+    `Expected to find no stored error files but instead found ${filesAfterSend.length}`,
   );
 
   t.same(batch.map((e) => e.details.error.message).sort(), [

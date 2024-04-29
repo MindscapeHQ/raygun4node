@@ -20,7 +20,7 @@ test("reporting uncaught exceptions", async function (t) {
           RAYGUN_API_KEY: "test",
           RAYGUN_API_PORT: testEnvironment.address.port,
         },
-      }
+      },
     )
     .catch(() => {});
 

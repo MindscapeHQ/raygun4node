@@ -190,21 +190,21 @@ class Raygun {
     customData?: CustomData,
     callback?: (err: Error | null) => void,
     request?: RequestParams,
-    tags?: Tag[]
+    tags?: Tag[],
   ): Message {
     const sendOptionsResult = this.buildSendOptions(
       exception,
       customData,
       callback,
       request,
-      tags
+      tags,
     );
 
     const message = sendOptionsResult.message;
 
     if (!sendOptionsResult.valid) {
       console.error(
-        `Encountered an error sending an error to Raygun. No API key is configured, please ensure .init is called with api key. See docs for more info.`
+        `Encountered an error sending an error to Raygun. No API key is configured, please ensure .init is called with api key. See docs for more info.`,
       );
       return sendOptionsResult.message;
     }
@@ -214,7 +214,7 @@ class Raygun {
     if (this._isOffline) {
       this.offlineStorage().save(
         JSON.stringify(message),
-        callback || emptyCallback
+        callback || emptyCallback,
       );
     } else {
       this.transport().send(sendOptions);
@@ -234,7 +234,7 @@ class Raygun {
       (major === 13 && minor < 7)
     ) {
       console.log(
-        "[Raygun] Warning: reportUncaughtExceptions requires at least Node v12.17.0 or v13.7.0. Uncaught exceptions will not be automatically reported."
+        "[Raygun] Warning: reportUncaughtExceptions requires at least Node v12.17.0 or v13.7.0. Uncaught exceptions will not be automatically reported.",
       );
 
       return;
@@ -250,14 +250,14 @@ class Raygun {
     customData?: CustomData,
     callback?: (err: Error | null) => void,
     request?: RequestParams,
-    tags?: Tag[]
+    tags?: Tag[],
   ): void {
     const result = this.buildSendOptions(
       exception,
       customData,
       callback,
       request,
-      tags
+      tags,
     );
 
     if (result.valid) {
@@ -279,7 +279,7 @@ class Raygun {
       hostname: req.hostname,
       path: req.path,
       method: req.method,
-      ip: req.ip ?? '',
+      ip: req.ip ?? "",
       query: req.query,
       headers: req.headers,
       body: req.body,
@@ -303,7 +303,7 @@ class Raygun {
     customData?: CustomData,
     callback?: Callback<IncomingMessage>,
     request?: RequestParams,
-    tags?: Tag[]
+    tags?: Tag[],
   ): SendOptionsResult {
     let mergedTags: Tag[] = [];
 
@@ -361,7 +361,7 @@ class Raygun {
 
     function wrappedCallback(
       error: Error | null,
-      response: IncomingMessage | null
+      response: IncomingMessage | null,
     ) {
       const durationInMs = stopTimer();
       if (error) {
@@ -400,7 +400,7 @@ class Raygun {
       port: this._port,
       useSSL: this._useSSL || false,
       apiKey: this._apiKey || "",
-    }
+    };
 
     return {
       send(message: string) {
@@ -421,7 +421,7 @@ class Raygun {
     }
 
     storage = this._offlineStorage = new OfflineStorage(
-      this.offlineTransport()
+      this.offlineTransport(),
     );
 
     return storage;
