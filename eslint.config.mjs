@@ -16,8 +16,9 @@ export default tseslint.config(
                     "args": "none",
                 }
             ],
-            // TODO: Remove ignored rules and fix the code
+            // Required to import JS modules
             "@typescript-eslint/no-var-requires": "off",
+            // TODO: Remove ignored rules and fix the code
             "no-undef": "off",
             "no-unreachable": "off",
             "no-useless-catch": "off",
