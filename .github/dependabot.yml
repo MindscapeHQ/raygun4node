@@ -1,7 +1,46 @@
 version: 2
 updates:
+
+# raygun4node
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "weekly"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
 
+# example: express
+  - package-ecosystem: "npm"
+    directory: "/examples/express-sample"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    ignore:
+      # Package in example is accessed by path, 
+      # do not update in package.json.
+      - dependency-name: "raygun4node"
+
+# example: domains
+  - package-ecosystem: "npm"
+    directory: "/examples/using-domains"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    ignore:
+      # Package in example is accessed by path, 
+      # do not update in package.json.
+      - dependency-name: "raygun4node"
+
+# Github Actions dependencies updates config
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
