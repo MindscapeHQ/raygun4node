@@ -8,17 +8,12 @@ export default tseslint.config(
     ...tseslint.configs.recommended,
     {
         rules: {
+            // Unused vars reported as error
             "@typescript-eslint/no-unused-vars": [
                 "error",
                 {
                     // Do not report unused function arguments
                     "args": "none",
-                    // "argsIgnorePattern": "^_",
-                    // "caughtErrors": "all",
-                    // "caughtErrorsIgnorePattern": "^_",
-                    // "destructuredArrayIgnorePattern": "^_",
-                    // "varsIgnorePattern": "^_",
-                    // "ignoreRestSiblings": true
                 }
             ],
             // TODO: Remove ignored rules and fix the code
