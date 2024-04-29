@@ -224,7 +224,7 @@ class Raygun {
   }
 
   private reportUncaughtExceptions() {
-    const [major, minor, patch, ...rest] = process.versions.node
+    const [major, minor] = process.versions.node
       .split(".")
       .map((part) => parseInt(part, 10));
 
@@ -240,10 +240,8 @@ class Raygun {
       return;
     }
 
-    const client = this;
-
-    process.on("uncaughtExceptionMonitor", function (e) {
-      client.sendSync(e);
+    process.on("uncaughtExceptionMonitor", (e) => {
+      this.sendSync(e);
     });
   }
 
@@ -397,19 +395,19 @@ class Raygun {
 
   private offlineTransport(): MessageTransport {
     const transport = this.transport();
-    const client = this;
+    const httpOptions = {
+      host: this._host,
+      port: this._port,
+      useSSL: this._useSSL || false,
+      apiKey: this._apiKey || "",
+    }
 
     return {
       send(message: string) {
         transport.send({
           message,
           callback: () => {},
-          http: {
-            host: client._host,
-            port: client._port,
-            useSSL: !!client._useSSL,
-            apiKey: client._apiKey || "",
-          },
+          http: httpOptions,
         });
       },
     };

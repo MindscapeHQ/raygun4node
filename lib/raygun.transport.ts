@@ -18,8 +18,6 @@ import {
   SendOptions,
 } from "./types";
 
-const debug = require("debug")("raygun");
-
 const API_HOST = "api.raygun.io";
 const DEFAULT_ENDPOINT = "/entries";
 const BATCH_ENDPOINT = "/entries/bulk";

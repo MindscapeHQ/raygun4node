@@ -5,7 +5,7 @@ const { promisify } = require("util");
 
 const test = require("tap").test;
 
-const { listen, request, makeClientWithMockServer, sleep } = require("./utils");
+const { makeClientWithMockServer } = require("./utils");
 
 test("offline message storage and sending", async function (t) {
   const cachePath = fs.mkdtempSync(path.join(os.tmpdir(), "raygun4node-test"));

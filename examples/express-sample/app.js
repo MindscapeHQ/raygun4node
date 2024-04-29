@@ -1,5 +1,10 @@
 var config = require('config');
 
+if (config.Raygun.Key === 'YOUR_API_KEY') {
+    console.error('You need to set your Raygun API key in the config file');
+    process.exit(1);
+}
+
 // Setup Raygun
 var raygun = require('raygun');
 var raygunClient = new raygun.Client().init({
@@ -8,7 +13,6 @@ var raygunClient = new raygun.Client().init({
 
 var express = require('express');
 var path = require('path');
-var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');

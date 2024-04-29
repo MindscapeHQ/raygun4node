@@ -20,32 +20,12 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm ci
     - run: npm test
-
-  prettier:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          ref: ${{ github.head_ref }}
-          persist-credentials: false
-
-      - name: Prettify code
-        uses: creyD/prettier_action@v4.3
-        with:
-          # "dry" causes that if any file is modified, the job fails
-          dry: True
-          # "write" enforces changes in place
-          prettier_options: --write lib/*.ts test/*.js examples/**/*.js
-          github_token: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
-
+    - run: npm run eslint

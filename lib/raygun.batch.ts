@@ -4,7 +4,6 @@ import type { IncomingMessage } from "http";
 import {
   callVariadicCallback,
   Callback,
-  Message,
   HTTPOptions,
   SendOptions,
 } from "./types";
@@ -32,7 +31,7 @@ export const MAX_BATCH_SIZE_BYTES = 1638400;
 const MAX_BATCH_INNER_SIZE_BYTES = MAX_BATCH_SIZE_BYTES - 2; // for the starting and ending byte
 
 export class RaygunBatchTransport {
-  private timerId: any | null = null;
+  private timerId: NodeJS.Timeout | null = null;
   private httpOptions: HTTPOptions;
   private interval: number;
   private batchId: number = 0;
@@ -65,7 +64,7 @@ export class RaygunBatchTransport {
   }
 
   private onIncomingMessage(messageAndCallback: MessageAndCallback) {
-    const { serializedMessage, callback } = messageAndCallback;
+    const { serializedMessage} = messageAndCallback;
     const messageLength = Buffer.byteLength(serializedMessage, "utf-8");
 
     if (messageLength >= MAX_BATCH_INNER_SIZE_BYTES) {
