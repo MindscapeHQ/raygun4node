@@ -32,7 +32,7 @@
   ],
   "scripts": {
     "eslint": "eslint --fix lib/*.ts test/*.js examples/**/*.js",
-    "prettier": "prettier --write lib/*.ts test/*.js",
+    "prettier": "prettier --write lib/*.ts test/*.js examples/**/*.js",
     "prepare": "tsc",
     "test": "tap --node-arg=-r --node-arg=ts-node/register --disable-coverage test/*_test.js"
   },
