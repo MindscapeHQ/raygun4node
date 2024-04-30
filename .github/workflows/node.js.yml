@@ -30,6 +30,9 @@ jobs:
     - run: npm test
     - run: npm run eslint
 
+  # Checks code formatting, fails if there are changes after applying prettier.
+  # Based on this example here:
+  # https://github.com/creyD/prettier_action?tab=readme-ov-file#example-4-dry-run
   prettier:
     runs-on: ubuntu-latest
 
@@ -37,8 +40,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          fetch-depth: 1
+          # Make sure the actual branch is checked out when running on pull requests
           ref: ${{ github.head_ref }}
+          # This is important to fetch the changes to the previous commit
+          fetch-depth: 0
+          # Make sure the value of GITHUB_TOKEN will not be persisted in repo's config
           persist-credentials: false
 
       - name: Prettify code
