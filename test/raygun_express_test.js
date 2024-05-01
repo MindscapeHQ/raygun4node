@@ -12,7 +12,6 @@ test("reporting express errors", async function (t) {
 
   app.get("/", (req, res) => {
     throw new Error("surprise error!");
-    res.send("response!");
   });
 
   app.use(raygunClient.expressHandler);
@@ -102,7 +101,6 @@ test("exceptions are propagated by middleware", async function (t) {
 
   app.get("/", (req, res) => {
     throw new Error("surprise error!");
-    res.send("response!");
   });
 
   function testErrorHandler(err, req, res, next) {
