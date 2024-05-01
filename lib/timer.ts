@@ -4,6 +4,5 @@ export function startTimer(): () => number {
   return function stopTimer() {
     const [seconds, nanoseconds] = process.hrtime(startTime);
     return Math.round(seconds * 1000 + nanoseconds / 1e6); // in milliseconds
-  }
+  };
 }
-

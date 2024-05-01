@@ -16,7 +16,7 @@ function callback(error: Error | null, result: IncomingMessage | null) {
     console.log("Error sending with sync transport", error);
   } else {
     console.log(
-      "[raygun-apm] Successfully reported uncaught exception to Raygun"
+      "[raygun-apm] Successfully reported uncaught exception to Raygun",
     );
   }
 }

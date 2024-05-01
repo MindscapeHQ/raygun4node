@@ -2,8 +2,8 @@
 
 const deepEqual = require("assert").deepEqual;
 var test = require("tap").test;
-var MessageBuilder = require("../lib/raygun.messageBuilder.ts")
-  .RaygunMessageBuilder;
+var MessageBuilder =
+  require("../lib/raygun.messageBuilder.ts").RaygunMessageBuilder;
 var VError = require("verror");
 
 test("basic builder tests", function (t) {
@@ -192,7 +192,7 @@ test("inner error builder tests", function (t) {
     tt.equal(message.details.error.innerError.message, innerErrorMessage);
     tt.equal(
       message.details.error.innerError.innerError.message,
-      innerInnerErrorMessage
+      innerInnerErrorMessage,
     );
 
     tt.end();
@@ -206,7 +206,7 @@ test("VError support", function (t) {
 
   var error = new VError(
     new VError(new VError(innerInnerErrorMessage), innerErrorMessage),
-    "Outer Error"
+    "Outer Error",
   );
 
   var builder = new MessageBuilder({ innerErrorFieldName: "cause" });
@@ -334,17 +334,17 @@ test("user and version builder tests", function (t) {
     tt.equal(
       message.details.user.identifier,
       "testuser",
-      "identifier should be set to the one in the object we returned from the user function"
+      "identifier should be set to the one in the object we returned from the user function",
     );
     tt.equal(
       message.details.user.email,
       "test@example.com",
-      "email should be set to the one in the object we returned from the user function"
+      "email should be set to the one in the object we returned from the user function",
     );
     tt.equal(
       message.details.user.notSupportedProp,
       undefined,
-      "should skip unknown properties"
+      "should skip unknown properties",
     );
     tt.end();
   });

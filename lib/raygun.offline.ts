@@ -28,13 +28,14 @@ export class OfflineStorage implements IOfflineStorage {
   }
 
   private _sendAndDelete(item: string) {
-    fs.readFile(path.join(this.cachePath, item), "utf8", (
-      err,
-      cacheContents
-    ) => {
-      this.transport.send(cacheContents);
-      fs.unlink(path.join(this.cachePath, item), () => {});
-    });
+    fs.readFile(
+      path.join(this.cachePath, item),
+      "utf8",
+      (err, cacheContents) => {
+        this.transport.send(cacheContents);
+        fs.unlink(path.join(this.cachePath, item), () => {});
+      },
+    );
   }
 
   init(offlineStorageOptions: OfflineStorageOptions | undefined) {
@@ -46,7 +47,7 @@ export class OfflineStorage implements IOfflineStorage {
     this.cacheLimit = offlineStorageOptions.cacheLimit || 100;
 
     debug(
-      `offline storage - initialized (cachePath=${this.cachePath}, cacheLimit=${this.cacheLimit}`
+      `offline storage - initialized (cachePath=${this.cachePath}, cacheLimit=${this.cacheLimit}`,
     );
 
     if (!fs.existsSync(this.cachePath)) {
@@ -86,7 +87,7 @@ export class OfflineStorage implements IOfflineStorage {
   }
 
   retrieve(
-    callback: (error: NodeJS.ErrnoException | null, items: string[]) => void
+    callback: (error: NodeJS.ErrnoException | null, items: string[]) => void,
   ) {
     fs.readdir(this.cachePath, callback);
   }
@@ -101,7 +102,7 @@ export class OfflineStorage implements IOfflineStorage {
 
       if (items.length > 0) {
         debug(
-          "offline storage - transporting ${items.length} message(s) from cache"
+          "offline storage - transporting ${items.length} message(s) from cache",
         );
       }
 

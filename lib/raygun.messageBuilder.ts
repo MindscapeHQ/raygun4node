@@ -50,7 +50,7 @@ function filterKeys(obj: object, filters: string[]): object {
 
 function getStackTrace(
   error: Error,
-  options: MessageBuilderOptions
+  options: MessageBuilderOptions,
 ): StackFrame[] {
   const stack: StackFrame[] = [];
   const trace = stackTrace.parse(error);
@@ -78,7 +78,7 @@ function getStackTrace(
 
 function buildError(
   error: IndexableError,
-  options: MessageBuilderOptions
+  options: MessageBuilderOptions,
 ): BuiltError {
   const builtError: BuiltError = {
     stackTrace: getStackTrace(error, options),
