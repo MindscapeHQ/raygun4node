@@ -10,7 +10,6 @@
 
 import fs from "fs";
 import path from "path";
-import * as raygunTransport from "./raygun.transport";
 import {
   MessageTransport,
   IOfflineStorage,
