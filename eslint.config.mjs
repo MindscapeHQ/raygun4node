@@ -7,6 +7,17 @@ export default tseslint.config(
     eslint.configs.recommended,
     ...tseslint.configs.recommended,
     {
+        languageOptions: {
+            // Add node globals to ignore undefined
+            globals: {
+                "__dirname": false,
+                "console": false,
+                "module": false,
+                "process": false,
+                "require": false,
+                "setTimeout": false,
+            }
+        },
         rules: {
             // Unused vars reported as error
             "@typescript-eslint/no-unused-vars": [
@@ -19,7 +30,6 @@ export default tseslint.config(
             // Required to import JS modules
             "@typescript-eslint/no-var-requires": "off",
             // TODO: Remove ignored rules and fix the code
-            "no-undef": "off",
             "no-unreachable": "off",
             "no-useless-catch": "off",
         }

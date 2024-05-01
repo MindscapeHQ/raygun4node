@@ -46,6 +46,7 @@ appDomain.run(function () {
       // Or we can deal with it in our "Fake Error Handler" below
 
       // This will throw an error as fakeErrorHandler doesn't exist
+      // eslint-disable-next-line
       fakeErrorHandler.DealWith(err);
     }
   });
