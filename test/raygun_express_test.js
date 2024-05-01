@@ -42,8 +42,6 @@ test("batch reporting errors", async function (t) {
 
   try {
     await nextBatchRequest({ maxWait: 2000 });
-  } catch (e) {
-    throw e;
   } finally {
     stop();
   }
@@ -68,8 +66,6 @@ test("batch transport discards massive errors", async function (t) {
 
   try {
     await nextBatchRequest({ maxWait: 2000 });
-  } catch (e) {
-    throw e;
   } finally {
     stop();
   }
