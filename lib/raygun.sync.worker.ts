@@ -1,5 +1,4 @@
 import fs from "fs";
-
 import * as transport from "./raygun.transport";
 import { SendOptions, SendOptionsWithoutCB } from "./types";
 import { IncomingMessage } from "http";
