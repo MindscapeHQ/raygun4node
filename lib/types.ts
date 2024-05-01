@@ -143,14 +143,14 @@ export type Hook<T> = (
   exception: Error | string,
   customData: CustomData,
   request?: RequestParams,
-  tags?: Tag[]
+  tags?: Tag[],
 ) => T;
 
 export interface IOfflineStorage {
   init(options: OfflineStorageOptions | undefined): void;
   save(message: string, callback: (error: Error | null) => void): void;
   retrieve(
-    callback: (error: NodeJS.ErrnoException | null, items: string[]) => void
+    callback: (error: NodeJS.ErrnoException | null, items: string[]) => void,
   ): void;
   send(callback: (error: Error | null, items?: string[]) => void): void;
 }
@@ -179,7 +179,7 @@ export type CallbackNoError<T> = (t: T | null) => void;
 export type CallbackWithError<T> = (e: Error | null, t: T | null) => void;
 
 export function isCallbackWithError<T>(
-  cb: Callback<T>
+  cb: Callback<T>,
 ): cb is CallbackWithError<T> {
   return cb.length > 1;
 }
@@ -187,7 +187,7 @@ export function isCallbackWithError<T>(
 export function callVariadicCallback<T>(
   callback: Callback<T>,
   error: Error | null,
-  result: T | null
+  result: T | null,
 ) {
   if (isCallbackWithError(callback)) {
     return callback(error, result);

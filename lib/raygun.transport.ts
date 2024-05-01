@@ -54,7 +54,7 @@ export function send(options: SendOptions, path = DEFAULT_ENDPOINT) {
 
     request.on("error", function (e) {
       console.log(
-        `Raygun: error ${e.message} occurred while attempting to send error with message: ${options.message}`
+        `Raygun: error ${e.message} occurred while attempting to send error with message: ${options.message}`,
       );
 
       // If the callback has two parameters, it should expect an `error` value.
@@ -67,7 +67,7 @@ export function send(options: SendOptions, path = DEFAULT_ENDPOINT) {
     request.end();
   } catch (e) {
     console.log(
-      `Raygun: error ${e} occurred while attempting to send error with message: ${options.message}`
+      `Raygun: error ${e} occurred while attempting to send error with message: ${options.message}`,
     );
   }
 }

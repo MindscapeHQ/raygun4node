@@ -89,7 +89,7 @@ test("send with verror", {}, function (t) {
 
   var error = new VError(
     new VError(new VError("Deep Error"), "Inner Error"),
-    "Outer Error"
+    "Outer Error",
   );
 
   var client = new Raygun.Client().init({
@@ -176,6 +176,6 @@ test("check that tags get merged", {}, function (t) {
       t.end();
     },
     null,
-    ["Tag2"]
+    ["Tag2"],
   );
 });

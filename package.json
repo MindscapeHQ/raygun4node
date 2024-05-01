@@ -31,9 +31,16 @@
     "CHANGELOG.md"
   ],
   "scripts": {
+    "//eslint": "performs static analysis over project files and examples",
     "eslint": "eslint --fix lib/*.ts test/*.js examples/**/*.js",
-    "prettier": "prettier --write lib/*.ts test/*.js",
+
+    "//prettier": "performs code formatting over project files and examples",
+    "prettier": "prettier --write lib/*.ts test/*.js examples/**/*.js",
+
+    "//prepare": "prepare project for distribution",
     "prepare": "tsc",
+
+    "//test": "runs tests on main project",
     "test": "tap --node-arg=-r --node-arg=ts-node/register --disable-coverage test/*_test.js"
   },
   "devDependencies": {

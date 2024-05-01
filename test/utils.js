@@ -63,9 +63,9 @@ function makeClientWithMockServer(clientOptions = {}) {
             setTimeout(
               () =>
                 reject(
-                  new Error(`nextRequest timed out after ${options.maxWait}ms`)
+                  new Error(`nextRequest timed out after ${options.maxWait}ms`),
                 ),
-              options.maxWait
+              options.maxWait,
             );
           }),
         nextBatchRequest: (options = { maxWait: 10000 }) =>
@@ -75,10 +75,10 @@ function makeClientWithMockServer(clientOptions = {}) {
               () =>
                 reject(
                   new Error(
-                    `nextBatchRequest timed out after ${options.maxWait}ms`
-                  )
+                    `nextBatchRequest timed out after ${options.maxWait}ms`,
+                  ),
                 ),
-              options.maxWait
+              options.maxWait,
             );
           }),
       });

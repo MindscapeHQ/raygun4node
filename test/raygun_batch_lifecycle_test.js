@@ -14,7 +14,7 @@ test("batch transport doesn't keep processes alive", async (t) => {
 
         t.equal(process.exitCode, 0);
         resolve();
-      }
+      },
     );
   });
 });
