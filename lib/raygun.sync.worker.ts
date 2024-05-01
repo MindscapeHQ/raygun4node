@@ -1,8 +1,7 @@
 import fs from "fs";
-
 import * as transport from "./raygun.transport";
 import { SendOptions, SendOptionsWithoutCB } from "./types";
-import {IncomingMessage} from "http";
+import { IncomingMessage } from "http";
 
 // Read stdin synchronously
 const data = fs.readFileSync(0, "utf-8");
