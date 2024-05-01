@@ -4,7 +4,6 @@ import type { IncomingMessage } from "http";
 import {
   callVariadicCallback,
   Callback,
-  Message,
   HTTPOptions,
   SendOptions,
 } from "./types";
@@ -65,7 +64,7 @@ export class RaygunBatchTransport {
   }
 
   private onIncomingMessage(messageAndCallback: MessageAndCallback) {
-    const { serializedMessage, callback } = messageAndCallback;
+    const { serializedMessage} = messageAndCallback;
     const messageLength = Buffer.byteLength(serializedMessage, "utf-8");
 
     if (messageLength >= MAX_BATCH_INNER_SIZE_BYTES) {

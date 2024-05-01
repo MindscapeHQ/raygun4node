@@ -224,7 +224,7 @@ class Raygun {
   }
 
   private reportUncaughtExceptions() {
-    const [major, minor, patch, ...rest] = process.versions.node
+    const [major, minor] = process.versions.node
       .split(".")
       .map((part) => parseInt(part, 10));
 

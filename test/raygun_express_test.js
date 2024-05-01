@@ -2,9 +2,7 @@ var express = require("express");
 var test = require("tap").test;
 
 const { MAX_BATCH_SIZE_BYTES } = require("../lib/raygun.batch.ts");
-var { listen, request, makeClientWithMockServer, sleep } = require("./utils");
-
-var API_KEY = "apikey";
+var { listen, request, makeClientWithMockServer } = require("./utils");
 
 test("reporting express errors", async function (t) {
   const app = express();
@@ -48,7 +46,7 @@ test("batch reporting errors", async function (t) {
   client.send(new Error("c"));
 
   try {
-    const message = await nextBatchRequest({ maxWait: 2000 });
+    await nextBatchRequest({ maxWait: 2000 });
   } catch (e) {
     throw e;
   } finally {
