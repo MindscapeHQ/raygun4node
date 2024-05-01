@@ -29,14 +29,12 @@ export class OfflineStorage implements IOfflineStorage {
   }
 
   private _sendAndDelete(item: string) {
-    const storage = this;
-
-    fs.readFile(path.join(this.cachePath, item), "utf8", function (
+    fs.readFile(path.join(this.cachePath, item), "utf8", (
       err,
       cacheContents
-    ) {
-      storage.transport.send(cacheContents);
-      fs.unlink(path.join(storage.cachePath, item), () => {});
+    ) => {
+      this.transport.send(cacheContents);
+      fs.unlink(path.join(this.cachePath, item), () => {});
     });
   }
 
@@ -60,18 +58,16 @@ export class OfflineStorage implements IOfflineStorage {
   }
 
   save(transportItem: string, callback: (err: Error | null) => void) {
-    const storage = this;
+    const filename = path.join(this.cachePath, Date.now() + ".json");
 
-    const filename = path.join(storage.cachePath, Date.now() + ".json");
-
-    fs.readdir(storage.cachePath, function (err, files) {
+    fs.readdir(this.cachePath, (err, files) => {
       if (err) {
         console.log("[Raygun] Error reading cache folder");
         console.log(err);
         return callback(err);
       }
 
-      if (files.length > storage.cacheLimit) {
+      if (files.length > this.cacheLimit) {
         console.log("[Raygun] Error cache reached limit");
         return callback(null);
       }
@@ -97,9 +93,7 @@ export class OfflineStorage implements IOfflineStorage {
   }
 
   send(callback: (error: Error | null, items?: string[]) => void) {
-    const storage = this;
-
-    storage.retrieve(function (err, items) {
+    this.retrieve((err, items) => {
       if (err) {
         console.log("[Raygun] Error reading cache folder");
         console.log(err);
@@ -113,7 +107,7 @@ export class OfflineStorage implements IOfflineStorage {
       }
 
       for (let i = 0; i < items.length; i++) {
-        storage._sendAndDelete(items[i]);
+        this._sendAndDelete(items[i]);
       }
 
       callback(err, items);
