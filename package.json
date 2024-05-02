@@ -71,7 +71,9 @@
   "keywords": [
     "APM",
     "crash",
+    "debug",
     "error",
+    "logging",
     "raygun",
     "reporting",
     "tracking"
