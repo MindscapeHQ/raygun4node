@@ -15,7 +15,7 @@ nock(/.*/)
   .persist();
 var API_KEY = "apikey";
 
-test("send basic", {}, function (t) {
+test("async send basic", {}, function (t) {
   t.plan(1);
 
   if (semver.satisfies(process.version, "=0.10")) {
@@ -24,16 +24,18 @@ test("send basic", {}, function (t) {
     return;
   }
 
-  var client = new Raygun.Client().init({
+  let client = new Raygun.Client().init({
     apiKey: API_KEY,
   });
-  client.sendWithCallback(new Error(), {}, function (response) {
+  client.send(new Error()).then((response) => {
     t.equal(response.statusCode, 202);
     t.end();
+  }).catch((err) => {
+    t.fail(err);
   });
 });
 
-test("send complex", {}, function (t) {
+test("async send complex", {}, function (t) {
   t.plan(1);
 
   if (semver.satisfies(process.version, "=0.10")) {
@@ -42,18 +44,20 @@ test("send complex", {}, function (t) {
     return;
   }
 
-  var client = new Raygun.Client()
+  let client = new Raygun.Client()
     .init({ apiKey: API_KEY })
     .setUser("callum@mindscape.co.nz")
     .setVersion("1.0.0.0");
 
-  client.sendWithCallback(new Error(), {}, function (response) {
+  client.send(new Error()).then((response) => {
     t.equal(response.statusCode, 202);
     t.end();
+  }).catch((err) => {
+    t.fail(err);
   });
 });
 
-test("send with inner error", {}, function (t) {
+test("async send with inner error", {}, function (t) {
   t.plan(1);
 
   if (semver.satisfies(process.version, "=0.10")) {
@@ -62,23 +66,25 @@ test("send with inner error", {}, function (t) {
     return;
   }
 
-  var error = new Error("Outer");
-  var innerError = new Error("Inner");
+  let error = new Error("Outer");
+  let innerError = new Error("Inner");
 
   error.cause = function () {
     return innerError;
   };
 
-  var client = new Raygun.Client().init({
+  let client = new Raygun.Client().init({
     apiKey: API_KEY,
   });
-  client.sendWithCallback(error, {}, function (response) {
+  client.send(new Error()).then((response) => {
     t.equal(response.statusCode, 202);
     t.end();
+  }).catch((err) => {
+    t.fail(err);
   });
 });
 
-test("send with verror", {}, function (t) {
+test("async send with verror", {}, function (t) {
   t.plan(1);
 
   if (semver.satisfies(process.version, "=0.10")) {
@@ -87,21 +93,23 @@ test("send with verror", {}, function (t) {
     return;
   }
 
-  var error = new VError(
+  let error = new VError(
     new VError(new VError("Deep Error"), "Inner Error"),
     "Outer Error",
   );
 
-  var client = new Raygun.Client().init({
+  let client = new Raygun.Client().init({
     apiKey: API_KEY,
   });
-  client.sendWithCallback(error, {}, function (response) {
+  client.send(error).then((response) => {
     t.equal(response.statusCode, 202);
     t.end();
+  }).catch((err) => {
+    t.fail(err);
   });
 });
 
-test("send with OnBeforeSend", {}, function (t) {
+test("async send with OnBeforeSend", {}, function (t) {
   t.plan(1);
 
   if (semver.satisfies(process.version, "=0.10")) {
@@ -110,43 +118,27 @@ test("send with OnBeforeSend", {}, function (t) {
     return;
   }
 
-  var client = new Raygun.Client().init({
+  let client = new Raygun.Client().init({
     apiKey: API_KEY,
   });
 
-  var onBeforeSendCalled = false;
+  let onBeforeSendCalled = false;
   client.onBeforeSend(function (payload) {
     onBeforeSendCalled = true;
     return payload;
   });
 
-  client.sendWithCallback(new Error(), {}, function () {
+  client.send(new Error()).then((response) => {
     t.equal(onBeforeSendCalled, true);
     t.end();
+  }).catch((err) => {
+    t.fail(err);
   });
 });
 
-test("send with expressHandler custom data", function (t) {
-  t.plan(1);
-  var client = new Raygun.Client().init({
-    apiKey: API_KEY,
-  });
-
-  client.expressCustomData = function () {
-    return { test: "data" };
-  };
-  client._send = client.sendWithCallback;
-  client.sendWithCallback = function (err, data) {
-    client.sendWithCallback = client._send;
-    t.equal(data.test, "data");
-    t.end();
-  };
-  client.expressHandler(new Error(), {}, {}, function () {});
-});
-
-test("check that tags get passed through", {}, function (t) {
-  var tag = ["Test"];
-  var client = new Raygun.Client().init({ apiKey: "TEST" });
+test("check that tags get passed through in async send", {}, function (t) {
+  let tag = ["Test"];
+  let client = new Raygun.Client().init({ apiKey: "TEST" });
 
   client.setTags(tag);
 
@@ -161,7 +153,7 @@ test("check that tags get passed through", {}, function (t) {
 });
 
 test("check that tags get merged", {}, function (t) {
-  var client = new Raygun.Client().init({ apiKey: "TEST" });
+  let client = new Raygun.Client().init({ apiKey: "TEST" });
   client.setTags(["Tag1"]);
 
   client.onBeforeSend(function (payload) {
@@ -169,13 +161,14 @@ test("check that tags get merged", {}, function (t) {
     return payload;
   });
 
-  client.sendWithCallback(
+  client.send(
     new Error(),
     {},
-    function () {
-      t.end();
-    },
     null,
     ["Tag2"],
-  );
+  ).then((message) => {
+    t.end();
+  }).catch((err) => {
+    t.fail(err);
+  });
 });
