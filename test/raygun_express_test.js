@@ -36,9 +36,9 @@ test("batch reporting errors", async function (t) {
       batchFrequency: 1000,
     });
 
-  client.send(new Error("a"));
-  client.send(new Error("b"));
-  client.send(new Error("c"));
+  client.sendWithCallback(new Error("a"));
+  client.sendWithCallback(new Error("b"));
+  client.sendWithCallback(new Error("c"));
 
   try {
     await nextBatchRequest({ maxWait: 2000 });
@@ -61,8 +61,8 @@ test("batch transport discards massive errors", async function (t) {
       batchFrequency: 1000,
     });
 
-  client.send(new Error("a".repeat(MAX_BATCH_SIZE_BYTES)));
-  client.send(new Error("b"));
+  client.sendWithCallback(new Error("a".repeat(MAX_BATCH_SIZE_BYTES)));
+  client.sendWithCallback(new Error("b"));
 
   try {
     await nextBatchRequest({ maxWait: 2000 });
@@ -81,7 +81,7 @@ test("batch transport discards massive errors", async function (t) {
 test("send is bound and can be passed directly", async function (t) {
   const { client, stop, nextRequest } = await makeClientWithMockServer();
 
-  setTimeout(client.send, 1, new Error("test!"));
+  setTimeout(client.sendWithCallback, 1, new Error("test!"));
 
   await nextRequest();
 
@@ -124,7 +124,7 @@ test("user function is called even if request is not present", async function (t
 
   const nextRequest = testEnvironment.nextRequest();
 
-  raygunClient.send(new Error("example error"));
+  raygunClient.sendWithCallback(new Error("example error"));
 
   const message = await nextRequest;
 
@@ -141,7 +141,7 @@ test("string exceptions are sent intact", async function (t) {
 
   const nextRequest = testEnvironment.nextRequest();
 
-  raygunClient.send("my string error");
+  raygunClient.sendWithCallback("my string error");
 
   const message = await nextRequest;
 

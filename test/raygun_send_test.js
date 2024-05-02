@@ -27,7 +27,7 @@ test("send basic", {}, function (t) {
   var client = new Raygun.Client().init({
     apiKey: API_KEY,
   });
-  client.send(new Error(), {}, function (response) {
+  client.sendWithCallback(new Error(), {}, function (response) {
     t.equal(response.statusCode, 202);
     t.end();
   });
@@ -47,7 +47,7 @@ test("send complex", {}, function (t) {
     .setUser("callum@mindscape.co.nz")
     .setVersion("1.0.0.0");
 
-  client.send(new Error(), {}, function (response) {
+  client.sendWithCallback(new Error(), {}, function (response) {
     t.equal(response.statusCode, 202);
     t.end();
   });
@@ -72,7 +72,7 @@ test("send with inner error", {}, function (t) {
   var client = new Raygun.Client().init({
     apiKey: API_KEY,
   });
-  client.send(error, {}, function (response) {
+  client.sendWithCallback(error, {}, function (response) {
     t.equal(response.statusCode, 202);
     t.end();
   });
@@ -95,7 +95,7 @@ test("send with verror", {}, function (t) {
   var client = new Raygun.Client().init({
     apiKey: API_KEY,
   });
-  client.send(error, {}, function (response) {
+  client.sendWithCallback(error, {}, function (response) {
     t.equal(response.statusCode, 202);
     t.end();
   });
@@ -120,7 +120,7 @@ test("send with OnBeforeSend", {}, function (t) {
     return payload;
   });
 
-  client.send(new Error(), {}, function () {
+  client.sendWithCallback(new Error(), {}, function () {
     t.equal(onBeforeSendCalled, true);
     t.end();
   });
@@ -135,9 +135,9 @@ test("send with expressHandler custom data", function (t) {
   client.expressCustomData = function () {
     return { test: "data" };
   };
-  client._send = client.send;
-  client.send = function (err, data) {
-    client.send = client._send;
+  client._send = client.sendWithCallback;
+  client.sendWithCallback = function (err, data) {
+    client.sendWithCallback = client._send;
     t.equal(data.test, "data");
     t.end();
   };
@@ -155,7 +155,7 @@ test("check that tags get passed through", {}, function (t) {
     return payload;
   });
 
-  client.send(new Error(), {}, function () {
+  client.sendWithCallback(new Error(), {}, function () {
     t.end();
   });
 });
@@ -169,7 +169,7 @@ test("check that tags get merged", {}, function (t) {
     return payload;
   });
 
-  client.send(
+  client.sendWithCallback(
     new Error(),
     {},
     function () {

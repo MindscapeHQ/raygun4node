@@ -120,7 +120,7 @@ class Raygun {
     }
 
     this.expressHandler = this.expressHandler.bind(this);
-    this.send = this.send.bind(this);
+    this.sendWithCallback = this.sendWithCallback.bind(this);
 
     this._offlineStorage =
       options.offlineStorage || new OfflineStorage(this.offlineTransport());
@@ -185,7 +185,7 @@ class Raygun {
     return raygunTransport;
   }
 
-  send(
+  sendWithCallback(
     exception: Error | string,
     customData?: CustomData,
     callback?: (err: Error | null) => void,
@@ -285,7 +285,7 @@ class Raygun {
       body: req.body,
     };
 
-    this.send(err, customData || {}, function () {}, requestParams, [
+    this.sendWithCallback(err, customData || {}, function () {}, requestParams, [
       "UnhandledException",
     ]);
     next(err);

@@ -19,7 +19,7 @@ test("offline message storage and sending", async function (t) {
   const raygunClient = testEnvironment.client;
   const send = (e) =>
     new Promise((resolve, reject) => {
-      raygunClient.send(e, null, (err, data) => {
+      raygunClient.sendWithCallback(e, null, (err, data) => {
         if (err) {
           reject(err);
         } else {
@@ -75,7 +75,7 @@ test("batched offline message storage and sending", async function (t) {
   const raygunClient = testEnvironment.client;
   const send = (e) =>
     new Promise((resolve, reject) => {
-      raygunClient.send(e, null, (err, data) => {
+      raygunClient.sendWithCallback(e, null, (err, data) => {
         if (err) {
           reject(err);
         } else {

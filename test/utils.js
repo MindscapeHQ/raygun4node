@@ -23,7 +23,7 @@ function makeClientWithMockServer(clientOptions = {}) {
         messageCallback = null;
       }
 
-      res.send("");
+      res.sendWithCallback("");
     });
 
     server.post("/entries/bulk", (req, res) => {
@@ -34,7 +34,7 @@ function makeClientWithMockServer(clientOptions = {}) {
         batchMessageCallback = null;
       }
 
-      res.send("");
+      res.sendWithCallback("");
     });
 
     const listener = server.listen(0, "localhost", () => {
