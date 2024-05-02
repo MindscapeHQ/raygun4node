@@ -179,3 +179,17 @@ test("check that tags get merged", {}, function (t) {
     ["Tag2"],
   );
 });
+
+test("send async", {}, function (t) {
+  t.plan(1);
+
+  let client = new Raygun.Client().init({
+    apiKey: API_KEY,
+  });
+  client.send(new Error()).then((response) => {
+    t.equal(response.statusCode, 202);
+    t.end();
+  }).catch((err) => {
+    t.fail(err);
+  });
+});

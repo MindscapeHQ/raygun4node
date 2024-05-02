@@ -185,10 +185,40 @@ class Raygun {
     return raygunTransport;
   }
 
+  /**
+   * Sends exception to Raygun
+   * @param exception to send
+   * @param customData to attach to the error report
+   * @param request custom RequestParams
+   * @param tags to attach to the error report
+   */
+  async send(
+      exception: Error | string,
+      customData?: CustomData,
+      request?: RequestParams,
+      tags?: Tag[],
+  ): Promise<IncomingMessage | null> {
+    return new Promise((resolve, reject) => {
+      this.sendWithCallback(
+          exception,
+          customData,
+          function (err, message) {
+            if (err != null) {
+              reject(err);
+            } else {
+              resolve(message);
+            }
+          },
+          request,
+          tags,
+      );
+    });
+  }
+
   sendWithCallback(
     exception: Error | string,
     customData?: CustomData,
-    callback?: (err: Error | null) => void,
+    callback?: Callback<IncomingMessage>,
     request?: RequestParams,
     tags?: Tag[],
   ): Message {
@@ -212,9 +242,10 @@ class Raygun {
     const sendOptions = sendOptionsResult.options;
 
     if (this._isOffline) {
+      let saveCallback = callback ? (err: Error | null) => callVariadicCallback(callback, err, null) : emptyCallback;
       this.offlineStorage().save(
         JSON.stringify(message),
-        callback || emptyCallback,
+          saveCallback,
       );
     } else {
       this.transport().send(sendOptions);
