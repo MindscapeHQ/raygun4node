@@ -30,7 +30,6 @@ export default tseslint.config(
             // Required to import JS modules
             "@typescript-eslint/no-var-requires": "off",
             // TODO: Remove ignored rules and fix the code
-            "no-unreachable": "off",
             "no-useless-catch": "off",
         }
     }
