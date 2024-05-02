@@ -27,12 +27,15 @@ test("async send basic", {}, function (t) {
   let client = new Raygun.Client().init({
     apiKey: API_KEY,
   });
-  client.send(new Error()).then((response) => {
-    t.equal(response.statusCode, 202);
-    t.end();
-  }).catch((err) => {
-    t.fail(err);
-  });
+  client
+    .send(new Error())
+    .then((response) => {
+      t.equal(response.statusCode, 202);
+      t.end();
+    })
+    .catch((err) => {
+      t.fail(err);
+    });
 });
 
 test("async send complex", {}, function (t) {
@@ -49,12 +52,15 @@ test("async send complex", {}, function (t) {
     .setUser("callum@mindscape.co.nz")
     .setVersion("1.0.0.0");
 
-  client.send(new Error()).then((response) => {
-    t.equal(response.statusCode, 202);
-    t.end();
-  }).catch((err) => {
-    t.fail(err);
-  });
+  client
+    .send(new Error())
+    .then((response) => {
+      t.equal(response.statusCode, 202);
+      t.end();
+    })
+    .catch((err) => {
+      t.fail(err);
+    });
 });
 
 test("async send with inner error", {}, function (t) {
@@ -76,12 +82,15 @@ test("async send with inner error", {}, function (t) {
   let client = new Raygun.Client().init({
     apiKey: API_KEY,
   });
-  client.send(new Error()).then((response) => {
-    t.equal(response.statusCode, 202);
-    t.end();
-  }).catch((err) => {
-    t.fail(err);
-  });
+  client
+    .send(new Error())
+    .then((response) => {
+      t.equal(response.statusCode, 202);
+      t.end();
+    })
+    .catch((err) => {
+      t.fail(err);
+    });
 });
 
 test("async send with verror", {}, function (t) {
@@ -101,12 +110,15 @@ test("async send with verror", {}, function (t) {
   let client = new Raygun.Client().init({
     apiKey: API_KEY,
   });
-  client.send(error).then((response) => {
-    t.equal(response.statusCode, 202);
-    t.end();
-  }).catch((err) => {
-    t.fail(err);
-  });
+  client
+    .send(error)
+    .then((response) => {
+      t.equal(response.statusCode, 202);
+      t.end();
+    })
+    .catch((err) => {
+      t.fail(err);
+    });
 });
 
 test("async send with OnBeforeSend", {}, function (t) {
@@ -128,12 +140,15 @@ test("async send with OnBeforeSend", {}, function (t) {
     return payload;
   });
 
-  client.send(new Error()).then((response) => {
-    t.equal(onBeforeSendCalled, true);
-    t.end();
-  }).catch((err) => {
-    t.fail(err);
-  });
+  client
+    .send(new Error())
+    .then((response) => {
+      t.equal(onBeforeSendCalled, true);
+      t.end();
+    })
+    .catch((err) => {
+      t.fail(err);
+    });
 });
 
 test("check that tags get passed through in async send", {}, function (t) {
@@ -161,14 +176,12 @@ test("check that tags get merged", {}, function (t) {
     return payload;
   });
 
-  client.send(
-    new Error(),
-    {},
-    null,
-    ["Tag2"],
-  ).then((message) => {
-    t.end();
-  }).catch((err) => {
-    t.fail(err);
-  });
+  client
+    .send(new Error(), {}, null, ["Tag2"])
+    .then((message) => {
+      t.end();
+    })
+    .catch((err) => {
+      t.fail(err);
+    });
 });
