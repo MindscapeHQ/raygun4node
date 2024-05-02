@@ -69,7 +69,11 @@
     "uuid": "^9.0.1"
   },
   "keywords": [
+    "APM",
+    "crash",
     "error",
-    "reporting"
+    "raygun",
+    "reporting",
+    "tracking"
   ]
 }
