@@ -438,7 +438,7 @@ curl
 All requests use the same authentication methods as the upload call (Basic Authentication and Token Authentication).
 
 ### Examples
-View a screencast on creating an app with Node.js and Express.js, then hooking up the error handling and sending them at [http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/](http://raygun.io/blog/2013/07/video-nodejs-error-handling-with-raygun/)
+View a screencast on creating an app with Node.js and Express.js, then hooking up the error handling and sending them at [https://raygun.com/blog/2013/07/video-nodejs-error-handling-with-raygun/](https://raygun.com/blog/2013/07/video-nodejs-error-handling-with-raygun/)
 
 ### Debug Logging
 You can enable logging of debug information from the Raygun client by setting the environment variable `DEBUG=raygun`. The client will then log information about transporting and storing errors, including timing information.
