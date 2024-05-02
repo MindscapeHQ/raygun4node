@@ -1,3 +1,7 @@
+## 0.14.0
+- Upgrade dependencies
+- Support for Node v20
+
 ## 0.13.2
 - Fix batch transport keeping process alive
 - Fix batch transport stalling on huge errors
