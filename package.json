@@ -68,5 +68,8 @@
     "stack-trace": "0.0.10",
     "uuid": "^9.0.1"
   },
-  "keywords": []
+  "keywords": [
+    "error",
+    "reporting"
+  ]
 }
