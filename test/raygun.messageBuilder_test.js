@@ -399,6 +399,30 @@ test("filter keys tests", function (t) {
   });
 });
 
+test("avoid infinite recursion in filter method", function (t) {
+  let builder = new MessageBuilder();
+
+  // body self-references, causing a potential infinite recursion in the filter method
+  // Causes exception: Maximum call stack size exceeded
+  let body = {
+    "key": "value",
+  };
+  body.myself = body;
+
+  let queryString = {};
+  let headers = {};
+
+  // performs filter on set
+  builder.setRequestDetails({
+    body: body,
+    query: queryString,
+    headers: headers,
+  });
+
+  // test should finish
+  t.end();
+});
+
 test("custom tags", function (t) {
   t.test("with array", function (tt) {
     var builder = new MessageBuilder();
