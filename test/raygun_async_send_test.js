@@ -162,9 +162,14 @@ test("check that tags get passed through in async send", {}, function (t) {
     return payload;
   });
 
-  client.sendWithCallback(new Error(), {}, function () {
-    t.end();
-  });
+  client
+    .send(new Error(), {}, null, ["Tag2"])
+    .then((message) => {
+      t.end();
+    })
+    .catch((err) => {
+      t.fail(err);
+    });
 });
 
 test("check that tags get merged", {}, function (t) {
