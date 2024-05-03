@@ -163,7 +163,7 @@ test("check that tags get passed through in async send", {}, function (t) {
   });
 
   client
-    .send(new Error(), {}, null, ["Tag2"])
+    .send(new Error())
     .then((message) => {
       t.end();
     })

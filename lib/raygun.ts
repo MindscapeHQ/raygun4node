@@ -319,14 +319,16 @@ class Raygun {
       body: req.body,
     };
 
-    this.sendWithCallback(
+    this.send(
       err,
       customData || {},
-      function () {},
       requestParams,
       ["UnhandledException"],
-    );
-    next(err);
+    ).then((message) => {
+      next(err);
+    }).catch((err) => {
+      console.log(`[Raygun] Failed to send Express error: ${err}`);
+    });
   }
 
   stop() {
