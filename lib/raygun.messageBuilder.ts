@@ -31,8 +31,8 @@ type UserMessageData = RawUserData | string | undefined;
 const humanString = require("object-to-human-string");
 const packageDetails = require("../package.json");
 
-function filterKeys(obj: object, filters: string[]): object {
-  if (!obj || !filters || typeof obj !== "object") {
+function filterKeys(obj: object, filters: string[], explored: Set<object> | null): object {
+  if (!obj || !filters || typeof obj !== "object" || explored?.has(obj)) {
     return obj;
   }
   // Make temporary copy of the object to avoid mutating the original
@@ -42,7 +42,7 @@ function filterKeys(obj: object, filters: string[]): object {
     if (filters.indexOf(i) > -1) {
       delete _obj[i];
     } else {
-      _obj[i] = filterKeys(_obj[i], filters);
+      _obj[i] = filterKeys(_obj[i], filters, explored?.add(_obj) || new Set([_obj]));
     }
   });
   return _obj;
