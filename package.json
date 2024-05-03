@@ -1,7 +1,7 @@
 {
   "name": "raygun",
-  "description": "Raygun.io package for Node, written in TypeScript",
-  "version": "0.13.2",
+  "description": "Raygun package for Node.js, written in TypeScript",
+  "version": "0.14.0",
   "homepage": "https://github.com/MindscapeHQ/raygun4node",
   "author": {
     "name": "MindscapeHQ",
@@ -68,5 +68,14 @@
     "stack-trace": "0.0.10",
     "uuid": "^9.0.1"
   },
-  "keywords": []
+  "keywords": [
+    "APM",
+    "crash",
+    "debug",
+    "error",
+    "logging",
+    "raygun",
+    "reporting",
+    "tracking"
+  ]
 }
