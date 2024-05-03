@@ -31,28 +31,40 @@ type UserMessageData = RawUserData | string | undefined;
 const humanString = require("object-to-human-string");
 const packageDetails = require("../package.json");
 
+/**
+ * Filter properties in obj according to provided filters.
+ * Also removes any recursive self-referencing object.
+ * @param obj object to apply filter
+ * @param filters list of keys to filter
+ * @param explored Set that contains already explored nodes, used internally
+ */
 function filterKeys(
   obj: object,
   filters: string[],
   explored: Set<object> | null = null,
 ): object {
-  // check if obj has been explored to avoid infinite recursion
-  if (!obj || !filters || typeof obj !== "object" || explored?.has(obj)) {
+  if (!obj || !filters || typeof obj !== "object") {
     return obj;
   }
+
+  // create or update the explored set with the incoming object
+  const _explored = explored?.add(obj) || new Set([obj]);
 
   // Make temporary copy of the object to avoid mutating the original
   // Cast to Record<string, object> to enforce type check and avoid using any
   const _obj = { ...obj } as Record<string, object>;
-  Object.keys(obj).forEach(function (i) {
-    if (filters.indexOf(i) > -1) {
-      delete _obj[i];
+
+  Object.keys(obj).forEach(function (key) {
+    // Remove child if:
+    // - the key is in the filter array
+    // - the value is already in the explored Set
+    if (filters.indexOf(key) > -1 || _explored?.has(_obj[key])) {
+      delete _obj[key];
     } else {
-      // add original obj to explored set before recursive call
-      _obj[i] = filterKeys(
-        _obj[i],
+      _obj[key] = filterKeys(
+        _obj[key],
         filters,
-        explored?.add(obj) || new Set([obj]),
+        _explored,
       );
     }
   });

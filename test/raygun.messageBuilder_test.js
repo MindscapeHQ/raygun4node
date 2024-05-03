@@ -404,14 +404,23 @@ test("filter keys tests", function (t) {
 });
 
 test("avoid infinite recursion in filter method", function (t) {
-  let builder = new MessageBuilder();
+  let builder = new MessageBuilder({
+    filters: ["filtered"],
+  });
 
   // body self-references, causing a potential infinite recursion in the filter method
   // Causes exception: Maximum call stack size exceeded
   let body = {
     key: "value",
+    filtered: true,
+  };
+  // second level self-reference
+  let other = {
+    body: body,
+    filtered: true,
   };
   body.myself = body;
+  body.other = other;
 
   let queryString = {};
   let headers = {};
@@ -422,6 +431,16 @@ test("avoid infinite recursion in filter method", function (t) {
     query: queryString,
     headers: headers,
   });
+  var message = builder.build();
+
+  // key is preserved
+  t.equal(message.details.request.form.key, "value");
+  // property in "filters" is filtered
+  t.equal(message.details.request.form.filtered, undefined);
+  t.equal(message.details.request.form.other.filtered, undefined);
+  // self-referencing objects are also not included
+  t.equal(message.details.request.form.myself, undefined);
+  t.equal(message.details.request.form.other.body, undefined);
 
   // test should finish
   t.end();
