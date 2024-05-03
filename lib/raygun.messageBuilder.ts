@@ -37,7 +37,6 @@ function filterKeys(
   explored: Set<object> | null = null,
 ): object {
   // check if obj has been explored to avoid infinite recursion
-
   if (!obj || !filters || typeof obj !== "object" || explored?.has(obj)) {
     return obj;
   }
