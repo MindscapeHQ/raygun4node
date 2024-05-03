@@ -86,6 +86,10 @@ Note that the Express middleware handler will pick up and transmit any `err` obj
 
 ## Documentation
 
+### `send` Promise response
+
+TODO
+
 ### Callbacks
 
 The callback should be a node-style callback: `function(err, response) { /*...*/ }`.
@@ -98,7 +102,7 @@ backwards compatibility; the Node-style callback should be preferred.
 You can pass custom data in on the Send() function, as the second parameter. For instance (based off the call in test/raygun_test.js):
 
 ```javascript
-client.send(new Error(), { 'mykey': 'beta' }, function (response){ });
+client.send(new Error(), { 'mykey': 'beta' });
 ```
 
 #### Sending custom data with Expressjs
