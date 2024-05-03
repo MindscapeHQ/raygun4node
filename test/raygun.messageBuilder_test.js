@@ -405,7 +405,7 @@ test("avoid infinite recursion in filter method", function (t) {
   // body self-references, causing a potential infinite recursion in the filter method
   // Causes exception: Maximum call stack size exceeded
   let body = {
-    "key": "value",
+    key: "value",
   };
   body.myself = body;
 

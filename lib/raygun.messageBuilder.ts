@@ -31,18 +31,28 @@ type UserMessageData = RawUserData | string | undefined;
 const humanString = require("object-to-human-string");
 const packageDetails = require("../package.json");
 
-function filterKeys(obj: object, filters: string[], explored: Set<object> | null): object {
+function filterKeys(
+  obj: object,
+  filters: string[],
+  explored: Set<object> | null = null,
+): object {
+  // check if obj has been explored to avoid infinite recursion
   if (!obj || !filters || typeof obj !== "object" || explored?.has(obj)) {
     return obj;
   }
-  // Make temporary copy of the object to avoid mutating the original
+
   // Cast to Record<string, object> to enforce type check and avoid using any
-  const _obj = { ...obj } as Record<string, object>;
+  const _obj = obj as Record<string, object>;
   Object.keys(obj).forEach(function (i) {
     if (filters.indexOf(i) > -1) {
       delete _obj[i];
     } else {
-      _obj[i] = filterKeys(_obj[i], filters, explored?.add(_obj) || new Set([_obj]));
+      // add current obj to explored set before recursive call
+      _obj[i] = filterKeys(
+        _obj[i],
+        filters,
+        explored?.add(_obj) || new Set([_obj]),
+      );
     }
   });
   return _obj;
