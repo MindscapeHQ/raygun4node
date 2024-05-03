@@ -186,11 +186,11 @@ class Raygun {
   }
 
   /**
-   * Sends exception to Raygun
-   * @param exception to send
-   * @param customData to attach to the error report
-   * @param request custom RequestParams
-   * @param tags to attach to the error report
+   * Sends exception to Raygun.
+   * @param exception to send.
+   * @param customData to attach to the error report.
+   * @param request custom RequestParams.
+   * @param tags to attach to the error report.
    * @return IncomingMessage if message was delivered, null if stored, rejected with Error if failed.
    */
   async send(
@@ -216,6 +216,9 @@ class Raygun {
     });
   }
 
+  /**
+   * @deprecated use send instead, which supports async/await calls.
+   */
   sendWithCallback(
     exception: Error | string,
     customData?: CustomData,
@@ -243,7 +246,7 @@ class Raygun {
     const sendOptions = sendOptionsResult.options;
 
     if (this._isOffline) {
-      let saveCallback = callback
+      const saveCallback = callback
         ? (err: Error | null) => callVariadicCallback(callback, err, null)
         : emptyCallback;
       this.offlineStorage().save(JSON.stringify(message), saveCallback);
