@@ -58,14 +58,10 @@ function filterKeys(
     // Remove child if:
     // - the key is in the filter array
     // - the value is already in the explored Set
-    if (filters.indexOf(key) > -1 || _explored?.has(_obj[key])) {
+    if (filters.indexOf(key) > -1 || _explored.has(_obj[key])) {
       delete _obj[key];
     } else {
-      _obj[key] = filterKeys(
-        _obj[key],
-        filters,
-        _explored,
-      );
+      _obj[key] = filterKeys(_obj[key], filters, _explored);
     }
   });
   return _obj;
