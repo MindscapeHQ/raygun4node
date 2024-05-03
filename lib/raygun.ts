@@ -319,12 +319,9 @@ class Raygun {
       body: req.body,
     };
 
-    this.send(
-      err,
-      customData || {},
-      requestParams,
-      ["UnhandledException"],
-    ).catch((err) => {
+    this.send(err, customData || {}, requestParams, [
+      "UnhandledException",
+    ]).catch((err) => {
       console.log(`[Raygun] Failed to send Express error: ${err}`);
     });
     next(err);
