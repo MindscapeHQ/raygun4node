@@ -324,11 +324,10 @@ class Raygun {
       customData || {},
       requestParams,
       ["UnhandledException"],
-    ).then((message) => {
-      next(err);
-    }).catch((err) => {
+    ).catch((err) => {
       console.log(`[Raygun] Failed to send Express error: ${err}`);
     });
+    next(err);
   }
 
   stop() {
