@@ -377,6 +377,10 @@ test("filter keys tests", function (t) {
   });
   var message = builder.build();
 
+  // Original object should not be modified
+  t.equal(body.username, "admin@raygun.io");
+  t.equal(body.password, "nice try");
+
   t.test("form is filtered", function (tt) {
     tt.equal(message.details.request.form.username, undefined);
     tt.equal(message.details.request.form.password, undefined);

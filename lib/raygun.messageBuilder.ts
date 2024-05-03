@@ -37,21 +37,23 @@ function filterKeys(
   explored: Set<object> | null = null,
 ): object {
   // check if obj has been explored to avoid infinite recursion
+
   if (!obj || !filters || typeof obj !== "object" || explored?.has(obj)) {
     return obj;
   }
 
+  // Make temporary copy of the object to avoid mutating the original
   // Cast to Record<string, object> to enforce type check and avoid using any
-  const _obj = obj as Record<string, object>;
+  const _obj = { ...obj } as Record<string, object>;
   Object.keys(obj).forEach(function (i) {
     if (filters.indexOf(i) > -1) {
       delete _obj[i];
     } else {
-      // add current obj to explored set before recursive call
+      // add original obj to explored set before recursive call
       _obj[i] = filterKeys(
         _obj[i],
         filters,
-        explored?.add(_obj) || new Set([_obj]),
+        explored?.add(obj) || new Set([obj]),
       );
     }
   });
