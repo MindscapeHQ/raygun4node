@@ -289,12 +289,8 @@ class Raygun {
    * @param exception error to report
    * @private
    */
-  private sendSync(
-    exception: Error | string,
-  ): void {
-    const result = this.buildSendOptions(
-      exception,
-    );
+  private sendSync(exception: Error | string): void {
+    const result = this.buildSendOptions(exception);
 
     if (result.valid) {
       raygunSyncTransport.send(result.options);
