@@ -86,7 +86,7 @@ Note that the Express middleware handler will pick up and transmit any `err` obj
 
 ## Documentation
 
-### Asynchronous `send` with `Promise` response
+### Send
 
 The `send()` function is asynchronous and returns a `Promise` of type `IncomingMessage`.
 
