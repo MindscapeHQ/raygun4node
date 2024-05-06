@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "DEBUG=express-sample:server node ./bin/www"
+    "start": "DEBUG=raygun,express-sample:server node ./bin/www"
   },
   "dependencies": {
     "body-parser": "^1.20.2",
