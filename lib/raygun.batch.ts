@@ -56,7 +56,7 @@ export class RaygunBatchTransport {
 
   stopProcessing() {
     if (this.timerId) {
-      debug("batch transport - stopping");
+      debug(`[raygun.batch.ts] Batch transport - stopping`);
       clearInterval(this.timerId);
 
       this.timerId = null;
@@ -123,7 +123,7 @@ export class RaygunBatchTransport {
     const { payload, messageCount, callbacks } = batch;
 
     debug(
-      `batch transport - processing ( ${messageCount} message(s) in batch)`,
+      `[raygun.batch.ts] Batch transport - processing (${messageCount} message(s) in batch)`,
     );
 
     const batchId = this.batchId;
@@ -137,11 +137,11 @@ export class RaygunBatchTransport {
       const durationInMs = stopTimer();
       if (err) {
         debug(
-          `batch transport - error sending batch (id=${batchId}, duration=${durationInMs}ms): ${err}`,
+          `[raygun.batch.ts] Batch transport - error sending batch (id=${batchId}, duration=${durationInMs}ms): ${err}`,
         );
       } else {
         debug(
-          `batch transport - successfully sent batch (id=${batchId}, duration=${durationInMs}ms)`,
+          `[raygun.batch.ts] Batch transport - successfully sent batch (id=${batchId}, duration=${durationInMs}ms)`,
         );
       }
 
@@ -153,7 +153,7 @@ export class RaygunBatchTransport {
     };
 
     debug(
-      `batch transport - sending batch (id=${batchId}) (${messageCount} messages, ${payload.length} bytes)`,
+      `[raygun.batch.ts] Batch transport - sending batch (id=${batchId}, ${messageCount} messages, ${payload.length} bytes)`,
     );
 
     const stopTimer = startTimer();

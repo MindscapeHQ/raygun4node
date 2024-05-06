@@ -99,7 +99,7 @@ class Raygun {
     this._reportColumnNumbers = options.reportColumnNumbers;
     this._innerErrorFieldName = options.innerErrorFieldName || "cause"; // VError function to retrieve inner error;
 
-    debug(`client initialized`);
+    debug(`[raygun.ts] Client initialized`);
 
     if (options.reportUncaughtExceptions) {
       this.reportUncaughtExceptions();
@@ -293,7 +293,7 @@ class Raygun {
 
   stop() {
     if (this._batchTransport) {
-      debug("batch transport stopped");
+      debug(`[raygun.ts] Batch transport stopped`);
       this._batchTransport.stopProcessing();
     }
   }
@@ -365,9 +365,13 @@ class Raygun {
     ) {
       const durationInMs = stopTimer();
       if (error) {
-        debug(`error sending message (duration=${durationInMs}ms): ${error}`);
+        debug(
+          `[raygun.ts] Error sending message (duration=${durationInMs}ms): ${error}`,
+        );
       } else {
-        debug(`successfully sent message (duration=${durationInMs}ms)`);
+        debug(
+          `[raygun.ts] Successfully sent message (duration=${durationInMs}ms)`,
+        );
       }
       if (!callback) {
         return;

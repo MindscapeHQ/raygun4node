@@ -47,7 +47,7 @@ export class OfflineStorage implements IOfflineStorage {
     this.cacheLimit = offlineStorageOptions.cacheLimit || 100;
 
     debug(
-      `offline storage - initialized (cachePath=${this.cachePath}, cacheLimit=${this.cacheLimit}`,
+      `[raygun.offline.ts] Offline storage - initialized (cachePath=${this.cachePath}, cacheLimit=${this.cacheLimit})`,
     );
 
     if (!fs.existsSync(this.cachePath)) {
@@ -74,7 +74,9 @@ export class OfflineStorage implements IOfflineStorage {
 
       fs.writeFile(filename, transportItem, "utf8", function (err) {
         if (!err) {
-          debug(`offline storage - wrote message to ${filename}`);
+          debug(
+            `[raygun.offline.ts] Offline storage - wrote message to ${filename}`,
+          );
           return callback(null);
         }
 
@@ -102,7 +104,7 @@ export class OfflineStorage implements IOfflineStorage {
 
       if (items.length > 0) {
         debug(
-          "offline storage - transporting ${items.length} message(s) from cache",
+          `[raygun.offline.ts] Offline storage - transporting ${items.length} message(s) from cache`,
         );
       }
 
