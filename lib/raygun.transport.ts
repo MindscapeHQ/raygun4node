@@ -26,6 +26,12 @@ export function sendBatch(options: SendOptions) {
   return send(options, BATCH_ENDPOINT);
 }
 
+// TODO: Convert this method callbacks to Promise.
+/**
+ * Transport implementation that sends error to Raygun.
+ * Errors are reported back via callback.
+ * @param options
+ */
 export function send(options: SendOptions, path = DEFAULT_ENDPOINT) {
   try {
     const data = Buffer.from(options.message);
@@ -66,6 +72,7 @@ export function send(options: SendOptions, path = DEFAULT_ENDPOINT) {
     request.write(data);
     request.end();
   } catch (e) {
+    // TODO: Non-HTTP errors are being ignored, should be better pass them up?
     console.log(
       `Raygun: error ${e} occurred while attempting to send error with message: ${options.message}`,
     );

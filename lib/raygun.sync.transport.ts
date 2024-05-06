@@ -31,6 +31,7 @@ export function send(options: SendOptionsWithoutCB) {
   try {
     syncRequest(options);
   } catch (e) {
+    // TODO: Is there a reason we ignore errors here?
     console.log(
       `Raygun: error ${e} occurred while attempting to send error with message: ${options.message}`,
     );

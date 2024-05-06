@@ -199,6 +199,7 @@ class Raygun {
     request?: RequestParams,
     tags?: Tag[],
   ): Promise<IncomingMessage | null> {
+    // Convert internal sendWithCallback implementation to a Promise.
     return new Promise((resolve, reject) => {
       this.sendWithCallback(
         exception,
@@ -246,11 +247,14 @@ class Raygun {
     const sendOptions = sendOptionsResult.options;
 
     if (this._isOffline) {
+      // make the save callback type compatible with Callback<IncomingMessage>
       const saveCallback = callback
         ? (err: Error | null) => callVariadicCallback(callback, err, null)
         : emptyCallback;
       this.offlineStorage().save(JSON.stringify(message), saveCallback);
     } else {
+      // Use current transport to send request.
+      // Transport can be batch or default.
       this.transport().send(sendOptions);
     }
 
@@ -437,6 +441,7 @@ class Raygun {
     };
 
     return {
+      // TODO: MessageTransport ignores any errors from the send callback, could this be improved?
       send(message: string) {
         transport.send({
           message,
