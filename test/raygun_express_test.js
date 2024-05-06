@@ -81,7 +81,7 @@ test("batch transport discards massive errors", async function (t) {
 test("send is bound and can be passed directly", async function (t) {
   const { client, stop, nextRequest } = await makeClientWithMockServer();
 
-  setTimeout(client.sendWithCallback, 1, new Error("test!"));
+  setTimeout(client.send, 1, new Error("test!"));
 
   await nextRequest();
 
