@@ -1,11 +1,9 @@
 "use strict";
 
-var test = require("tap").test;
-var semver = require("semver");
-var VError = require("verror");
-var nock = require("nock");
-
-var Raygun = require("../lib/raygun.ts");
+const test = require("tap").test;
+const VError = require("verror");
+const nock = require("nock");
+const Raygun = require("../lib/raygun.ts");
 
 nock(/.*/)
   .post(/.*/, function () {
@@ -13,16 +11,10 @@ nock(/.*/)
   })
   .reply(202, {})
   .persist();
-var API_KEY = "apikey";
+const API_KEY = "apikey";
 
 test("async send basic", {}, function (t) {
   t.plan(1);
-
-  if (semver.satisfies(process.version, "=0.10")) {
-    t.pass("Ignored on node 0.10");
-    t.end();
-    return;
-  }
 
   let client = new Raygun.Client().init({
     apiKey: API_KEY,
@@ -40,12 +32,6 @@ test("async send basic", {}, function (t) {
 
 test("async send complex", {}, function (t) {
   t.plan(1);
-
-  if (semver.satisfies(process.version, "=0.10")) {
-    t.pass("Ignored on node 0.10");
-    t.end();
-    return;
-  }
 
   let client = new Raygun.Client()
     .init({ apiKey: API_KEY })
@@ -65,12 +51,6 @@ test("async send complex", {}, function (t) {
 
 test("async send with inner error", {}, function (t) {
   t.plan(1);
-
-  if (semver.satisfies(process.version, "=0.10")) {
-    t.pass("Ignored on node 0.10");
-    t.end();
-    return;
-  }
 
   let error = new Error("Outer");
   let innerError = new Error("Inner");
@@ -96,12 +76,6 @@ test("async send with inner error", {}, function (t) {
 test("async send with verror", {}, function (t) {
   t.plan(1);
 
-  if (semver.satisfies(process.version, "=0.10")) {
-    t.pass("Ignored on node 0.10");
-    t.end();
-    return;
-  }
-
   let error = new VError(
     new VError(new VError("Deep Error"), "Inner Error"),
     "Outer Error",
@@ -123,12 +97,6 @@ test("async send with verror", {}, function (t) {
 
 test("async send with OnBeforeSend", {}, function (t) {
   t.plan(1);
-
-  if (semver.satisfies(process.version, "=0.10")) {
-    t.pass("Ignored on node 0.10");
-    t.end();
-    return;
-  }
 
   let client = new Raygun.Client().init({
     apiKey: API_KEY,
