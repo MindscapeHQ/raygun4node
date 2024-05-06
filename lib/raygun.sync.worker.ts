@@ -13,10 +13,10 @@ transport.send(sendOptions);
 
 function callback(error: Error | null, result: IncomingMessage | null) {
   if (error) {
-    console.log("Error sending with sync transport", error);
+    console.log(`[Raygun4Node] Error sending with sync transport`, error);
   } else {
     console.log(
-      "[raygun-apm] Successfully reported uncaught exception to Raygun",
+      `[Raygun4Node] Successfully reported uncaught exception to Raygun`,
     );
   }
 }

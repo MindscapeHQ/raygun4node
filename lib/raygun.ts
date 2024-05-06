@@ -234,7 +234,7 @@ class Raygun {
       (major === 13 && minor < 7)
     ) {
       console.log(
-        "[Raygun] Warning: reportUncaughtExceptions requires at least Node v12.17.0 or v13.7.0. Uncaught exceptions will not be automatically reported.",
+        `[Raygun4Node] Warning: reportUncaughtExceptions requires at least Node v12.17.0 or v13.7.0. Uncaught exceptions will not be automatically reported.`,
       );
 
       return;

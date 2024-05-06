@@ -62,13 +62,13 @@ export class OfflineStorage implements IOfflineStorage {
 
     fs.readdir(this.cachePath, (err, files) => {
       if (err) {
-        console.log("[Raygun] Error reading cache folder");
+        console.log(`[Raygun4Node] Error reading cache folder`);
         console.log(err);
         return callback(err);
       }
 
       if (files.length > this.cacheLimit) {
-        console.log("[Raygun] Error cache reached limit");
+        console.log(`[Raygun4Node] Error cache reached limit`);
         return callback(null);
       }
 
@@ -80,7 +80,7 @@ export class OfflineStorage implements IOfflineStorage {
           return callback(null);
         }
 
-        console.log("[Raygun] Error writing to cache folder");
+        console.log(`[Raygun4Node] Error writing to cache folder`);
         console.log(err);
 
         return callback(err);
@@ -97,7 +97,7 @@ export class OfflineStorage implements IOfflineStorage {
   send(callback: (error: Error | null, items?: string[]) => void) {
     this.retrieve((err, items) => {
       if (err) {
-        console.log("[Raygun] Error reading cache folder");
+        console.log(`[Raygun4Node] Error reading cache folder`);
         console.log(err);
         return callback(err);
       }

@@ -26,7 +26,7 @@ export function send(options: SendOptionsWithoutCB) {
     syncRequest(options);
   } catch (e) {
     console.log(
-      `Raygun: error ${e} occurred while attempting to send error with message: ${options.message}`,
+      `[Raygun4Node] Error ${e} occurred while attempting to send error with message: ${options.message}`,
     );
   }
 }
