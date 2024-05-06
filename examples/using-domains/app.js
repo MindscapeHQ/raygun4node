@@ -1,7 +1,7 @@
 var config = require("config");
 
 if (config.Raygun.Key === "YOUR_API_KEY") {
-  console.error("You need to set your Raygun API key in the config file");
+    console.error(`[Raygun4Node-Domains-Sample] You need to set your Raygun API key in the config file`);
   process.exit(1);
 }
 
@@ -16,11 +16,11 @@ var appDomain = require("domain").create();
 // crashes
 appDomain.on("error", function (err) {
   try {
-    console.log(`Domain error caught: ${err}`);
+      console.log(`[Raygun4Node-Domains-Sample] Domain error caught: ${err}`);
     // Try send data to Raygun
     raygunClient.send(err, {}, function () {
       // Exit the process once the error has been sent
-      console.log("Error sent to Raygun, exiting process");
+        console.log(`[Raygun4Node-Domains-Sample] Error sent to Raygun, exiting process`);
       process.exit(1);
     });
   } catch (e) {
@@ -35,7 +35,7 @@ appDomain.on("error", function (err) {
 appDomain.run(function () {
   var fs = require("fs");
 
-  console.log("Running example app");
+    console.log(`[Raygun4Node-Domains-Sample] Running example app`);
 
   // Try and read a file that doesn't exist
   fs.readFile("badfile.json", "utf8", function (err, file) {
