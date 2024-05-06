@@ -204,7 +204,7 @@ class Raygun {
 
     if (!sendOptionsResult.valid) {
       console.error(
-        `Encountered an error sending an error to Raygun. No API key is configured, please ensure .init is called with api key. See docs for more info.`,
+        `[Raygun4Node] Encountered an error sending an error to Raygun. No API key is configured, please ensure .init() is called with api key. See docs for more info.`,
       );
       return sendOptionsResult.message;
     }
