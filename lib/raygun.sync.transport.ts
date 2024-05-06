@@ -21,6 +21,12 @@ function syncRequest(httpOptions: SendOptionsWithoutCB) {
   console.log(requestProcess.stdout.toString());
 }
 
+/**
+ * Spawns a synchronous send request.
+ * Errors are not returned and callback is ignored.
+ * Only used to report uncaught exceptions.
+ * @param options
+ */
 export function send(options: SendOptionsWithoutCB) {
   try {
     syncRequest(options);

@@ -279,19 +279,17 @@ class Raygun {
     });
   }
 
+  /**
+   * Send error using synchronous transport.
+   * Only used to report uncaught exceptions.
+   * @param exception error to report
+   * @private
+   */
   private sendSync(
     exception: Error | string,
-    customData?: CustomData,
-    callback?: (err: Error | null) => void,
-    request?: RequestParams,
-    tags?: Tag[],
   ): void {
     const result = this.buildSendOptions(
       exception,
-      customData,
-      callback,
-      request,
-      tags,
     );
 
     if (result.valid) {
