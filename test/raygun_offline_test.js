@@ -17,18 +17,7 @@ test("offline message storage and sending", async function (t) {
     },
   });
   const raygunClient = testEnvironment.client;
-  const send = (e) =>
-    new Promise((resolve, reject) => {
-      raygunClient.send(e, null, (err, data) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(data);
-        }
-      });
-    });
-
-  await send(new Error("offline error"));
+  await raygunClient.send(new Error("offline error"));
 
   const files = fs.readdirSync(cachePath);
 
@@ -44,7 +33,7 @@ test("offline message storage and sending", async function (t) {
 
   t.equal(data.details.error.message, "offline error");
 
-  await send(new Error("offline error 2"));
+  await raygunClient.send(new Error("offline error 2"));
 
   await promisify(raygunClient.online.bind(raygunClient))();
   await testEnvironment.nextRequest();
@@ -73,18 +62,7 @@ test("batched offline message storage and sending", async function (t) {
     },
   });
   const raygunClient = testEnvironment.client;
-  const send = (e) =>
-    new Promise((resolve, reject) => {
-      raygunClient.send(e, null, (err, data) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(data);
-        }
-      });
-    });
-
-  await send(new Error("offline error"));
+  await raygunClient.send(new Error("offline error"));
 
   const files = fs.readdirSync(cachePath);
 
@@ -100,7 +78,7 @@ test("batched offline message storage and sending", async function (t) {
 
   t.equal(data.details.error.message, "offline error");
 
-  await send(new Error("offline error 2"));
+  await raygunClient.send(new Error("offline error 2"));
 
   await promisify(raygunClient.online.bind(raygunClient))();
   const batch = await testEnvironment.nextBatchRequest();

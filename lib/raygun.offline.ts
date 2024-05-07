@@ -32,6 +32,7 @@ export class OfflineStorage implements IOfflineStorage {
       path.join(this.cachePath, item),
       "utf8",
       (err, cacheContents) => {
+        // TODO: MessageTransport ignores any errors from the send callback, could this be improved?
         this.transport.send(cacheContents);
         fs.unlink(path.join(this.cachePath, item), () => {});
       },
