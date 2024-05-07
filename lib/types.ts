@@ -68,12 +68,8 @@ export type Tag = string;
 
 export type SendOptions = {
   message: string;
-  // TODO: Remove Callback in SendOptions and use Promises internally
-  callback: Callback<IncomingMessage>;
   http: HTTPOptions;
 };
-
-export type SendOptionsWithoutCB = Omit<SendOptions, "callback">;
 
 export type HTTPOptions = {
   useSSL: boolean;
