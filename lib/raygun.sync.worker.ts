@@ -1,22 +1,16 @@
 import fs from "fs";
 import * as transport from "./raygun.transport";
-import { SendOptions, SendOptionsWithoutCB } from "./types";
-import { IncomingMessage } from "http";
+import { SendOptionsWithoutCB } from "./types";
 
 // Read stdin synchronously
 const data = fs.readFileSync(0, "utf-8");
 
 const options: SendOptionsWithoutCB = JSON.parse(data);
-const sendOptions: SendOptions = { ...options, callback };
 
-transport.send(sendOptions);
-
-function callback(error: Error | null, result: IncomingMessage | null) {
-  if (error) {
-    console.log("Error sending with sync transport", error);
-  } else {
-    console.log(
+transport.send(options).then((response) => {
+  console.log(
       "[raygun-apm] Successfully reported uncaught exception to Raygun",
-    );
-  }
-}
+  );
+}).catch((error) => {
+  console.log("Error sending with sync transport", error);
+});

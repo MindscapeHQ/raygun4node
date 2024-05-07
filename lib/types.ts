@@ -132,7 +132,7 @@ export type OfflineStorageOptions = {
 };
 
 export type Transport = {
-  send(options: SendOptions): void;
+  send(options: SendOptionsWithoutCB): Promise<IncomingMessage>;
 };
 
 export type MessageTransport = {

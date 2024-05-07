@@ -256,7 +256,15 @@ class Raygun {
     } else {
       // Use current transport to send request.
       // Transport can be batch or default.
-      this.transport().send(sendOptions);
+      this.transport().send(sendOptions).then((response) => {
+        if (callback) {
+          callVariadicCallback(callback, null, response);
+        }
+      }).catch((error) => {
+        if (callback) {
+          callVariadicCallback(callback,error,null);
+        }
+      });
     }
 
     return message;
@@ -442,8 +450,11 @@ class Raygun {
       send(message: string) {
         transport.send({
           message,
-          callback: () => {},
           http: httpOptions,
+        }).then((response) => {
+          debug(`[raygun.ts] Sent message: ${response}`);
+        }).catch((error) => {
+          console.error(`[Raygun4Node] Failed to send message`, error);
         });
       },
     };

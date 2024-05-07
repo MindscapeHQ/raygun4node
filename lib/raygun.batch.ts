@@ -5,7 +5,7 @@ import {
   callVariadicCallback,
   Callback,
   HTTPOptions,
-  SendOptions,
+  SendOptionsWithoutCB,
 } from "./types";
 
 const debug = require("debug")("raygun");
@@ -45,18 +45,28 @@ export class RaygunBatchTransport {
 
   /**
    * Enqueues send request to batch processor.
-   * Callback in SendOptions is called when the message is eventually processed.
-   * @param options
+   * @param options send options without callback
+   * @return Promise with response or error if rejected
    */
-  send(options: SendOptions) {
-    this.onIncomingMessage({
-      serializedMessage: options.message,
-      callback: options.callback,
-    });
+  send(options: SendOptionsWithoutCB) : Promise<IncomingMessage> {
+    return new Promise((resolve, reject) => {
+      this.onIncomingMessage({
+        serializedMessage: options.message,
+        // TODO: Switch to using Promises internally
+        // See issue: https://github.com/MindscapeHQ/raygun4node/issues/199
+        callback: (error, message) => {
+          if (error) {
+            reject(error);
+          } else if (message) {
+            resolve(message);
+          }
+        }
+      });
 
-    if (!this.timerId) {
-      this.timerId = setTimeout(() => this.processBatch(), 1000);
-    }
+      if (!this.timerId) {
+        this.timerId = setTimeout(() => this.processBatch(), 1000);
+      }
+    });
   }
 
   stopProcessing() {
@@ -151,6 +161,7 @@ export class RaygunBatchTransport {
       }
 
       // TODO: Callbacks are processed in batch, see how can this be implemented with Promises
+      // See issue: https://github.com/MindscapeHQ/raygun4node/issues/199
       for (const callback of callbacks) {
         if (callback) {
           callVariadicCallback(callback, err, response);
