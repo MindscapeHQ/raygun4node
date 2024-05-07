@@ -69,7 +69,7 @@ function onError(error) {
       process.exit(1);
       break;
     case 'EADDRINUSE':
-          console.error(`[Raygun4Node-Express-Sample] ` + bind + ` is already in use`);
+      console.error(`[Raygun4Node-Express-Sample] ` + bind + ` is already in use`);
       process.exit(1);
       break;
     default:
