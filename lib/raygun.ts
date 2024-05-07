@@ -219,7 +219,7 @@ class Raygun {
   }
 
   /**
-   * @deprecated use send instead, which supports async/await calls.
+   * @deprecated sendWithCallback is a deprecated method. Instead, use send, which supports async/await calls.
    */
   sendWithCallback(
     exception: Error | string,
