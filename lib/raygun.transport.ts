@@ -12,15 +12,13 @@ import http from "http";
 import https from "https";
 
 import { IncomingMessage } from "http";
-import { SendOptionsWithoutCB } from "./types";
+import { SendOptions } from "./types";
 
 const API_HOST = "api.raygun.io";
 const DEFAULT_ENDPOINT = "/entries";
 const BATCH_ENDPOINT = "/entries/bulk";
 
-export function sendBatch(
-  options: SendOptionsWithoutCB,
-): Promise<IncomingMessage> {
+export function sendBatch(options: SendOptions): Promise<IncomingMessage> {
   return send(options, BATCH_ENDPOINT);
 }
 
@@ -32,7 +30,7 @@ export function sendBatch(
  * @return Promise with IncomingMessage or rejected with Error
  */
 export function send(
-  options: SendOptionsWithoutCB,
+  options: SendOptions,
   path = DEFAULT_ENDPOINT,
 ): Promise<IncomingMessage> {
   try {

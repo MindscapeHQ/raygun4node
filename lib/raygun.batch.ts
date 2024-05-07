@@ -48,7 +48,7 @@ export class RaygunBatchTransport {
    * @param options send options without callback
    * @return Promise with response or error if rejected
    */
-  send(options: SendOptionsWithoutCB) : Promise<IncomingMessage> {
+  send(options: SendOptionsWithoutCB): Promise<IncomingMessage> {
     return new Promise((resolve, reject) => {
       this.onIncomingMessage({
         serializedMessage: options.message,
@@ -60,7 +60,7 @@ export class RaygunBatchTransport {
           } else if (message) {
             resolve(message);
           }
-        }
+        },
       });
 
       if (!this.timerId) {
@@ -178,12 +178,14 @@ export class RaygunBatchTransport {
     sendBatch({
       message: payload,
       http: this.httpOptions,
-    }).then((response) => {
-      // Call to original callbacks for success
-      runAllCallbacks(null, response);
-    }).catch((error) => {
-      // Call to original callbacks for error
-      runAllCallbacks(error, null);
-    });
+    })
+      .then((response) => {
+        // Call to original callbacks for success
+        runAllCallbacks(null, response);
+      })
+      .catch((error) => {
+        // Call to original callbacks for error
+        runAllCallbacks(error, null);
+      });
   }
 }

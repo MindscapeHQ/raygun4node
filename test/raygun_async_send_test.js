@@ -158,3 +158,22 @@ test("check that tags get merged", {}, function (t) {
       t.fail(err);
     });
 });
+
+
+test("send with expressHandler custom data", function (t) {
+  t.plan(1);
+  let client = new Raygun.Client().init({
+    apiKey: API_KEY,
+  });
+
+  client.expressCustomData = function () {
+    return { test: "data" };
+  };
+  client._send = client.send;
+  client.send = function (err, data, params, tags) {
+    client.send = client._send;
+    t.equal(data.test, "data");
+    t.end();
+  };
+  client.expressHandler(new Error(), {}, {}, function () {});
+});
