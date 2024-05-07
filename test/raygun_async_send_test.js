@@ -4,6 +4,7 @@ const test = require("tap").test;
 const VError = require("verror");
 const nock = require("nock");
 const Raygun = require("../lib/raygun.ts");
+const {IncomingMessage} = require("http");
 
 nock(/.*/)
   .post(/.*/, function () {
@@ -170,10 +171,11 @@ test("send with expressHandler custom data", function (t) {
     return { test: "data" };
   };
   client._send = client.send;
-  client.send = function (err, data, params, tags) {
+  client.send = (err, data, params, tags) => {
     client.send = client._send;
     t.equal(data.test, "data");
     t.end();
+    return Promise.resolve(null);
   };
   client.expressHandler(new Error(), {}, {}, function () {});
 });
