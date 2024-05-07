@@ -43,6 +43,11 @@ export class RaygunBatchTransport {
     this.httpOptions = options.httpOptions;
   }
 
+  /**
+   * Enqueues send request to batch processor.
+   * Callback in SendOptions is called when the message is eventually processed.
+   * @param options
+   */
   send(options: SendOptions) {
     this.onIncomingMessage({
       serializedMessage: options.message,
@@ -145,6 +150,7 @@ export class RaygunBatchTransport {
         );
       }
 
+      // TODO: Callbacks are processed in batch, see how can this be implemented with Promises
       for (const callback of callbacks) {
         if (callback) {
           callVariadicCallback(callback, err, response);

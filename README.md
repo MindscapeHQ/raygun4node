@@ -86,7 +86,55 @@ Note that the Express middleware handler will pick up and transmit any `err` obj
 
 ## Documentation
 
-### Callbacks
+### Send
+
+The `send()` function is asynchronous and returns a `Promise` of type `IncomingMessage`.
+
+Note that `IncomingMessage` can be `null` if the request was stored because the application was offline.
+
+`IncomingMessage` is the response from the Raygun API - there's nothing in the body, it's just a status code response. 
+If everything went ok, you'll get a 202 response code. 
+Otherwise, we throw 401 for incorrect API keys, 403 if you're over your plan limits, or anything in the 500+ range for internal errors.
+
+We use the nodejs http/https library to make the POST to Raygun, you can see more documentation about that callback here: https://nodejs.org/api/http.html#http_http_request_options_callback
+
+You can `await` the call to obtain the result, or use `then/catch`.
+
+#### Using `await`
+
+Use `await` to obtain the `IncomingMessage`, remember to `catch` any possible thrown errors from the `send()` method.
+
+```js
+try {
+  let message = await client.send(error);
+} catch (e) {
+  // error sending message
+}
+```
+
+#### Using `then/catch`
+
+You can also use `then()` to obtain the `IncomingMessage`, as well, use `catch()` to catch any possible thrown errors from the `send()` method.
+
+```js
+client.send(error)
+  .then((message) => {
+    // message sent to Raygun
+  })
+  .catch((error) => {
+      // error sending message
+  });
+```
+
+### Legacy `sendWithCallback`
+
+```javascript
+client.sendWithCallback(new Error(), {}, function (response){ });
+```
+
+The client still provides a legacy `send()` method that supports callbacks instead of `Promises`.
+
+**This method is deprecated and will be removed in the future.**
 
 The callback should be a node-style callback: `function(err, response) { /*...*/ }`.
 *Note*: If the callback only takes one parameter (`function(response){ /*...*/ }`)
@@ -98,7 +146,7 @@ backwards compatibility; the Node-style callback should be preferred.
 You can pass custom data in on the Send() function, as the second parameter. For instance (based off the call in test/raygun_test.js):
 
 ```javascript
-client.send(new Error(), { 'mykey': 'beta' }, function (response){ });
+client.send(new Error(), { 'mykey': 'beta' });
 ```
 
 #### Sending custom data with Expressjs
@@ -113,19 +161,11 @@ raygunClient.expressCustomData = function (err, req) {
 };
 ```
 
-### Callback
-
-```javascript
-client.send(new Error(), {}, function (response){ });
-```
-
-The argument to the 3rd argument callback is the response from the Raygun API - there's nothing in the body, it's just a status code response. If everything went ok, you'll get a 202 response code. Otherwise we throw 401 for incorrect API keys, 403 if you're over your plan limits, or anything in the 500+ range for internal errors. We use the nodejs http/https library to make the POST to Raygun, you can see more documentation about that callback here: https://nodejs.org/api/http.html#http_http_request_options_callback
-
 ### Sending request data
 
 You can send the request data in the Send() function, as the fourth parameter. For example:
 ```javascript
-client.send(new Error(), {}, function () {}, request);
+client.send(new Error(), {}, request);
 ```
 
 If you want to filter any of the request data then you can pass in an array of keys to filter when
@@ -139,7 +179,7 @@ const raygunClient = new raygun.Client().init({ apiKey: 'YOUR_API_KEY', filters:
 
 You can add tags to your error in the Send() function, as the fifth parameter. For example:
 ```javascript
-client.send(new Error(), {}, function () {}, {}, ['Custom Tag 1', 'Important Error']);
+client.send(new Error(), {}, {}, ['Custom Tag 1', 'Important Error']);
 ```
 
 Tags can also be set globally using setTags

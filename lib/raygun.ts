@@ -120,6 +120,7 @@ class Raygun {
     }
 
     this.expressHandler = this.expressHandler.bind(this);
+    this.sendWithCallback = this.sendWithCallback.bind(this);
     this.send = this.send.bind(this);
 
     this._offlineStorage =
@@ -185,10 +186,45 @@ class Raygun {
     return raygunTransport;
   }
 
-  send(
+  /**
+   * Sends exception to Raygun.
+   * @param exception to send.
+   * @param customData to attach to the error report.
+   * @param request custom RequestParams.
+   * @param tags to attach to the error report.
+   * @return IncomingMessage if message was delivered, null if stored, rejected with Error if failed.
+   */
+  async send(
     exception: Error | string,
     customData?: CustomData,
-    callback?: (err: Error | null) => void,
+    request?: RequestParams,
+    tags?: Tag[],
+  ): Promise<IncomingMessage | null> {
+    // Convert internal sendWithCallback implementation to a Promise.
+    return new Promise((resolve, reject) => {
+      this.sendWithCallback(
+        exception,
+        customData,
+        function (err, message) {
+          if (err != null) {
+            reject(err);
+          } else {
+            resolve(message);
+          }
+        },
+        request,
+        tags,
+      );
+    });
+  }
+
+  /**
+   * @deprecated sendWithCallback is a deprecated method. Instead, use send, which supports async/await calls.
+   */
+  sendWithCallback(
+    exception: Error | string,
+    customData?: CustomData,
+    callback?: Callback<IncomingMessage>,
     request?: RequestParams,
     tags?: Tag[],
   ): Message {
@@ -212,11 +248,14 @@ class Raygun {
     const sendOptions = sendOptionsResult.options;
 
     if (this._isOffline) {
-      this.offlineStorage().save(
-        JSON.stringify(message),
-        callback || emptyCallback,
-      );
+      // make the save callback type compatible with Callback<IncomingMessage>
+      const saveCallback = callback
+        ? (err: Error | null) => callVariadicCallback(callback, err, null)
+        : emptyCallback;
+      this.offlineStorage().save(JSON.stringify(message), saveCallback);
     } else {
+      // Use current transport to send request.
+      // Transport can be batch or default.
       this.transport().send(sendOptions);
     }
 
@@ -245,20 +284,14 @@ class Raygun {
     });
   }
 
-  private sendSync(
-    exception: Error | string,
-    customData?: CustomData,
-    callback?: (err: Error | null) => void,
-    request?: RequestParams,
-    tags?: Tag[],
-  ): void {
-    const result = this.buildSendOptions(
-      exception,
-      customData,
-      callback,
-      request,
-      tags,
-    );
+  /**
+   * Send error using synchronous transport.
+   * Only used to report uncaught exceptions.
+   * @param exception error to report
+   * @private
+   */
+  private sendSync(exception: Error | string): void {
+    const result = this.buildSendOptions(exception);
 
     if (result.valid) {
       raygunSyncTransport.send(result.options);
@@ -285,9 +318,11 @@ class Raygun {
       body: req.body,
     };
 
-    this.send(err, customData || {}, function () {}, requestParams, [
+    this.send(err, customData || {}, requestParams, [
       "UnhandledException",
-    ]);
+    ]).catch((err) => {
+      console.log(`[Raygun] Failed to send Express error: ${err}`);
+    });
     next(err);
   }
 
@@ -403,6 +438,7 @@ class Raygun {
     };
 
     return {
+      // TODO: MessageTransport ignores any errors from the send callback, could this be improved?
       send(message: string) {
         transport.send({
           message,
