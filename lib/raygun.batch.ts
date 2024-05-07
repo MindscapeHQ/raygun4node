@@ -166,8 +166,13 @@ export class RaygunBatchTransport {
 
     sendBatch({
       message: payload,
-      callback: runAllCallbacks,
       http: this.httpOptions,
+    }).then((response) => {
+      // Call to original callbacks for success
+      runAllCallbacks(null, response);
+    }).catch((error) => {
+      // Call to original callbacks for error
+      runAllCallbacks(error, null);
     });
   }
 }

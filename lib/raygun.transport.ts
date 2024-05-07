@@ -27,7 +27,9 @@ export function sendBatch(
 /**
  * Transport implementation that sends error to Raygun.
  * Errors are reported back via callback.
- * @param options
+ * @param options without callback
+ * @param path service endpoint
+ * @return Promise with IncomingMessage or rejected with Error
  */
 export function send(
   options: SendOptionsWithoutCB,
