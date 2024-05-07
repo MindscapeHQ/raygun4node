@@ -99,7 +99,7 @@ class Raygun {
     this._reportColumnNumbers = options.reportColumnNumbers;
     this._innerErrorFieldName = options.innerErrorFieldName || "cause"; // VError function to retrieve inner error;
 
-    debug(`client initialized`);
+    debug(`[raygun.ts] client initialized`);
 
     if (options.reportUncaughtExceptions) {
       this.reportUncaughtExceptions();
@@ -211,7 +211,7 @@ class Raygun {
 
     if (!sendOptionsResult.valid) {
       console.error(
-        `Encountered an error sending an error to Raygun. No API key is configured, please ensure .init is called with api key. See docs for more info.`,
+        `[Raygun4Node] Encountered an error sending an error to Raygun. No API key is configured, please ensure .init is called with api key. See docs for more info.`,
       );
       return Promise.reject(sendOptionsResult.message);
     }
@@ -236,17 +236,19 @@ class Raygun {
       });
     } else {
       // wrap Promise and add duration debug info
-      const durationInMs = startTimer();
+      const stopTimer = startTimer();
       // Use current transport to send request.
       // Transport can be batch or default.
       return this.transport()
         .send(sendOptions)
         .then((response) => {
-          debug(`successfully sent message (duration=${durationInMs}ms)`);
+          const durationInMs = stopTimer();
+          debug(`[raygun.ts] Successfully sent message (duration=${durationInMs}ms)`);
           return response;
         })
         .catch((error) => {
-          debug(`error sending message (duration=${durationInMs}ms): ${error}`);
+          const durationInMs = stopTimer();
+          debug(`[raygun.ts] Error sending message (duration=${durationInMs}ms): ${error}`);
           return error;
         });
     }
