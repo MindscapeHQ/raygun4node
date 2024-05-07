@@ -15,24 +15,23 @@ import { IncomingMessage } from "http";
 import {
   isCallbackWithError,
   callVariadicCallback,
-  SendOptions,
+  SendOptionsWithoutCB,
 } from "./types";
 
 const API_HOST = "api.raygun.io";
 const DEFAULT_ENDPOINT = "/entries";
 const BATCH_ENDPOINT = "/entries/bulk";
 
-export function sendBatch(options: SendOptions) {
+export function sendBatch(options: SendOptionsWithoutCB): Promise<IncomingMessage> {
   return send(options, BATCH_ENDPOINT);
 }
 
-// TODO: Convert this method callbacks to Promise.
 /**
  * Transport implementation that sends error to Raygun.
  * Errors are reported back via callback.
  * @param options
  */
-export function send(options: SendOptions, path = DEFAULT_ENDPOINT) {
+export function send(options: SendOptionsWithoutCB, path = DEFAULT_ENDPOINT): Promise<IncomingMessage> {
   try {
     const data = Buffer.from(options.message);
 
@@ -49,28 +48,27 @@ export function send(options: SendOptions, path = DEFAULT_ENDPOINT) {
       },
     };
 
-    const cb = function (response: IncomingMessage) {
-      if (options.callback) {
-        return callVariadicCallback(options.callback, null, response);
-      }
-    };
 
-    const httpLib = options.http.useSSL ? https : http;
-    const request = httpLib.request(httpOptions, cb);
+    // Wrap HTTP request in Promise
+    return new Promise((resolve, reject) => {
+      const httpLib = options.http.useSSL ? https : http;
+      const request = httpLib.request(httpOptions, (response: IncomingMessage) => {
+        // request completed successfully
+        resolve(response);
+      });
 
-    request.on("error", function (e) {
-      console.log(
-        `Raygun: error ${e.message} occurred while attempting to send error with message: ${options.message}`,
-      );
+      request.on("error", function (e) {
+        console.log(
+            `Raygun: error ${e.message} occurred while attempting to send error with message: ${options.message}`,
+        );
 
-      // If the callback has two parameters, it should expect an `error` value.
-      if (options.callback && isCallbackWithError(options.callback)) {
-        options.callback(e, null);
-      }
+        // request failed
+        reject(e);
+      });
+
+      request.write(data);
+      request.end();
     });
-
-    request.write(data);
-    request.end();
   } catch (e) {
     // TODO: Non-HTTP errors are being ignored, should be better pass them up?
     console.log(
