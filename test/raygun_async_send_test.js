@@ -4,7 +4,6 @@ const test = require("tap").test;
 const VError = require("verror");
 const nock = require("nock");
 const Raygun = require("../lib/raygun.ts");
-const {IncomingMessage} = require("http");
 
 nock(/.*/)
   .post(/.*/, function () {
@@ -159,7 +158,6 @@ test("check that tags get merged", {}, function (t) {
       t.fail(err);
     });
 });
-
 
 test("send with expressHandler custom data", function (t) {
   t.plan(1);

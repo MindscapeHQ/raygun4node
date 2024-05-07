@@ -239,13 +239,16 @@ class Raygun {
       const durationInMs = startTimer();
       // Use current transport to send request.
       // Transport can be batch or default.
-      return this.transport().send(sendOptions).then((response) => {
-        debug(`successfully sent message (duration=${durationInMs}ms)`);
-        return response;
-      }).catch((error) => {
-        debug(`error sending message (duration=${durationInMs}ms): ${error}`);
-        return error;
-      });
+      return this.transport()
+        .send(sendOptions)
+        .then((response) => {
+          debug(`successfully sent message (duration=${durationInMs}ms)`);
+          return response;
+        })
+        .catch((error) => {
+          debug(`error sending message (duration=${durationInMs}ms): ${error}`);
+          return error;
+        });
     }
   }
 
@@ -260,15 +263,17 @@ class Raygun {
     tags?: Tag[],
   ) {
     // call async send but redirect response to provided legacy callback
-    this.send(exception, customData, request, tags).then((response) => {
-      if (callback) {
-        callVariadicCallback(callback, null, response);
-      }
-    }).catch((error) => {
-      if (callback) {
-        callVariadicCallback(callback, error, null);
-      }
-    });
+    this.send(exception, customData, request, tags)
+      .then((response) => {
+        if (callback) {
+          callVariadicCallback(callback, null, response);
+        }
+      })
+      .catch((error) => {
+        if (callback) {
+          callVariadicCallback(callback, error, null);
+        }
+      });
   }
 
   private reportUncaughtExceptions() {

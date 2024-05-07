@@ -5,7 +5,7 @@ import {
   callVariadicCallback,
   Callback,
   HTTPOptions,
-  SendOptionsWithoutCB,
+  SendOptions,
 } from "./types";
 
 const debug = require("debug")("raygun");
@@ -48,7 +48,7 @@ export class RaygunBatchTransport {
    * @param options send options without callback
    * @return Promise with response or error if rejected
    */
-  send(options: SendOptionsWithoutCB): Promise<IncomingMessage> {
+  send(options: SendOptions): Promise<IncomingMessage> {
     return new Promise((resolve, reject) => {
       this.onIncomingMessage({
         serializedMessage: options.message,

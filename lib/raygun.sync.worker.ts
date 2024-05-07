@@ -1,11 +1,11 @@
 import fs from "fs";
 import * as transport from "./raygun.transport";
-import { SendOptionsWithoutCB } from "./types";
+import { SendOptions } from "./types";
 
 // Read stdin synchronously
 const data = fs.readFileSync(0, "utf-8");
 
-const options: SendOptionsWithoutCB = JSON.parse(data);
+const options: SendOptions = JSON.parse(data);
 
 transport
   .send(options)
