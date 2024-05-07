@@ -70,9 +70,9 @@ export function send(options: SendOptionsWithoutCB, path = DEFAULT_ENDPOINT): Pr
       request.end();
     });
   } catch (e) {
-    // TODO: Non-HTTP errors are being ignored, should be better pass them up?
     console.log(
       `Raygun: error ${e} occurred while attempting to send error with message: ${options.message}`,
     );
+    return Promise.reject(e);
   }
 }
