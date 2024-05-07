@@ -1,8 +1,8 @@
 ---
 name: Bug report
-about: Create a report to help us improve
-title: ''
-labels: ''
+about: Bug report
+title: "<Area of the SDK>: <Short Description of issue>"
+labels: needs triage
 assignees: ''
 
 ---
@@ -20,19 +20,18 @@ Steps to reproduce the behavior:
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 
+Links to related tickets or other context are welcome here.
+
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+**Environment (please complete the following information):**
+ - OS: [e.g. Linux/Windows/macOS etc]
+ - SDK version: [e.g. 10.5.2]
+ - Node/npm versions: [e.g. 21.7.3]
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+** Logs**
+If applicable, include relevant logs or error messages here (please use code blocks to format properly).
 
-**Additional context**
-Add any other context about the problem here.
+**Possible Solution**
+If you have suggestions for how the issue might be resolved or investigated, please describe them here.
