@@ -12,17 +12,15 @@ import http from "http";
 import https from "https";
 
 import { IncomingMessage } from "http";
-import {
-  isCallbackWithError,
-  callVariadicCallback,
-  SendOptionsWithoutCB,
-} from "./types";
+import { SendOptionsWithoutCB } from "./types";
 
 const API_HOST = "api.raygun.io";
 const DEFAULT_ENDPOINT = "/entries";
 const BATCH_ENDPOINT = "/entries/bulk";
 
-export function sendBatch(options: SendOptionsWithoutCB): Promise<IncomingMessage> {
+export function sendBatch(
+  options: SendOptionsWithoutCB,
+): Promise<IncomingMessage> {
   return send(options, BATCH_ENDPOINT);
 }
 
@@ -31,7 +29,10 @@ export function sendBatch(options: SendOptionsWithoutCB): Promise<IncomingMessag
  * Errors are reported back via callback.
  * @param options
  */
-export function send(options: SendOptionsWithoutCB, path = DEFAULT_ENDPOINT): Promise<IncomingMessage> {
+export function send(
+  options: SendOptionsWithoutCB,
+  path = DEFAULT_ENDPOINT,
+): Promise<IncomingMessage> {
   try {
     const data = Buffer.from(options.message);
 
@@ -48,18 +49,20 @@ export function send(options: SendOptionsWithoutCB, path = DEFAULT_ENDPOINT): Pr
       },
     };
 
-
     // Wrap HTTP request in Promise
     return new Promise((resolve, reject) => {
       const httpLib = options.http.useSSL ? https : http;
-      const request = httpLib.request(httpOptions, (response: IncomingMessage) => {
-        // request completed successfully
-        resolve(response);
-      });
+      const request = httpLib.request(
+        httpOptions,
+        (response: IncomingMessage) => {
+          // request completed successfully
+          resolve(response);
+        },
+      );
 
       request.on("error", function (e) {
         console.log(
-            `Raygun: error ${e.message} occurred while attempting to send error with message: ${options.message}`,
+          `Raygun: error ${e.message} occurred while attempting to send error with message: ${options.message}`,
         );
 
         // request failed
