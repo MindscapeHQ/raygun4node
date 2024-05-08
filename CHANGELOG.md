@@ -1,3 +1,9 @@
+## 0.15.0-0
+- async/await `send()` support
+- Upgrade dependencies
+- Improvements in filter method
+- Improvements in documentation
+
 ## 0.14.0
 - Upgrade dependencies
 - Support for Node v20
