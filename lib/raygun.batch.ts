@@ -86,11 +86,9 @@ export class RaygunBatchTransport {
       const messageSize = Math.ceil(messageLength / 1024);
       const startOfMessage = serializedMessage.slice(0, 1000);
 
-      console.warn(
-        `[raygun4node] Error is too large to send to Raygun (${messageSize}kb)\nStart of error: ${startOfMessage}`,
-      );
-
-      return;
+      const errorMessage = `Error is too large to send to Raygun (${messageSize}kb)\nStart of error: ${startOfMessage}`;
+      console.error(`[Raygun4Node] ${errorMessage}`);
+      throw Error(errorMessage);
     }
 
     const messageIsTooLargeToAddToBatch =
