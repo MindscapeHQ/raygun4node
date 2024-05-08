@@ -33,7 +33,7 @@ export function send(options: SendOptions) {
   } catch (e) {
     // TODO: Is there a reason we ignore errors here?
     console.log(
-      `Raygun: error ${e} occurred while attempting to send error with message: ${options.message}`,
+      `[Raygun4Node] Error ${e} occurred while attempting to send error with message: ${options.message}`,
     );
   }
 }

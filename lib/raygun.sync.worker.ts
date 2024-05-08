@@ -11,9 +11,9 @@ transport
   .send(options)
   .then((response) => {
     console.log(
-      "[raygun-apm] Successfully reported uncaught exception to Raygun",
+      "[Raygun4Node] Successfully reported uncaught exception to Raygun",
     );
   })
   .catch((error) => {
-    console.log("Error sending with sync transport", error);
+    console.log("[Raygun4Node] Error sending with sync transport", error);
   });

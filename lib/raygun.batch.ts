@@ -136,7 +136,7 @@ export class RaygunBatchTransport {
     const { payload, messageCount, callbacks } = batch;
 
     debug(
-      `[raygun.batch.ts] batch transport - processing ( ${messageCount} message(s) in batch)`,
+      `[raygun.batch.ts] Batch transport - processing (${messageCount} message(s) in batch)`,
     );
 
     const batchId = this.batchId;
@@ -150,11 +150,11 @@ export class RaygunBatchTransport {
       const durationInMs = stopTimer();
       if (err) {
         debug(
-          `[raygun.batch.ts] batch transport - error sending batch (id=${batchId}, duration=${durationInMs}ms): ${err}`,
+          `[raygun.batch.ts] Batch transport - error sending batch (id=${batchId}, duration=${durationInMs}ms): ${err}`,
         );
       } else {
         debug(
-          `[raygun.batch.ts] batch transport - successfully sent batch (id=${batchId}, duration=${durationInMs}ms)`,
+          `[raygun.batch.ts] Batch transport - successfully sent batch (id=${batchId}, duration=${durationInMs}ms)`,
         );
       }
 
@@ -168,7 +168,7 @@ export class RaygunBatchTransport {
     };
 
     debug(
-      `[raygun.batch.ts] batch transport - sending batch (id=${batchId}) (${messageCount} messages, ${payload.length} bytes)`,
+      `[raygun.batch.ts] Batch transport - sending batch (id=${batchId}, ${messageCount} messages, ${payload.length} bytes)`,
     );
 
     const stopTimer = startTimer();

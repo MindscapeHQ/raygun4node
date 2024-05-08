@@ -99,7 +99,7 @@ class Raygun {
     this._reportColumnNumbers = options.reportColumnNumbers;
     this._innerErrorFieldName = options.innerErrorFieldName || "cause"; // VError function to retrieve inner error;
 
-    debug(`[raygun.ts] client initialized`);
+    debug(`[raygun.ts] Client initialized`);
 
     if (options.reportUncaughtExceptions) {
       this.reportUncaughtExceptions();
@@ -293,7 +293,7 @@ class Raygun {
       (major === 13 && minor < 7)
     ) {
       console.log(
-        "[Raygun] Warning: reportUncaughtExceptions requires at least Node v12.17.0 or v13.7.0. Uncaught exceptions will not be automatically reported.",
+        `[Raygun4Node] Warning: reportUncaughtExceptions requires at least Node v12.17.0 or v13.7.0. Uncaught exceptions will not be automatically reported.`,
       );
 
       return;
@@ -348,7 +348,7 @@ class Raygun {
 
   stop() {
     if (this._batchTransport) {
-      debug("batch transport stopped");
+      debug(`[raygun.ts] Batch transport stopped`);
       this._batchTransport.stopProcessing();
     }
   }
