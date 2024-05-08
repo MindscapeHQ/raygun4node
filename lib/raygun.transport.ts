@@ -61,8 +61,8 @@ export function send(
       );
 
       request.on("error", function (e) {
-        console.log(
-          `Raygun: error ${e.message} occurred while attempting to send error with message: ${options.message}`,
+        console.error(
+          `[Raygun4Node] error ${e.message} occurred while attempting to send error with message: ${options.message}`,
         );
 
         // request failed
@@ -73,9 +73,8 @@ export function send(
       request.end();
     });
   } catch (e) {
-    // TODO: Non-HTTP errors are being ignored, should be better pass them up?
-    console.log(
-      `Raygun: error ${e} occurred while attempting to send error with message: ${options.message}`,
+    console.error(
+      `[Raygun4Node] error ${e} occurred while attempting to send error with message: ${options.message}`,
     );
     return Promise.reject(e);
   }
