@@ -341,7 +341,7 @@ class Raygun {
     this.send(err, customData || {}, requestParams, [
       "UnhandledException",
     ]).catch((err) => {
-      console.log(`[Raygun] Failed to send Express error: ${err}`);
+      console.error(`[Raygun] Failed to send Express error`, err);
     });
     next(err);
   }
@@ -438,7 +438,6 @@ class Raygun {
     };
 
     return {
-      // TODO: MessageTransport ignores any errors from the send callback, could this be improved?
       send(message: string) {
         transport
           .send({
@@ -446,10 +445,15 @@ class Raygun {
             http: httpOptions,
           })
           .then((response) => {
-            debug(`[raygun.ts] Sent message: ${response}`);
+            debug(
+              `[raygun.ts] Sent message from offline transport: ${response}`,
+            );
           })
           .catch((error) => {
-            console.error(`[Raygun4Node] Failed to send message`, error);
+            console.error(
+              `[Raygun4Node] Failed to send message from offline transport`,
+              error,
+            );
           });
       },
     };
