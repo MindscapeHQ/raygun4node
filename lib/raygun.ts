@@ -99,7 +99,7 @@ class Raygun {
     this._reportColumnNumbers = options.reportColumnNumbers;
     this._innerErrorFieldName = options.innerErrorFieldName || "cause"; // VError function to retrieve inner error;
 
-    debug(`client initialized`);
+    debug(`[raygun.ts] Client initialized`);
 
     if (options.reportUncaughtExceptions) {
       this.reportUncaughtExceptions();
@@ -240,7 +240,7 @@ class Raygun {
 
     if (!sendOptionsResult.valid) {
       console.error(
-        `Encountered an error sending an error to Raygun. No API key is configured, please ensure .init is called with api key. See docs for more info.`,
+        `[Raygun4Node] Encountered an error sending an error to Raygun. No API key is configured, please ensure .init() is called with api key. See docs for more info.`,
       );
       return sendOptionsResult.message;
     }
@@ -273,7 +273,7 @@ class Raygun {
       (major === 13 && minor < 7)
     ) {
       console.log(
-        "[Raygun] Warning: reportUncaughtExceptions requires at least Node v12.17.0 or v13.7.0. Uncaught exceptions will not be automatically reported.",
+        `[Raygun4Node] Warning: reportUncaughtExceptions requires at least Node v12.17.0 or v13.7.0. Uncaught exceptions will not be automatically reported.`,
       );
 
       return;
@@ -328,7 +328,7 @@ class Raygun {
 
   stop() {
     if (this._batchTransport) {
-      debug("batch transport stopped");
+      debug(`[raygun.ts] Batch transport stopped`);
       this._batchTransport.stopProcessing();
     }
   }
@@ -400,9 +400,13 @@ class Raygun {
     ) {
       const durationInMs = stopTimer();
       if (error) {
-        debug(`error sending message (duration=${durationInMs}ms): ${error}`);
+        debug(
+          `[raygun.ts] Error sending message (duration=${durationInMs}ms): ${error}`,
+        );
       } else {
-        debug(`successfully sent message (duration=${durationInMs}ms)`);
+        debug(
+          `[raygun.ts] Successfully sent message (duration=${durationInMs}ms)`,
+        );
       }
       if (!callback) {
         return;
