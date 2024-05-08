@@ -243,12 +243,16 @@ class Raygun {
         .send(sendOptions)
         .then((response) => {
           const durationInMs = stopTimer();
-          debug(`[raygun.ts] Successfully sent message (duration=${durationInMs}ms)`);
+          debug(
+            `[raygun.ts] Successfully sent message (duration=${durationInMs}ms)`,
+          );
           return response;
         })
         .catch((error) => {
           const durationInMs = stopTimer();
-          debug(`[raygun.ts] Error sending message (duration=${durationInMs}ms): ${error}`);
+          debug(
+            `[raygun.ts] Error sending message (duration=${durationInMs}ms): ${error}`,
+          );
           return error;
         });
     }
