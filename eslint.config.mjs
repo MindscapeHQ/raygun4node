@@ -6,9 +6,13 @@ import stylisticTs from '@stylistic/eslint-plugin-ts';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
+    // Basic eslint rules
     eslint.configs.recommended,
+    // Codestyle rules for JS
     stylistic.configs["recommended-flat"],
+    // Codestyle rules for TS
     stylisticTs.configs["all-flat"],
+    // Eslint rules for TS
     ...tseslint.configs.recommended,
     {
         languageOptions: {
@@ -37,6 +41,7 @@ export default tseslint.config(
             "@stylistic/semi": ["error", "always"],
             // Stick to double quotes
             "@stylistic/quotes": ["error", "double"],
+            // Always indent with two spaces
             '@stylistic/ts/indent': ['error', 2],
             // Enforce curly braces spacing
             "@stylistic/ts/object-curly-spacing": ["error", "always"],
@@ -44,7 +49,7 @@ export default tseslint.config(
             "@stylistic/brace-style": ["error", "1tbs"],
             // Enforce parenthesis in functions: "(a) => a"
             "@stylistic/arrow-parens": ["error", "always"],
-            // Disabled rules that collide with Prettier
+            // Disabled rules that collide with Prettier formatter
             "@stylistic/member-delimiter-style": ["off", 0],
             "@stylistic/no-mixed-operators": ["off", 0],
             "@stylistic/operator-linebreak": ["off", 0],
