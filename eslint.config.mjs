@@ -31,6 +31,10 @@ export default tseslint.config(
             ],
             // Required to import JS modules
             "@typescript-eslint/no-var-requires": "off",
+            // Always require semicolons
+            "@stylistic/semi": ["error", "always"],
+            // Stick to double quotes
+            "@stylistic/quotes": ["error", "double"],
         }
     }
 );

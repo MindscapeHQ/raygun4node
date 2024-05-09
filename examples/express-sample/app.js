@@ -2,7 +2,7 @@ var config = require("config");
 
 if (config.Raygun.Key === "YOUR_API_KEY") {
   console.error(
-    `[Raygun4Node-Express-Sample] You need to set your Raygun API key in the config file`,
+    "[Raygun4Node-Express-Sample] You need to set your Raygun API key in the config file",
   );
   process.exit(1);
 }
@@ -35,7 +35,7 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
 // uncomment after placing your favicon in /public
-//app.use(favicon(__dirname + '/public/favicon.ico'));
+// app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger("dev"));
 app.use(bodyParser.json());
 app.use(

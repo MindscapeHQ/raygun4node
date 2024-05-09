@@ -71,7 +71,7 @@ export class RaygunBatchTransport {
 
   stopProcessing() {
     if (this.timerId) {
-      debug(`[raygun.batch.ts] Batch transport - stopping`);
+      debug("[raygun.batch.ts] Batch transport - stopping");
       clearInterval(this.timerId);
 
       this.timerId = null;

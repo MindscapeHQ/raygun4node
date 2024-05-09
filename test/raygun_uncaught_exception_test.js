@@ -11,7 +11,7 @@ test("reporting uncaught exceptions", async function (t) {
 
   await util
     .promisify(childProcess.exec)(
-      `node -r ts-node/register ./raygun_uncaught_exception_app.js`,
+      "node -r ts-node/register ./raygun_uncaught_exception_app.js",
       {
         cwd: __dirname,
         stdio: "inherit",
