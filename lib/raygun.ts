@@ -420,6 +420,7 @@ class Raygun {
       .setBreadcrumbs(getBreadcrumbs())
       .setTags(mergedTags);
 
+
     let message = builder.build();
 
     if (this._groupingKey) {
@@ -448,6 +449,8 @@ class Raygun {
     if (!apiKey) {
       return { valid: false, message };
     }
+
+    // TODO: clear breadcrumbs as they have been incorporated into the message
 
     return {
       valid: true,
