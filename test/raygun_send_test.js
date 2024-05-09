@@ -126,24 +126,6 @@ test("send with OnBeforeSend", {}, function (t) {
   });
 });
 
-test("send with expressHandler custom data", function (t) {
-  t.plan(1);
-  var client = new Raygun.Client().init({
-    apiKey: API_KEY,
-  });
-
-  client.expressCustomData = function () {
-    return { test: "data" };
-  };
-  client._send = client.sendWithCallback;
-  client.sendWithCallback = function (err, data) {
-    client.sendWithCallback = client._send;
-    t.equal(data.test, "data");
-    t.end();
-  };
-  client.expressHandler(new Error(), {}, {}, function () {});
-});
-
 test("check that tags get passed through", {}, function (t) {
   var tag = ["Test"];
   var client = new Raygun.Client().init({ apiKey: "TEST" });

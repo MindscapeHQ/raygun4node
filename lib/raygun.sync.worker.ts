@@ -1,22 +1,19 @@
 import fs from "fs";
 import * as transport from "./raygun.transport";
-import { SendOptions, SendOptionsWithoutCB } from "./types";
-import { IncomingMessage } from "http";
+import { SendOptions } from "./types";
 
 // Read stdin synchronously
 const data = fs.readFileSync(0, "utf-8");
 
-const options: SendOptionsWithoutCB = JSON.parse(data);
-const sendOptions: SendOptions = { ...options, callback };
+const options: SendOptions = JSON.parse(data);
 
-transport.send(sendOptions);
-
-function callback(error: Error | null, result: IncomingMessage | null) {
-  if (error) {
-    console.log(`[Raygun4Node] Error sending with sync transport`, error);
-  } else {
+transport
+  .send(options)
+  .then((response) => {
     console.log(
       `[Raygun4Node] Successfully reported uncaught exception to Raygun`,
     );
-  }
-}
+  })
+  .catch((error) => {
+    console.error(`[Raygun4Node] Error sending with sync transport`, error);
+  });

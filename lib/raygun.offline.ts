@@ -32,8 +32,9 @@ export class OfflineStorage implements IOfflineStorage {
       path.join(this.cachePath, item),
       "utf8",
       (err, cacheContents) => {
-        // TODO: MessageTransport ignores any errors from the send callback, could this be improved?
+        // Attempt to send stored messages after going online
         this.transport.send(cacheContents);
+        // Ignore result, delete stored content nevertheless
         fs.unlink(path.join(this.cachePath, item), () => {});
       },
     );
@@ -63,13 +64,12 @@ export class OfflineStorage implements IOfflineStorage {
 
     fs.readdir(this.cachePath, (err, files) => {
       if (err) {
-        console.log(`[Raygun4Node] Error reading cache folder`);
-        console.log(err);
+        console.error(`[Raygun4Node] Error reading cache folder`, err);
         return callback(err);
       }
 
       if (files.length > this.cacheLimit) {
-        console.log(`[Raygun4Node] Error cache reached limit`);
+        console.error(`[Raygun4Node] Error cache reached limit`);
         return callback(null);
       }
 
@@ -81,9 +81,7 @@ export class OfflineStorage implements IOfflineStorage {
           return callback(null);
         }
 
-        console.log(`[Raygun4Node] Error writing to cache folder`);
-        console.log(err);
-
+        console.error(`[Raygun4Node] Error writing to cache folder`, err);
         return callback(err);
       });
     });
@@ -98,8 +96,7 @@ export class OfflineStorage implements IOfflineStorage {
   send(callback: (error: Error | null, items?: string[]) => void) {
     this.retrieve((err, items) => {
       if (err) {
-        console.log(`[Raygun4Node] Error reading cache folder`);
-        console.log(err);
+        console.error(`[Raygun4Node] Error reading cache folder`, err);
         return callback(err);
       }
 
