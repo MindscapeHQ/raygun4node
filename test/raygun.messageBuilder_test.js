@@ -377,6 +377,10 @@ test("filter keys tests", function (t) {
   });
   var message = builder.build();
 
+  // Original object should not be modified
+  t.equal(body.username, "admin@raygun.io");
+  t.equal(body.password, "nice try");
+
   t.test("form is filtered", function (tt) {
     tt.equal(message.details.request.form.username, undefined);
     tt.equal(message.details.request.form.password, undefined);
@@ -397,6 +401,49 @@ test("filter keys tests", function (t) {
     tt.end();
     t.end();
   });
+});
+
+test("avoid infinite recursion in filter method", function (t) {
+  let builder = new MessageBuilder({
+    filters: ["filtered"],
+  });
+
+  // body self-references, causing a potential infinite recursion in the filter method
+  // Causes exception: Maximum call stack size exceeded
+  let body = {
+    key: "value",
+    filtered: true,
+  };
+  // second level self-reference
+  let other = {
+    body: body,
+    filtered: true,
+  };
+  body.myself = body;
+  body.other = other;
+
+  let queryString = {};
+  let headers = {};
+
+  // performs filter on set
+  builder.setRequestDetails({
+    body: body,
+    query: queryString,
+    headers: headers,
+  });
+  var message = builder.build();
+
+  // key is preserved
+  t.equal(message.details.request.form.key, "value");
+  // property in "filters" is filtered
+  t.equal(message.details.request.form.filtered, undefined);
+  t.equal(message.details.request.form.other.filtered, undefined);
+  // self-referencing objects are also not included
+  t.equal(message.details.request.form.myself, undefined);
+  t.equal(message.details.request.form.other.body, undefined);
+
+  // test should finish
+  t.end();
 });
 
 test("custom tags", function (t) {

@@ -32,6 +32,7 @@ export class OfflineStorage implements IOfflineStorage {
       path.join(this.cachePath, item),
       "utf8",
       (err, cacheContents) => {
+        // TODO: MessageTransport ignores any errors from the send callback, could this be improved?
         this.transport.send(cacheContents);
         fs.unlink(path.join(this.cachePath, item), () => {});
       },
@@ -47,7 +48,7 @@ export class OfflineStorage implements IOfflineStorage {
     this.cacheLimit = offlineStorageOptions.cacheLimit || 100;
 
     debug(
-      `offline storage - initialized (cachePath=${this.cachePath}, cacheLimit=${this.cacheLimit}`,
+      `[raygun.offline.ts] Offline storage - initialized (cachePath=${this.cachePath}, cacheLimit=${this.cacheLimit})`,
     );
 
     if (!fs.existsSync(this.cachePath)) {
@@ -62,23 +63,25 @@ export class OfflineStorage implements IOfflineStorage {
 
     fs.readdir(this.cachePath, (err, files) => {
       if (err) {
-        console.log("[Raygun] Error reading cache folder");
+        console.log(`[Raygun4Node] Error reading cache folder`);
         console.log(err);
         return callback(err);
       }
 
       if (files.length > this.cacheLimit) {
-        console.log("[Raygun] Error cache reached limit");
+        console.log(`[Raygun4Node] Error cache reached limit`);
         return callback(null);
       }
 
       fs.writeFile(filename, transportItem, "utf8", function (err) {
         if (!err) {
-          debug(`offline storage - wrote message to ${filename}`);
+          debug(
+            `[raygun.offline.ts] Offline storage - wrote message to ${filename}`,
+          );
           return callback(null);
         }
 
-        console.log("[Raygun] Error writing to cache folder");
+        console.log(`[Raygun4Node] Error writing to cache folder`);
         console.log(err);
 
         return callback(err);
@@ -95,14 +98,14 @@ export class OfflineStorage implements IOfflineStorage {
   send(callback: (error: Error | null, items?: string[]) => void) {
     this.retrieve((err, items) => {
       if (err) {
-        console.log("[Raygun] Error reading cache folder");
+        console.log(`[Raygun4Node] Error reading cache folder`);
         console.log(err);
         return callback(err);
       }
 
       if (items.length > 0) {
         debug(
-          "offline storage - transporting ${items.length} message(s) from cache",
+          `[raygun.offline.ts] Offline storage - transporting ${items.length} message(s) from cache`,
         );
       }
 
