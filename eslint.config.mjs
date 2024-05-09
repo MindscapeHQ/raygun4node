@@ -60,6 +60,10 @@ export default tseslint.config(
             "@stylistic/ts/space-before-function-paren": ["off", 0],
             "@stylistic/brace-style": ["error", "1tbs"],
             "@stylistic/no-mixed-operators": ["off", 0],
+
+            "@stylistic/arrow-parens": ["error", "always"],
+            // Collides with Prettier
+            "@stylistic/operator-linebreak": ["off", 0],
         }
     }
 );
