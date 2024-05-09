@@ -38,32 +38,21 @@ export default tseslint.config(
             // Stick to double quotes
             "@stylistic/quotes": ["error", "double"],
             '@stylistic/ts/indent': ['error', 2],
-
-            // "@stylistic/ts/member-delimiter-style": ["error",
-            //     {
-            //         "multiline": {
-            //             "delimiter": "comma",
-            //             "requireLast": true
-            //         },
-            //         "singleline": {
-            //             "delimiter": "comma",
-            //             "requireLast": false
-            //         },
-            //         "multilineDetection": "brackets"
-            //     }
-            // ],
-
+            // Enforce curly braces spacing
             "@stylistic/ts/object-curly-spacing": ["error", "always"],
-            "@stylistic/ts/comma-dangle": ["off", 0],
-            "@stylistic/ts/quote-props": ["off", 0],
-            "@stylistic/member-delimiter-style": ["off", 0],
-            "@stylistic/ts/space-before-function-paren": ["off", 0],
+            // Enforce "one true brace style"
             "@stylistic/brace-style": ["error", "1tbs"],
-            "@stylistic/no-mixed-operators": ["off", 0],
-
+            // Enforce parenthesis in functions: "(a) => a"
             "@stylistic/arrow-parens": ["error", "always"],
-            // Collides with Prettier
+            // Disabled rules that collide with Prettier
+            "@stylistic/member-delimiter-style": ["off", 0],
+            "@stylistic/no-mixed-operators": ["off", 0],
             "@stylistic/operator-linebreak": ["off", 0],
+            "@stylistic/quote-props": ["off", 0],
+            "@stylistic/ts/comma-dangle": ["off", 0],
+            "@stylistic/ts/no-extra-parens": ["off", 0],
+            "@stylistic/ts/quote-props": ["off", 0],
+            "@stylistic/ts/space-before-function-paren": ["off", 0],
         }
     }
 );
