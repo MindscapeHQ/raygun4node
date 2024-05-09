@@ -2,11 +2,13 @@
 
 import eslint from '@eslint/js';
 import stylistic from '@stylistic/eslint-plugin';
+import stylisticTs from '@stylistic/eslint-plugin-ts';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
     eslint.configs.recommended,
     stylistic.configs["recommended-flat"],
+    stylisticTs.configs["all-flat"],
     ...tseslint.configs.recommended,
     {
         languageOptions: {
@@ -35,6 +37,9 @@ export default tseslint.config(
             "@stylistic/semi": ["error", "always"],
             // Stick to double quotes
             "@stylistic/quotes": ["error", "double"],
+            '@stylistic/ts/indent': ['error', 2],
+
+            // "@stylistic/ts/member-delimiter-style": ["error", "comma"],
         }
     }
 );

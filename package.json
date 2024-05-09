@@ -43,6 +43,7 @@
   "devDependencies": {
     "@eslint/js": "^9.2.0",
     "@stylistic/eslint-plugin": "^2.0.0",
+    "@stylistic/eslint-plugin-ts": "^2.0.0",
     "@types/node": "^20.12.8",
     "@types/stack-trace": "0.0.33",
     "@types/uuid": "^9.0.8",
