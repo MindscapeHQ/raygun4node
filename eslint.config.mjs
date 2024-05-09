@@ -39,7 +39,24 @@ export default tseslint.config(
             "@stylistic/quotes": ["error", "double"],
             '@stylistic/ts/indent': ['error', 2],
 
-            // "@stylistic/ts/member-delimiter-style": ["error", "comma"],
+            "@stylistic/ts/member-delimiter-style": ["error",
+                {
+                    "multiline": {
+                        "delimiter": "comma",
+                        "requireLast": true
+                    },
+                    "singleline": {
+                        "delimiter": "comma",
+                        "requireLast": false
+                    },
+                    "multilineDetection": "brackets"
+                }
+            ],
+
+            "@stylistic/ts/object-curly-spacing": ["error", "always"],
+            "@stylistic/ts/comma-dangle": ["off", 0],
+            "@stylistic/ts/quote-props": ["off", 0],
+            "@stylistic/member-delimiter-style": ["off", 0],
         }
     }
 );

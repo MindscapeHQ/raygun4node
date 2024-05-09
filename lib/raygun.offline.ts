@@ -20,7 +20,9 @@ const debug = require("debug")("raygun");
 
 export class OfflineStorage implements IOfflineStorage {
   cachePath: string = "";
+
   cacheLimit: number = 100;
+
   transport: MessageTransport;
 
   constructor(transport: MessageTransport) {

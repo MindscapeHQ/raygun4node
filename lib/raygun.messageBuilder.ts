@@ -83,8 +83,8 @@ function getStackTrace(
     };
 
     if (
-      !!options.reportColumnNumbers &&
-      typeof callSite.getColumnNumber === "function"
+      !!options.reportColumnNumbers
+      && typeof callSite.getColumnNumber === "function"
     ) {
       frame.columnNumber = callSite.getColumnNumber();
     }
@@ -108,8 +108,8 @@ function buildError(
   let innerError: Error | undefined = undefined;
 
   if (options.innerErrorFieldName) {
-    innerError =
-      typeof error[options.innerErrorFieldName!] === "function"
+    innerError
+      = typeof error[options.innerErrorFieldName!] === "function"
         ? error[options.innerErrorFieldName!]()
         : error[options.innerErrorFieldName!];
   }
@@ -123,7 +123,9 @@ function buildError(
 
 export class RaygunMessageBuilder {
   _filters: string[];
+
   options: MessageBuilderOptions;
+
   message: MessageBuilding;
 
   constructor(options: MessageBuilderOptions = {}) {
@@ -151,9 +153,9 @@ export class RaygunMessageBuilder {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setErrorDetails(error: Error | string | any) {
     if (
-      !(error instanceof Error) &&
-      typeof error !== "string" &&
-      this.options.useHumanStringForObject
+      !(error instanceof Error)
+      && typeof error !== "string"
+      && this.options.useHumanStringForObject
     ) {
       error = humanString(error);
       this.message.details.groupingKey = error

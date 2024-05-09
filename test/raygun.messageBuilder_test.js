@@ -2,8 +2,8 @@
 
 const deepEqual = require("assert").deepEqual;
 var test = require("tap").test;
-var MessageBuilder =
-  require("../lib/raygun.messageBuilder.ts").RaygunMessageBuilder;
+var MessageBuilder
+  = require("../lib/raygun.messageBuilder.ts").RaygunMessageBuilder;
 var VError = require("verror");
 
 test("basic builder tests", function (t) {
@@ -369,7 +369,7 @@ test("filter keys tests", function (t) {
     remember: true,
   };
   var queryString = { username: "admin@raygun.io", remember: false };
-  var headers = { "X-ApiKey": "123456", Host: "app.raygun.io" };
+  var headers = { "X-ApiKey": "123456", "Host": "app.raygun.io" };
   builder.setRequestDetails({
     body: body,
     query: queryString,
