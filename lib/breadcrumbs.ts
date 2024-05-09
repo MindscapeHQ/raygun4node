@@ -12,7 +12,7 @@ try {
 } catch (e) {
   debug(
     "failed to load async_hooks.AsyncLocalStorage - initialization failed\n",
-    e
+    e,
   );
 }
 
@@ -24,7 +24,7 @@ type SourceFile = {
 
 function returnCallerSite(
   err: Error,
-  callsites: NodeJS.CallSite[]
+  callsites: NodeJS.CallSite[],
 ): SourceFile | null {
   for (const callsite of callsites) {
     const fileName = callsite.getFileName() || "";
@@ -59,7 +59,7 @@ function getCallsite(): SourceFile | null {
 
 export function addBreadcrumb(
   breadcrumb: string | Breadcrumb,
-  type: InternalBreadcrumb["type"] = "manual"
+  type: InternalBreadcrumb["type"] = "manual",
 ) {
   const crumbs = getBreadcrumbs();
 

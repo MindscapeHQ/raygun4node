@@ -9,6 +9,7 @@
 "use strict";
 
 import {
+  Breadcrumb,
   callVariadicCallback,
   Callback,
   CustomData,
@@ -24,6 +25,12 @@ import {
   Tag,
   Transport,
 } from "./types";
+import {
+  addBreadcrumb,
+  addRequestBreadcrumb,
+  getBreadcrumbs,
+  runWithBreadcrumbs,
+} from "./breadcrumbs";
 import type { IncomingMessage } from "http";
 import type { Request, Response, NextFunction } from "express";
 import { RaygunBatchTransport } from "./raygun.batch";
@@ -193,6 +200,17 @@ class Raygun {
 
   setTags(tags: Tag[]) {
     this._tags = tags;
+  }
+
+  breadcrumbs(req: Request, res: Response, next: NextFunction) {
+    runWithBreadcrumbs(() => {
+      addRequestBreadcrumb(req);
+      next();
+    });
+  }
+
+  addBreadcrumb(b: string | Breadcrumb) {
+    addBreadcrumb(b);
   }
 
   transport(): Transport {
@@ -399,6 +417,7 @@ class Raygun {
       .setUserCustomData(customData)
       .setUser(this.user(request) || this._user)
       .setVersion(this._version)
+      .setBreadcrumbs(getBreadcrumbs())
       .setTags(mergedTags);
 
     let message = builder.build();

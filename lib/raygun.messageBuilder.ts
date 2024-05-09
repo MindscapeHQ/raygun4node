@@ -24,6 +24,7 @@ import {
   CustomData,
   Environment,
   BuiltError,
+  InternalBreadcrumb,
 } from "./types";
 
 type UserMessageData = RawUserData | string | undefined;
@@ -275,5 +276,12 @@ export class RaygunMessageBuilder {
       data.uuid = userData.uuid;
     }
     return data;
+  }
+
+  setBreadcrumbs(breadcrumbs: InternalBreadcrumb[] | null) {
+    if (breadcrumbs) {
+      this.message.details.breadcrumbs = [...breadcrumbs];
+    }
+    return this;
   }
 }
