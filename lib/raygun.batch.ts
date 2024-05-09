@@ -32,8 +32,11 @@ const MAX_BATCH_INNER_SIZE_BYTES = MAX_BATCH_SIZE_BYTES - 2; // for the starting
 
 export class RaygunBatchTransport {
   private timerId: NodeJS.Timeout | null = null;
+
   private httpOptions: HTTPOptions;
+
   private interval: number;
+
   private batchId: number = 0;
 
   private batchState: BatchState = { messages: [], messageSizeInBytes: 0 };
@@ -71,7 +74,7 @@ export class RaygunBatchTransport {
 
   stopProcessing() {
     if (this.timerId) {
-      debug(`[raygun.batch.ts] Batch transport - stopping`);
+      debug("[raygun.batch.ts] Batch transport - stopping");
       clearInterval(this.timerId);
 
       this.timerId = null;

@@ -33,18 +33,17 @@
   "scripts": {
     "//eslint": "performs static analysis over project files and examples",
     "eslint": "eslint --fix lib/*.ts test/*.js examples/**/*.js",
-
     "//prettier": "performs code formatting over project files and examples",
     "prettier": "prettier --write lib/*.ts test/*.js examples/**/*.js",
-
     "//prepare": "prepare project for distribution",
     "prepare": "tsc",
-
     "//test": "runs tests on main project",
     "test": "tap --node-arg=-r --node-arg=ts-node/register --disable-coverage test/*_test.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.2.0",
+    "@stylistic/eslint-plugin": "^2.0.0",
+    "@stylistic/eslint-plugin-ts": "^2.0.0",
     "@types/node": "^20.12.8",
     "@types/stack-trace": "0.0.33",
     "@types/uuid": "^9.0.8",

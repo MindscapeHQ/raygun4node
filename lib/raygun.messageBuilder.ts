@@ -123,7 +123,9 @@ function buildError(
 
 export class RaygunMessageBuilder {
   _filters: string[];
+
   options: MessageBuilderOptions;
+
   message: MessageBuilding;
 
   constructor(options: MessageBuilderOptions = {}) {

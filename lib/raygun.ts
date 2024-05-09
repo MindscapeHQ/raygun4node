@@ -64,22 +64,39 @@ function emptyCallback() {}
 
 class Raygun {
   _apiKey: string | undefined;
+
   _filters: string[] = [];
+
   _user: RawUserData | undefined;
+
   _version: string = "";
+
   _host: string | undefined;
+
   _port: number | undefined;
+
   _useSSL: boolean | undefined;
+
   _onBeforeSend: Hook<Message> | undefined;
+
   _offlineStorage: IOfflineStorage | undefined;
+
   _isOffline: boolean | undefined;
+
   _offlineStorageOptions: OfflineStorageOptions | undefined;
+
   _groupingKey: Hook<string> | undefined;
+
   _tags: Tag[] | undefined;
+
   _useHumanStringForObject: boolean | undefined;
+
   _reportColumnNumbers: boolean | undefined;
+
   _innerErrorFieldName: string | undefined;
+
   _batch: boolean = false;
+
   _batchTransport: RaygunBatchTransport | undefined;
 
   init(options: RaygunOptions) {
@@ -99,7 +116,7 @@ class Raygun {
     this._reportColumnNumbers = options.reportColumnNumbers;
     this._innerErrorFieldName = options.innerErrorFieldName || "cause"; // VError function to retrieve inner error;
 
-    debug(`[raygun.ts] Client initialized`);
+    debug("[raygun.ts] Client initialized");
 
     if (options.reportUncaughtExceptions) {
       this.reportUncaughtExceptions();
@@ -211,7 +228,7 @@ class Raygun {
 
     if (!sendOptionsResult.valid) {
       console.error(
-        `[Raygun4Node] Encountered an error sending an error to Raygun. No API key is configured, please ensure .init is called with api key. See docs for more info.`,
+        "[Raygun4Node] Encountered an error sending an error to Raygun. No API key is configured, please ensure .init is called with api key. See docs for more info.",
       );
       return Promise.reject(sendOptionsResult.message);
     }
@@ -293,7 +310,7 @@ class Raygun {
       (major === 13 && minor < 7)
     ) {
       console.log(
-        `[Raygun4Node] Warning: reportUncaughtExceptions requires at least Node v12.17.0 or v13.7.0. Uncaught exceptions will not be automatically reported.`,
+        "[Raygun4Node] Warning: reportUncaughtExceptions requires at least Node v12.17.0 or v13.7.0. Uncaught exceptions will not be automatically reported.",
       );
 
       return;
@@ -341,14 +358,14 @@ class Raygun {
     this.send(err, customData || {}, requestParams, [
       "UnhandledException",
     ]).catch((err) => {
-      console.error(`[Raygun] Failed to send Express error`, err);
+      console.error("[Raygun] Failed to send Express error", err);
     });
     next(err);
   }
 
   stop() {
     if (this._batchTransport) {
-      debug(`[raygun.ts] Batch transport stopped`);
+      debug("[raygun.ts] Batch transport stopped");
       this._batchTransport.stopProcessing();
     }
   }
@@ -451,7 +468,7 @@ class Raygun {
           })
           .catch((error) => {
             console.error(
-              `[Raygun4Node] Failed to send message from offline transport`,
+              "[Raygun4Node] Failed to send message from offline transport",
               error,
             );
           });
