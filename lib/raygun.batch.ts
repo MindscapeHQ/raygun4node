@@ -11,19 +11,19 @@ import {
 const debug = require("debug")("raygun");
 
 export type MessageAndCallback = {
-  serializedMessage: string,
-  callback: Callback<IncomingMessage> | null,
+  serializedMessage: string;
+  callback: Callback<IncomingMessage> | null;
 };
 
 export type PreparedBatch = {
-  payload: string,
-  messageCount: number,
-  callbacks: Array<Callback<IncomingMessage> | null>,
+  payload: string;
+  messageCount: number;
+  callbacks: Array<Callback<IncomingMessage> | null>;
 };
 
 export type BatchState = {
-  messages: MessageAndCallback[],
-  messageSizeInBytes: number,
+  messages: MessageAndCallback[];
+  messageSizeInBytes: number;
 };
 
 export const MAX_MESSAGES_IN_BATCH = 100;
@@ -41,7 +41,7 @@ export class RaygunBatchTransport {
 
   private batchState: BatchState = { messages: [], messageSizeInBytes: 0 };
 
-  constructor(options: { interval: number, httpOptions: HTTPOptions }) {
+  constructor(options: { interval: number; httpOptions: HTTPOptions }) {
     this.interval = options.interval;
     this.httpOptions = options.httpOptions;
   }
@@ -94,9 +94,9 @@ export class RaygunBatchTransport {
       throw Error(errorMessage);
     }
 
-    const messageIsTooLargeToAddToBatch
-      = this.batchState.messageSizeInBytes + messageLength
-      > MAX_BATCH_INNER_SIZE_BYTES;
+    const messageIsTooLargeToAddToBatch =
+      this.batchState.messageSizeInBytes + messageLength >
+      MAX_BATCH_INNER_SIZE_BYTES;
 
     if (messageIsTooLargeToAddToBatch) {
       this.processBatch();
@@ -119,13 +119,13 @@ export class RaygunBatchTransport {
 
   private processBatch() {
     const payload = this.batchState.messages
-      .map(m => m.serializedMessage)
+      .map((m) => m.serializedMessage)
       .join(",");
 
     const batch: PreparedBatch = {
       payload: `[${payload}]`,
       messageCount: this.batchState.messages.length,
-      callbacks: this.batchState.messages.map(m => m.callback),
+      callbacks: this.batchState.messages.map((m) => m.callback),
     };
 
     this.sendBatch(batch);

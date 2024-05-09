@@ -36,8 +36,8 @@ import * as raygunSyncTransport from "./raygun.sync.transport";
 import { v4 as uuidv4 } from "uuid";
 
 type SendOptionsResult =
-  | { valid: true, message: Message, options: SendOptions }
-  | { valid: false, message: Message };
+  | { valid: true; message: Message; options: SendOptions }
+  | { valid: false; message: Message };
 
 const debug = require("debug")("raygun");
 
@@ -109,8 +109,8 @@ class Raygun {
     this._isOffline = options.isOffline;
     this._groupingKey = options.groupingKey;
     this._tags = options.tags;
-    this._useHumanStringForObject
-      = options.useHumanStringForObject === undefined
+    this._useHumanStringForObject =
+      options.useHumanStringForObject === undefined
         ? true
         : options.useHumanStringForObject;
     this._reportColumnNumbers = options.reportColumnNumbers;
@@ -140,8 +140,8 @@ class Raygun {
     this.sendWithCallback = this.sendWithCallback.bind(this);
     this.send = this.send.bind(this);
 
-    this._offlineStorage
-      = options.offlineStorage || new OfflineStorage(this.offlineTransport());
+    this._offlineStorage =
+      options.offlineStorage || new OfflineStorage(this.offlineTransport());
     this._offlineStorageOptions = options.offlineStorageOptions;
 
     if (this._isOffline) {
@@ -302,12 +302,12 @@ class Raygun {
   private reportUncaughtExceptions() {
     const [major, minor] = process.versions.node
       .split(".")
-      .map(part => parseInt(part, 10));
+      .map((part) => parseInt(part, 10));
 
     if (
-      major < 12
-      || major === 12 && minor < 17
-      || major === 13 && minor < 7
+      major < 12 ||
+      (major === 12 && minor < 17) ||
+      (major === 13 && minor < 7)
     ) {
       console.log(
         "[Raygun4Node] Warning: reportUncaughtExceptions requires at least Node v12.17.0 or v13.7.0. Uncaught exceptions will not be automatically reported.",
@@ -404,15 +404,15 @@ class Raygun {
     let message = builder.build();
 
     if (this._groupingKey) {
-      message.details.groupingKey
-        = typeof this._groupingKey === "function"
+      message.details.groupingKey =
+        typeof this._groupingKey === "function"
           ? this._groupingKey(message, exception, customData, request, tags)
           : null;
     }
 
     if (this._onBeforeSend) {
-      message
-        = typeof this._onBeforeSend === "function"
+      message =
+        typeof this._onBeforeSend === "function"
           ? this._onBeforeSend(message, exception, customData, request, tags)
           : message;
     }

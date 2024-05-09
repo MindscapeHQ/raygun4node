@@ -42,7 +42,7 @@ export function send(
       path: path,
       method: "POST",
       headers: {
-        "Host": API_HOST,
+        Host: API_HOST,
         "Content-Type": "application/json",
         "Content-Length": data.length,
         "X-ApiKey": options.http.apiKey,

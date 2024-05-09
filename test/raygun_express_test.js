@@ -30,8 +30,8 @@ test("reporting express errors", async function (t) {
 });
 
 test("batch reporting errors", async function (t) {
-  const { client, server, stop, nextBatchRequest }
-    = await makeClientWithMockServer({
+  const { client, server, stop, nextBatchRequest } =
+    await makeClientWithMockServer({
       batch: true,
       batchFrequency: 1000,
     });
@@ -49,14 +49,14 @@ test("batch reporting errors", async function (t) {
   t.equal(server.entries.length, 0);
   t.equal(server.bulkEntries.length, 1);
   t.same(
-    server.bulkEntries[0].map(e => e.details.error.message),
+    server.bulkEntries[0].map((e) => e.details.error.message),
     ["a", "b", "c"],
   );
 });
 
 test("batch transport discards massive errors", async function (t) {
-  const { client, server, stop, nextBatchRequest }
-    = await makeClientWithMockServer({
+  const { client, server, stop, nextBatchRequest } =
+    await makeClientWithMockServer({
       batch: true,
       batchFrequency: 1000,
     });
@@ -73,7 +73,7 @@ test("batch transport discards massive errors", async function (t) {
   t.equal(server.entries.length, 0);
   t.equal(server.bulkEntries.length, 1);
   t.same(
-    server.bulkEntries[0].map(e => e.details.error.message),
+    server.bulkEntries[0].map((e) => e.details.error.message),
     ["b"],
   );
 });

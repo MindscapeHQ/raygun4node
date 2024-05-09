@@ -91,7 +91,7 @@ test("batched offline message storage and sending", async function (t) {
     `Expected to find no stored error files but instead found ${filesAfterSend.length}`,
   );
 
-  t.same(batch.map(e => e.details.error.message).sort(), [
+  t.same(batch.map((e) => e.details.error.message).sort(), [
     "offline error",
     "offline error 2",
   ]);
