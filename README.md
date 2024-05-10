@@ -1,6 +1,6 @@
 # Raygun4Node
 
-[![Build Status](https://travis-ci.org/MindscapeHQ/raygun4node.svg?branch=master)](https://travis-ci.org/MindscapeHQ/raygun4node)
+[![GitHub CI](https://github.com/MindscapeHQ/raygun4node/actions/workflows/node.js.yml/badge.svg)](https://github.com/MindscapeHQ/raygun4node/actions)
 
 Raygun.io package for Node, written in TypeScript.
 
