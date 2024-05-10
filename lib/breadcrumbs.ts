@@ -150,6 +150,15 @@ export function runWithBreadcrumbs(f: () => void) {
   asyncLocalStorage.run([], f);
 }
 
+export function clear() {
+  if (!asyncLocalStorage) {
+    return;
+  }
+
+  debug("clearing stored breadcrumbs, entering with new store");
+  asyncLocalStorage.enterWith([]);
+}
+
 const consoleMethods: [keyof typeof console, InternalBreadcrumb["level"]][] = [
   ["debug", "debug"],
   ["log", "info"],

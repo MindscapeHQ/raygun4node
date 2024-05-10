@@ -25,12 +25,7 @@ import {
   Tag,
   Transport,
 } from "./types";
-import {
-  addBreadcrumb,
-  addRequestBreadcrumb,
-  getBreadcrumbs,
-  runWithBreadcrumbs,
-} from "./breadcrumbs";
+import * as breadcrumbs from "./breadcrumbs";
 import type { IncomingMessage } from "http";
 import type { Request, Response, NextFunction } from "express";
 import { RaygunBatchTransport } from "./raygun.batch";
@@ -202,15 +197,34 @@ class Raygun {
     this._tags = tags;
   }
 
-  breadcrumbs(req: Request, res: Response, next: NextFunction) {
-    runWithBreadcrumbs(() => {
-      addRequestBreadcrumb(req);
+  /**
+   * Attach as express middleware to create a breadcrumb store scope per request.
+   * e.g. `app.use(raygun.expressHandlerBreadcrumbs);`
+   * Then call to `raygun.addBreadcrumb(...)` to add breadcrumbs to the future Raygun `send` call.
+   * @param req
+   * @param res
+   * @param next
+   */
+  expressHandlerBreadcrumbs(req: Request, res: Response, next: NextFunction) {
+    breadcrumbs.runWithBreadcrumbs(() => {
+      breadcrumbs.addRequestBreadcrumb(req);
       next();
     });
   }
 
-  addBreadcrumb(b: string | Breadcrumb) {
-    addBreadcrumb(b);
+  /**
+   * Adds breadcrumb to current context
+   * @param breadcrumb either a string message or a Breadcrumb object
+   */
+  addBreadcrumb(breadcrumb: string | Breadcrumb) {
+    breadcrumbs.addBreadcrumb(breadcrumb);
+  }
+
+  /**
+   * Manually clear stored breadcrumbs for current context
+   */
+  clearBreadcrumbs() {
+    breadcrumbs.clear();
   }
 
   transport(): Transport {
@@ -372,6 +386,8 @@ class Raygun {
       headers: req.headers,
       body: req.body,
     };
+
+    // TODO: Maybe we need to run this inside a context to get the right breadcrumbs!
 
     this.send(err, customData || {}, requestParams, [
       "UnhandledException",
