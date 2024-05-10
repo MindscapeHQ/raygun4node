@@ -63,6 +63,8 @@ export function addBreadcrumb(
 ) {
   const crumbs = getBreadcrumbs();
 
+  debug("using breadcrum store:", crumbs);
+
   if (!crumbs) {
     return;
   }
@@ -93,15 +95,17 @@ export function addBreadcrumb(
     lineNumber: callsite?.lineNumber || undefined,
   };
 
-  debug("recorded breadcrumb:", internalCrumb);
+  debug("[breadcrumbs.ts] recorded breadcrumb:", internalCrumb);
 
   crumbs.push(internalCrumb);
 }
 
 export function addRequestBreadcrumb(request: Request) {
+  debug(`Add request breadcrumb: ${request}`);
   const crumbs = getBreadcrumbs();
 
   if (!crumbs) {
+    debug(`Add request breadcrumb skip, no store!`);
     return;
   }
 
@@ -124,11 +128,13 @@ export function getBreadcrumbs(): InternalBreadcrumb[] | null {
   const store = asyncLocalStorage.getStore();
 
   if (store) {
+    debug("found store:", store);
     return store;
   }
 
   const newStore: InternalBreadcrumb[] = [];
 
+  debug("enter with new store");
   asyncLocalStorage.enterWith(newStore);
 
   return newStore;

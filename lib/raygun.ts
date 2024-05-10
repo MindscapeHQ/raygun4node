@@ -420,8 +420,9 @@ class Raygun {
       .setBreadcrumbs(getBreadcrumbs())
       .setTags(mergedTags);
 
-
     let message = builder.build();
+
+    // TODO: Do we need to clear the breadcrumbs after adding them to the message?
 
     if (this._groupingKey) {
       message.details.groupingKey =
@@ -449,8 +450,6 @@ class Raygun {
     if (!apiKey) {
       return { valid: false, message };
     }
-
-    // TODO: clear breadcrumbs as they have been incorporated into the message
 
     return {
       valid: true,

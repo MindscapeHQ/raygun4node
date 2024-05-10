@@ -70,8 +70,90 @@ test("capturing breadcrumbs", async function (t) {
 
   // line numbers correspond to the calls to `addBreadcrumb` in this test
   // update accordingly if they change
-  t.equal(
+  deepEqual(
     message.details.breadcrumbs.map((b) => b.lineNumber),
     [undefined, 38, 40],
   );
 });
+
+test("capturing breadcrumbs in different contexts", async function (t) {
+  const app = express();
+  const testEnv = await makeClientWithMockServer();
+  const raygun = testEnv.client;
+
+  app.use(raygun.breadcrumbs);
+
+  app.get("/endpoint1", (req, res) => {
+    raygun.addBreadcrumb("endpoint1: 1");
+    setTimeout(() => {
+      raygun.addBreadcrumb("endpoint1: 2");
+      raygun.send(new Error("error1"));
+      res.send("done!");
+    }, 1);
+  });
+
+  app.get("/endpoint2", (req, res) => {
+    raygun.addBreadcrumb("endpoint2: 1");
+    setTimeout(() => {
+      raygun.addBreadcrumb("endpoint2: 2");
+      raygun.send(new Error("error2"));
+      res.send("done!");
+    }, 1);
+  });
+
+  const server = await listen(app);
+
+  await request(`http://localhost:${server.address().port}/endpoint1`);
+  const message1 = await testEnv.nextRequest();
+
+  deepEqual(
+      message1.details.breadcrumbs.map((b) => b.message),
+      ["GET /endpoint1", "endpoint1: 1", "endpoint1: 2"],
+  );
+
+  await request(`http://localhost:${server.address().port}/endpoint2`);
+  const message2 = await testEnv.nextRequest();
+
+  deepEqual(
+      message2.details.breadcrumbs.map((b) => b.message),
+      ["GET /endpoint2", "endpoint2: 1", "endpoint2: 2"],
+  );
+
+  server.close();
+  testEnv.stop();
+});
+
+// test("expressHandler and breadcrumbs", async function (t) {
+//   const app = express();
+//
+//   const testEnvironment = await makeClientWithMockServer();
+//   const raygunClient = testEnvironment.client;
+//
+//   app.get("/", (req, res) => {
+//     throw new Error("surprise error!");
+//   });
+//
+//   // Add breadcrumbs capture to express server
+//   app.use(raygunClient.breadcrumbs);
+//   // Add Raydun express handler
+//   app.use(raygunClient.expressHandler);
+//
+//   // Start test server and request root
+//   const server = await listen(app);
+//   await request(`http://localhost:${server.address().port}`);
+//   const message = await testEnvironment.nextRequest();
+//
+//   server.close();
+//   testEnvironment.stop();
+//
+//   // Error captured by expressHandler
+//   t.ok(
+//       message.details.tags.includes("UnhandledException")
+//   );
+//
+//   // Error should include at least one breadcrumb!
+//   t.equal(
+//       message.details.breadcrumbs.length,
+//       1,
+//   );
+// });

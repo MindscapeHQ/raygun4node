@@ -58,7 +58,11 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", routes);
 app.use("/users", users);
 
+// Add the Raygun Breadcrumb handler
+app.use(raygunClient.breadcrumbs);
 // Add the Raygun Express handler
 app.use(raygunClient.expressHandler);
+
+raygunClient.addBreadcrumb("Express Server started!");
 
 module.exports = app;

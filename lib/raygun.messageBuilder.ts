@@ -27,6 +27,8 @@ import {
   InternalBreadcrumb,
 } from "./types";
 
+const debug = require("debug")("raygun");
+
 type UserMessageData = RawUserData | string | undefined;
 
 const humanString = require("object-to-human-string");
@@ -279,6 +281,7 @@ export class RaygunMessageBuilder {
   }
 
   setBreadcrumbs(breadcrumbs: InternalBreadcrumb[] | null) {
+    debug(`[raygun.messageBuilder.ts] Added breadcrumbs: ${breadcrumbs?.length || 0}`);
     if (breadcrumbs) {
       this.message.details.breadcrumbs = [...breadcrumbs];
     }
