@@ -119,9 +119,6 @@ export function addRequestBreadcrumb(request: Request, response: Response) {
   };
 
   crumbs.push(internalCrumb);
-
-  // Make the current breadcrumb store available to the express error handler
-  response.locals.breadcrumbs = crumbs;
 }
 
 export function getBreadcrumbs(): InternalBreadcrumb[] | null {
