@@ -34,6 +34,9 @@ raygunClient.user = function (req) {
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
+// Add the Raygun breadcrumb Express handler
+app.use(raygunClient.expressHandlerBreadcrumbs);
+
 // uncomment after placing your favicon in /public
 // app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger("dev"));
@@ -58,9 +61,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", routes);
 app.use("/users", users);
 
-// Add the Raygun Breadcrumb handler
-app.use(raygunClient.breadcrumbs);
-// Add the Raygun Express handler
+// Add the Raygun error Express handler
 app.use(raygunClient.expressHandler);
 
 raygunClient.addBreadcrumb("Express Server started!");

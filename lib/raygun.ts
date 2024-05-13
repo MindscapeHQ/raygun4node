@@ -27,7 +27,7 @@ import {
 } from "./types";
 import * as breadcrumbs from "./breadcrumbs";
 import type { IncomingMessage } from "http";
-import type { Request, Response, NextFunction } from "express";
+import {Request, Response, NextFunction, response} from "express";
 import { RaygunBatchTransport } from "./raygun.batch";
 import { RaygunMessageBuilder } from "./raygun.messageBuilder";
 import { OfflineStorage } from "./raygun.offline";
@@ -198,21 +198,6 @@ class Raygun {
   }
 
   /**
-   * Attach as express middleware to create a breadcrumb store scope per request.
-   * e.g. `app.use(raygun.expressHandlerBreadcrumbs);`
-   * Then call to `raygun.addBreadcrumb(...)` to add breadcrumbs to the future Raygun `send` call.
-   * @param req
-   * @param res
-   * @param next
-   */
-  expressHandlerBreadcrumbs(req: Request, res: Response, next: NextFunction) {
-    breadcrumbs.runWithBreadcrumbs(() => {
-      breadcrumbs.addRequestBreadcrumb(req);
-      next();
-    });
-  }
-
-  /**
    * Adds breadcrumb to current context
    * @param breadcrumb either a string message or a Breadcrumb object
    */
@@ -367,6 +352,29 @@ class Raygun {
     }
   }
 
+  /**
+   * Attach as express middleware to create a breadcrumb store scope per request.
+   * e.g. `app.use(raygun.expressHandlerBreadcrumbs);`
+   * Then call to `raygun.addBreadcrumb(...)` to add breadcrumbs to the future Raygun `send` call.
+   * @param req
+   * @param res
+   * @param next
+   */
+  expressHandlerBreadcrumbs(req: Request, res: Response, next: NextFunction) {
+    breadcrumbs.runWithBreadcrumbs(() => {
+      breadcrumbs.addRequestBreadcrumb(req, res);
+      next();
+    });
+  }
+
+  /**
+   * Attach as express middleware to report application errors to Raygun automatically.
+   * e.g. `app.use(raygun.expressHandler);`
+   * @param err
+   * @param req
+   * @param res
+   * @param next
+   */
   expressHandler(err: Error, req: Request, res: Response, next: NextFunction) {
     let customData;
 
@@ -387,13 +395,31 @@ class Raygun {
       body: req.body,
     };
 
-    // TODO: Maybe we need to run this inside a context to get the right breadcrumbs!
+    // If a local store of breadcrumbs exist in the response
+    // run in scoped breadcrumbs store
+    if (res.locals.breadcrumbs) {
+      breadcrumbs.runWithBreadcrumbs(() => {
+        debug("sending express error with scoped breadcrumbs store");
+        this.send(err, customData || {}, requestParams, [
+          "UnhandledException",
+        ]).catch((err) => {
+          console.error("[Raygun] Failed to send Express error", err);
+        });
+      }, res.locals.breadcrumbs);
+    } else {
+      debug("sending express error with global breadcrumbs store");
+      // Otherwise, run with the global breadcrumbs store
+      this.send(err, customData || {}, requestParams, [
+        "UnhandledException",
+      ]).then((response) => {
+        // Clear global breadcrumbs store after successful sent
+        breadcrumbs.clear();
+      }).catch((err) => {
+        console.error("[Raygun] Failed to send Express error", err);
+      });
 
-    this.send(err, customData || {}, requestParams, [
-      "UnhandledException",
-    ]).catch((err) => {
-      console.error("[Raygun] Failed to send Express error", err);
-    });
+    }
+
     next(err);
   }
 
@@ -433,7 +459,7 @@ class Raygun {
       .setUserCustomData(customData)
       .setUser(this.user(request) || this._user)
       .setVersion(this._version)
-      .setBreadcrumbs(getBreadcrumbs())
+      .setBreadcrumbs(breadcrumbs.getBreadcrumbs())
       .setTags(mergedTags);
 
     let message = builder.build();

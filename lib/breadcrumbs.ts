@@ -100,7 +100,7 @@ export function addBreadcrumb(
   crumbs.push(internalCrumb);
 }
 
-export function addRequestBreadcrumb(request: Request) {
+export function addRequestBreadcrumb(request: Request, response: Response) {
   debug(`Add request breadcrumb: ${request}`);
   const crumbs = getBreadcrumbs();
 
@@ -118,6 +118,9 @@ export function addRequestBreadcrumb(request: Request) {
   };
 
   crumbs.push(internalCrumb);
+
+  // Make the current breadcrumb store available to the express error handler
+  response.locals.breadcrumbs = crumbs;
 }
 
 export function getBreadcrumbs(): InternalBreadcrumb[] | null {
@@ -128,7 +131,6 @@ export function getBreadcrumbs(): InternalBreadcrumb[] | null {
   const store = asyncLocalStorage.getStore();
 
   if (store) {
-    debug("found store:", store);
     return store;
   }
 
@@ -140,14 +142,14 @@ export function getBreadcrumbs(): InternalBreadcrumb[] | null {
   return newStore;
 }
 
-export function runWithBreadcrumbs(f: () => void) {
+export function runWithBreadcrumbs(f: () => void, store: InternalBreadcrumb[] = []) {
   if (!asyncLocalStorage) {
     f();
     return;
   }
   debug("running function with breadcrumbs");
 
-  asyncLocalStorage.run([], f);
+  asyncLocalStorage.run(store, f);
 }
 
 export function clear() {
@@ -159,21 +161,21 @@ export function clear() {
   asyncLocalStorage.enterWith([]);
 }
 
-const consoleMethods: [keyof typeof console, InternalBreadcrumb["level"]][] = [
-  ["debug", "debug"],
-  ["log", "info"],
-  ["info", "info"],
-  ["warn", "warning"],
-  ["error", "error"],
-];
+// const consoleMethods: [keyof typeof console, InternalBreadcrumb["level"]][] = [
+//   ["debug", "debug"],
+//   ["log", "info"],
+//   ["info", "info"],
+//   ["warn", "warning"],
+//   ["error", "error"],
+// ];
 
-for (const [method, level] of consoleMethods) {
-  const oldMethod = (console as any)[method];
-  (console as any)[method] = function logWithBreadcrumb<T>(
-    this: T,
-    ...args: any[]
-  ) {
-    addBreadcrumb({ message: args.join(" "), level }, "console");
-    return oldMethod.apply(this, args);
-  };
-}
+// for (const [method, level] of consoleMethods) {
+//   const oldMethod = (console as any)[method];
+//   (console as any)[method] = function logWithBreadcrumb<T>(
+//     this: T,
+//     ...args: any[]
+//   ) {
+//     addBreadcrumb({ message: args.join(" "), level }, "console");
+//     return oldMethod.apply(this, args);
+//   };
+// }
