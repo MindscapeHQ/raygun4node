@@ -1,7 +1,6 @@
 import type { AsyncLocalStorage } from "async_hooks";
 import type { Breadcrumb, InternalBreadcrumb } from "./types";
-import type { Request, Response, NextFunction } from "express";
-import path from "path";
+import type { Request, Response } from "express";
 const debug = require("debug")("raygun").bind(null, "[breadcrumbs]");
 
 let asyncLocalStorage: AsyncLocalStorage<InternalBreadcrumb[]> | null = null;
@@ -48,6 +47,8 @@ function getCallsite(): SourceFile | null {
 
   Error.prepareStackTrace = returnCallerSite;
 
+  // Ignore use of any, required for captureStackTrace
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const output: any = {};
 
   Error.captureStackTrace(output);
@@ -105,7 +106,7 @@ export function addRequestBreadcrumb(request: Request, response: Response) {
   const crumbs = getBreadcrumbs();
 
   if (!crumbs) {
-    debug(`Add request breadcrumb skip, no store!`);
+    debug("Add request breadcrumb skip, no store!");
     return;
   }
 

@@ -27,7 +27,7 @@ import {
 } from "./types";
 import * as breadcrumbs from "./breadcrumbs";
 import type { IncomingMessage } from "http";
-import {Request, Response, NextFunction, response} from "express";
+import { Request, Response, NextFunction } from "express";
 import { RaygunBatchTransport } from "./raygun.batch";
 import { RaygunMessageBuilder } from "./raygun.messageBuilder";
 import { OfflineStorage } from "./raygun.offline";
@@ -417,7 +417,6 @@ class Raygun {
       }).catch((err) => {
         console.error("[Raygun] Failed to send Express error", err);
       });
-
     }
 
     next(err);

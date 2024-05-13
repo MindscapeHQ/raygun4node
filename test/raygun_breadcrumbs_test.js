@@ -128,14 +128,14 @@ test("capturing breadcrumbs in different contexts", async function (t) {
 
   // First error should include breadcrumbs from scope
   deepEqual(
-      message1.details.breadcrumbs.map((b) => b.message),
-      ["GET /endpoint1", "endpoint1: 1", "endpoint1: 2"],
+    message1.details.breadcrumbs.map((b) => b.message),
+    ["GET /endpoint1", "endpoint1: 1", "endpoint1: 2"],
   );
 
   // Second error should include breadcrumbs from scope
   deepEqual(
-      message2.details.breadcrumbs.map((b) => b.message),
-      ["GET /endpoint2", "endpoint2: 1", "endpoint2: 2"],
+    message2.details.breadcrumbs.map((b) => b.message),
+    ["GET /endpoint2", "endpoint2: 1", "endpoint2: 2"],
   );
 
   t.end();
@@ -155,7 +155,6 @@ test("expressHandler and breadcrumbs", async function (t) {
 
   // Define root endpoint which throws an error
   app.get("/", (req, res) => {
-
     // Add an extra breadcrumb before throwing
     raygunClient.addBreadcrumb("breadcrumb-1");
 
@@ -176,7 +175,7 @@ test("expressHandler and breadcrumbs", async function (t) {
 
   // Error captured by expressHandler
   t.ok(
-      message.details.tags.includes("UnhandledException")
+    message.details.tags.includes("UnhandledException"),
   );
 
   // Error should include breadcrumbs from the scoped store
