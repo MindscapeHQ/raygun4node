@@ -2,32 +2,30 @@ const express = require("express");
 const deepEqual = require("assert").deepEqual;
 const test = require("tap").test;
 const { listen, makeClientWithMockServer, request } = require("./utils");
-const Raygun = require("../lib/raygun");
 
-// test("add breadcrumbs to payload details", {}, function (t) {
-//   let client = new Raygun.Client().init({ apiKey: "TEST" });
-//
-//   client.addBreadcrumb("BREADCRUMB-1");
-//   client.addBreadcrumb("BREADCRUMB-2");
-//
-//   client.onBeforeSend(function (payload) {
-//     t.equal(payload.details.breadcrumbs.length, 2);
-//     t.equal(payload.details.breadcrumbs[0].message, "BREADCRUMB-1");
-//     t.equal(payload.details.breadcrumbs[1].message, "BREADCRUMB-2");
-//     return payload;
-//   });
-//
-//   client
-//     .send(new Error())
-//     .then((message) => {
-//       t.end();
-//     })
-//     .catch((err) => {
-//       t.fail(err);
-//     });
-// });
+test("add breadcrumbs to payload details", {}, async function (t) {
+  const testEnv = await makeClientWithMockServer();
+  const client = testEnv.client;
 
-test("capturing breadcrumbs", async function (t) {
+  // Add breadcrumbs in global scope
+  client.addBreadcrumb("BREADCRUMB-1");
+  client.addBreadcrumb("BREADCRUMB-2");
+
+  client.onBeforeSend(function (payload) {
+    // Raygun payload should include breadcrumbs
+    t.equal(payload.details.breadcrumbs.length, 2);
+    t.equal(payload.details.breadcrumbs[0].message, "BREADCRUMB-1");
+    t.equal(payload.details.breadcrumbs[1].message, "BREADCRUMB-2");
+    return payload;
+  });
+
+  // Send Raygun error
+  await client.send(new Error());
+
+  testEnv.stop();
+});
+
+test("capturing breadcrumbs in single scope", async function (t) {
   const app = express();
   const testEnv = await makeClientWithMockServer();
   const raygun = testEnv.client;
@@ -36,9 +34,12 @@ test("capturing breadcrumbs", async function (t) {
   app.use(raygun.expressHandlerBreadcrumbs);
 
   function requestHandler(req, res) {
+    // Breadcrumbs are added in the scope of the request
     raygun.addBreadcrumb("first!");
     setTimeout(() => {
       raygun.addBreadcrumb("second!");
+
+      // Send custom Raygun error with scoped breadcrumbs
       raygun.send(new Error("test end"));
       res.send("done!");
     }, 1);
@@ -54,16 +55,19 @@ test("capturing breadcrumbs", async function (t) {
   server.close();
   testEnv.stop();
 
+  // Error should include breadcrumbs from scope
   deepEqual(
     message.details.breadcrumbs.map((b) => b.message),
     ["GET /", "first!", "second!"],
   );
 
+  // Breadcrumbs include method names
   deepEqual(
     message.details.breadcrumbs.map((b) => b.methodName),
     [undefined, requestHandler.name, "<anonymous>"],
   );
 
+  // Breadcrumbs include class names
   deepEqual(
     message.details.breadcrumbs.map((b) => b.className),
     [undefined, __filename, __filename],
@@ -73,7 +77,7 @@ test("capturing breadcrumbs", async function (t) {
   // update accordingly if they change
   deepEqual(
     message.details.breadcrumbs.map((b) => b.lineNumber),
-    [undefined, 39, 41],
+    [undefined, 38, 40],
   );
 
   t.end();
@@ -88,18 +92,24 @@ test("capturing breadcrumbs in different contexts", async function (t) {
   app.use(raygun.expressHandlerBreadcrumbs);
 
   app.get("/endpoint1", (req, res) => {
+    // Breadcrumbs are added in the scope of the request for endpoint1
     raygun.addBreadcrumb("endpoint1: 1");
     setTimeout(() => {
       raygun.addBreadcrumb("endpoint1: 2");
+
+      // Send custom Raygun error with scoped breadcrumbs
       raygun.send(new Error("error1"));
       res.send("done!");
     }, 1);
   });
 
   app.get("/endpoint2", (req, res) => {
+    // Breadcrumbs are added in the scope of the request for endpoint2
     raygun.addBreadcrumb("endpoint2: 1");
     setTimeout(() => {
       raygun.addBreadcrumb("endpoint2: 2");
+
+      // Send custom Raygun error with scoped breadcrumbs
       raygun.send(new Error("error2"));
       res.send("done!");
     }, 1);
@@ -116,11 +126,13 @@ test("capturing breadcrumbs in different contexts", async function (t) {
   server.close();
   testEnv.stop();
 
+  // First error should include breadcrumbs from scope
   deepEqual(
       message1.details.breadcrumbs.map((b) => b.message),
       ["GET /endpoint1", "endpoint1: 1", "endpoint1: 2"],
   );
 
+  // Second error should include breadcrumbs from scope
   deepEqual(
       message2.details.breadcrumbs.map((b) => b.message),
       ["GET /endpoint2", "endpoint2: 1", "endpoint2: 2"],
