@@ -281,7 +281,9 @@ export class RaygunMessageBuilder {
   }
 
   setBreadcrumbs(breadcrumbs: InternalBreadcrumb[] | null) {
-    debug(`[raygun.messageBuilder.ts] Added breadcrumbs: ${breadcrumbs?.length || 0}`);
+    debug(
+      `[raygun.messageBuilder.ts] Added breadcrumbs: ${breadcrumbs?.length || 0}`,
+    );
     if (breadcrumbs) {
       this.message.details.breadcrumbs = [...breadcrumbs];
     }

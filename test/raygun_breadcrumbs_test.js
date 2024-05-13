@@ -174,9 +174,7 @@ test("expressHandler and breadcrumbs", async function (t) {
   testEnvironment.stop();
 
   // Error captured by expressHandler
-  t.ok(
-    message.details.tags.includes("UnhandledException"),
-  );
+  t.ok(message.details.tags.includes("UnhandledException"));
 
   // Error should include breadcrumbs from the scoped store
   t.equal(message.details.breadcrumbs.length, 2);

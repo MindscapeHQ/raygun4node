@@ -409,14 +409,14 @@ class Raygun {
     } else {
       debug("sending express error with global breadcrumbs store");
       // Otherwise, run with the global breadcrumbs store
-      this.send(err, customData || {}, requestParams, [
-        "UnhandledException",
-      ]).then((response) => {
-        // Clear global breadcrumbs store after successful sent
-        breadcrumbs.clear();
-      }).catch((err) => {
-        console.error("[Raygun] Failed to send Express error", err);
-      });
+      this.send(err, customData || {}, requestParams, ["UnhandledException"])
+        .then((response) => {
+          // Clear global breadcrumbs store after successful sent
+          breadcrumbs.clear();
+        })
+        .catch((err) => {
+          console.error("[Raygun] Failed to send Express error", err);
+        });
     }
 
     next(err);

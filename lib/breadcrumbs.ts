@@ -143,7 +143,10 @@ export function getBreadcrumbs(): InternalBreadcrumb[] | null {
   return newStore;
 }
 
-export function runWithBreadcrumbs(f: () => void, store: InternalBreadcrumb[] = []) {
+export function runWithBreadcrumbs(
+  f: () => void,
+  store: InternalBreadcrumb[] = [],
+) {
   if (!asyncLocalStorage) {
     f();
     return;
