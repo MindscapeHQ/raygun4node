@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const raygunClient = require("../logger");
+const raygunClient = require("../raygun.client");
 
 /* GET home page. */
 router.get("/", function (req, res, next) {

@@ -24,7 +24,7 @@ in the subdirectory where you found this README.md file.
 
 ## Interesting files to look
 
-- `logger.js`
+- `raygun.client.js`
   - Setup of Raygun (lines 9-14)
 - `app.js`
   - Sets the user (lines 17-19)
