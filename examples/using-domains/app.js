@@ -17,6 +17,7 @@ var appDomain = require("domain").create();
 // Add the error handler so we can pass errors to Raygun when the domain
 // crashes
 appDomain.on("error", function (err) {
+  raygunClient.addBreadcrumb("Domain error caught!");
   console.log(`[Raygun4Node-Domains-Sample] Domain error caught: ${err}`);
   // Try send data to Raygun
   raygunClient
@@ -40,6 +41,7 @@ appDomain.on("error", function (err) {
 appDomain.run(function () {
   var fs = require("fs");
 
+  raygunClient.addBreadcrumb("Running example app");
   console.log("[Raygun4Node-Domains-Sample] Running example app");
 
   // Try and read a file that doesn't exist
