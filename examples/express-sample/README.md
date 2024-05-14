@@ -24,9 +24,12 @@ in the subdirectory where you found this README.md file.
 
 ## Interesting files to look
 
+- `logger.js`
+  - Setup of Raygun (lines 9-14)
 - `app.js`
-  - Setup of Raygun (lines 9-12)
-  - Sets the user (lines 27-29)
-  - Attaches Raygun to Express (line 60)
+  - Sets the user (lines 17-19)
+  - Attaches Raygun Breadcrumb middleware to Express (line 26)
+  - Attaches Raygun to Express (line 53)
 - `routes/index.js`
-  - Tries to use a fake object, which bounces up to the Express handler (lines 11-15)
+  - `/send` endpoint: Sends a custom error to Raygun (lines 11-34)
+  - `/error` endpoint: Tries to use a fake object, which bounces up to the Express handler (lines 36-49)
