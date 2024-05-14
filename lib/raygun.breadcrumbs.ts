@@ -135,7 +135,9 @@ export function clear() {
     return;
   }
 
-  debug("[raygun.breadcrumbs.ts] clearing stored breadcrumbs, entering with new store");
+  debug(
+    "[raygun.breadcrumbs.ts] clearing stored breadcrumbs, entering with new store",
+  );
   asyncLocalStorage.enterWith([]);
 }
 

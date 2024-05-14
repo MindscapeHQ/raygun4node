@@ -12,7 +12,9 @@ export function addRequestBreadcrumb(request: Request) {
   const crumbs = getBreadcrumbs();
 
   if (!crumbs) {
-    debug("[raygun.breadcrumbs.express.ts] Add request breadcrumb skip, no store!");
+    debug(
+      "[raygun.breadcrumbs.express.ts] Add request breadcrumb skip, no store!",
+    );
     return;
   }
 
@@ -24,7 +26,9 @@ export function addRequestBreadcrumb(request: Request) {
     type: "request",
   };
 
-  debug(`[raygun.breadcrumbs.express.ts] recorded request breadcrumb: ${internalCrumb}`);
+  debug(
+    `[raygun.breadcrumbs.express.ts] recorded request breadcrumb: ${internalCrumb}`,
+  );
 
   crumbs.push(internalCrumb);
 }
