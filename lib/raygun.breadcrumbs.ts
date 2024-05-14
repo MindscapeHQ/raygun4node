@@ -1,15 +1,15 @@
 import type { AsyncLocalStorage } from "async_hooks";
 import type { Breadcrumb, InternalBreadcrumb } from "./types";
-const debug = require("debug")("raygun").bind(null, "[raygun.breadcrumbs.ts]");
+const debug = require("debug")("raygun");
 
 let asyncLocalStorage: AsyncLocalStorage<InternalBreadcrumb[]> | null = null;
 
 try {
   asyncLocalStorage = new (require("async_hooks").AsyncLocalStorage)();
-  debug("initialized successfully");
+  debug("[raygun.breadcrumbs.ts] initialized successfully");
 } catch (e) {
   debug(
-    "failed to load async_hooks.AsyncLocalStorage - initialization failed\n",
+    "[raygun.breadcrumbs.ts] failed to load async_hooks.AsyncLocalStorage - initialization failed\n",
     e,
   );
 }
@@ -93,7 +93,7 @@ export function addBreadcrumb(
     lineNumber: callsite?.lineNumber || undefined,
   };
 
-  debug(`recorded breadcrumb: ${internalCrumb}`);
+  debug(`[raygun.breadcrumbs.ts] recorded breadcrumb: ${internalCrumb}`);
 
   crumbs.push(internalCrumb);
 }
@@ -111,7 +111,7 @@ export function getBreadcrumbs(): InternalBreadcrumb[] | null {
 
   const newStore: InternalBreadcrumb[] = [];
 
-  debug("enter with new store");
+  debug("[raygun.breadcrumbs.ts] enter with new store");
   asyncLocalStorage.enterWith(newStore);
 
   return newStore;
@@ -126,7 +126,7 @@ export function runWithBreadcrumbs(
     return;
   }
 
-  debug("running function with breadcrumbs");
+  debug("[raygun.breadcrumbs.ts] running function with breadcrumbs");
   asyncLocalStorage.run(store, f);
 }
 
@@ -135,7 +135,7 @@ export function clear() {
     return;
   }
 
-  debug("clearing stored breadcrumbs, entering with new store");
+  debug("[raygun.breadcrumbs.ts] clearing stored breadcrumbs, entering with new store");
   asyncLocalStorage.enterWith([]);
 }
 

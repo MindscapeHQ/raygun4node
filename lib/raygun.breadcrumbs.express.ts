@@ -2,10 +2,7 @@ import type { Request } from "express";
 import type { InternalBreadcrumb } from "./types";
 import { getBreadcrumbs } from "./raygun.breadcrumbs";
 
-const debug = require("debug")("raygun").bind(
-  null,
-  "[raygun.breadcrumbs.express.ts]",
-);
+const debug = require("debug")("raygun");
 
 /**
  * Parses an ExpressJS Request and adds it to the breadcrumbs store
@@ -15,7 +12,7 @@ export function addRequestBreadcrumb(request: Request) {
   const crumbs = getBreadcrumbs();
 
   if (!crumbs) {
-    debug("Add request breadcrumb skip, no store!");
+    debug("[raygun.breadcrumbs.express.ts] Add request breadcrumb skip, no store!");
     return;
   }
 
@@ -27,7 +24,7 @@ export function addRequestBreadcrumb(request: Request) {
     type: "request",
   };
 
-  debug(`recorded request breadcrumb: ${internalCrumb}`);
+  debug(`[raygun.breadcrumbs.express.ts] recorded request breadcrumb: ${internalCrumb}`);
 
   crumbs.push(internalCrumb);
 }
