@@ -324,7 +324,7 @@ Breadcrumbs can be cleared with `client.clearBreadcrumbs()`.
 
 #### Breadcrumbs and ExpressJS
 
-Raygun4Node provides a special ExpressJS middleware that helps to scope Breadcrumbs to a specific request.
+Raygun4Node provides a custom ExpressJS middleware that helps to scope Breadcrumbs to a specific request.
 As well, this middleware will add a Breadcrumb with information about the performed request.
 
 To set up, add the Raygun Breadcrumbs ExpressJS handler before configuring any endpoints.
@@ -335,6 +335,14 @@ app.use(raygunClient.expressHandlerBreadcrumbs);
 
 // Setup the rest of the app, e.g.
 app.use("/", routes);
+```
+
+This middleware can be user together with the provided ExpressJS error handler.
+The order in which the middlewares are configured is important. `expressHandlerBreadcrumbs` should go first to scope breadcrumbs correctly.
+
+```js
+app.use(raygunClient.expressHandlerBreadcrumbs);
+app.use(raygunClient.expressHandler);
 ```
 
 ### Batched error transport
