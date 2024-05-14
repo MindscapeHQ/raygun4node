@@ -137,22 +137,3 @@ export function clear() {
   );
   asyncLocalStorage.enterWith([]);
 }
-
-// const consoleMethods: [keyof typeof console, InternalBreadcrumb["level"]][] = [
-//   ["debug", "debug"],
-//   ["log", "info"],
-//   ["info", "info"],
-//   ["warn", "warning"],
-//   ["error", "error"],
-// ];
-
-// for (const [method, level] of consoleMethods) {
-//   const oldMethod = (console as any)[method];
-//   (console as any)[method] = function logWithBreadcrumb<T>(
-//     this: T,
-//     ...args: any[]
-//   ) {
-//     addBreadcrumb({ message: args.join(" "), level }, "console");
-//     return oldMethod.apply(this, args);
-//   };
-// }
