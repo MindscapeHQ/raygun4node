@@ -25,7 +25,8 @@ import {
   Tag,
   Transport,
 } from "./types";
-import * as breadcrumbs from "./breadcrumbs";
+import * as breadcrumbs from "./raygun.breadcrumbs";
+import * as breadcrumbsExpressJs from "./raygun.breadcrumbs.express";
 import type { IncomingMessage } from "http";
 import { Request, Response, NextFunction } from "express";
 import { RaygunBatchTransport } from "./raygun.batch";
@@ -362,7 +363,7 @@ class Raygun {
    */
   expressHandlerBreadcrumbs(req: Request, res: Response, next: NextFunction) {
     breadcrumbs.runWithBreadcrumbs(() => {
-      breadcrumbs.addRequestBreadcrumb(req);
+      breadcrumbsExpressJs.addRequestBreadcrumb(req);
       // Make the current breadcrumb store available to the express error handler
       res.locals.breadcrumbs = breadcrumbs.getBreadcrumbs();
       next();

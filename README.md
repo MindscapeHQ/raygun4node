@@ -317,6 +317,10 @@ Raygun can cache errors thrown by your Node application when it's running in 'of
 
 Raygun includes an on-disk cache provider out of the box, which required write permissions to the folder you wish to use. You cal also pass in your own cache storage.
 
+### Breadcrumbs
+
+
+
 ##### Getting setup with the default offline provide
 
 When creating your Raygun client you need to pass through a cache path

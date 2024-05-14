@@ -1,7 +1,6 @@
 import type { AsyncLocalStorage } from "async_hooks";
 import type { Breadcrumb, InternalBreadcrumb } from "./types";
-import type { Request, Response } from "express";
-const debug = require("debug")("raygun").bind(null, "[breadcrumbs]");
+const debug = require("debug")("raygun").bind(null, "[raygun.breadcrumbs.js]");
 
 let asyncLocalStorage: AsyncLocalStorage<InternalBreadcrumb[]> | null = null;
 
@@ -95,27 +94,6 @@ export function addBreadcrumb(
   };
 
   debug(`recorded breadcrumb: ${internalCrumb}`);
-
-  crumbs.push(internalCrumb);
-}
-
-export function addRequestBreadcrumb(request: Request) {
-  const crumbs = getBreadcrumbs();
-
-  if (!crumbs) {
-    debug("Add request breadcrumb skip, no store!");
-    return;
-  }
-
-  const internalCrumb: InternalBreadcrumb = {
-    category: "http",
-    message: `${request.method} ${request.url}`,
-    level: "info",
-    timestamp: Number(new Date()),
-    type: "request",
-  };
-
-  debug(`recorded request breadcrumb: ${internalCrumb}`);
 
   crumbs.push(internalCrumb);
 }
