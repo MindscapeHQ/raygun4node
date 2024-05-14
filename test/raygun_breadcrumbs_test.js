@@ -182,3 +182,34 @@ test("expressHandler and breadcrumbs", async function (t) {
   t.equal(message.details.breadcrumbs[1].message, "breadcrumb-1");
   t.end();
 });
+
+test("custom breadcrumb objects", {}, async function (t) {
+  const testEnv = await makeClientWithMockServer();
+  const client = testEnv.client;
+
+  // Breadcrumb object
+  client.addBreadcrumb({
+    level: "info",
+    category: "CATEGORY",
+    message: "MESSAGE",
+    customData: {
+      "custom": "data",
+    }
+  });
+
+  client.onBeforeSend(function (payload) {
+    // Raygun payload should include breadcrumbs
+    t.equal(payload.details.breadcrumbs.length, 1);
+    t.equal(payload.details.breadcrumbs[0].message, "MESSAGE");
+    t.equal(payload.details.breadcrumbs[0].category, "CATEGORY");
+    t.equal(payload.details.breadcrumbs[0].level, "info");
+    t.equal(payload.details.breadcrumbs[0].customData["custom"], "data");
+    return payload;
+  });
+
+  // Send Raygun error
+  await client.send(new Error());
+
+  testEnv.stop();
+});
+
