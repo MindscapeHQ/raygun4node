@@ -199,7 +199,7 @@ test("custom breadcrumb objects", {}, async function (t) {
 
   client.onBeforeSend(function (payload) {
     // Raygun payload should include breadcrumbs
-    t.equal(payload.details.breadcrumbs.length, 69);
+    t.equal(payload.details.breadcrumbs.length, 1);
     t.equal(payload.details.breadcrumbs[0].message, "MESSAGE");
     t.equal(payload.details.breadcrumbs[0].category, "CATEGORY");
     t.equal(payload.details.breadcrumbs[0].level, "info");
