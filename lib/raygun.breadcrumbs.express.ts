@@ -1,5 +1,5 @@
 import type { Request } from "express";
-import type { InternalBreadcrumb } from "./types";
+import type { Breadcrumb } from "./types";
 import { getBreadcrumbs } from "./raygun.breadcrumbs";
 
 const debug = require("debug")("raygun");
@@ -18,7 +18,7 @@ export function addRequestBreadcrumb(request: Request) {
     return;
   }
 
-  const internalCrumb: InternalBreadcrumb = {
+  const internalCrumb: Breadcrumb = {
     category: "http",
     message: `${request.method} ${request.url}`,
     level: "info",

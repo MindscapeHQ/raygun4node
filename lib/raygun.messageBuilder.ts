@@ -24,7 +24,7 @@ import {
   CustomData,
   Environment,
   BuiltError,
-  InternalBreadcrumb,
+  Breadcrumb,
 } from "./types";
 
 const debug = require("debug")("raygun");
@@ -280,7 +280,7 @@ export class RaygunMessageBuilder {
     return data;
   }
 
-  setBreadcrumbs(breadcrumbs: InternalBreadcrumb[] | null) {
+  setBreadcrumbs(breadcrumbs: Breadcrumb[] | null) {
     debug(
       `[raygun.messageBuilder.ts] Added breadcrumbs: ${breadcrumbs?.length || 0}`,
     );

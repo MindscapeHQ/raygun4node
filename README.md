@@ -291,6 +291,52 @@ const myBeforeSend = function (payload, exception, customData, request, tags) {
 Raygun.onBeforeSend(myBeforeSend);
 ```
 
+### Breadcrumbs
+
+Breadcrumbs can be sent to Raygun to provide additional information to look into and debug issues stemming from crash reports.
+
+Breadcrumbs can be created in two ways.
+
+#### Simple string:
+
+Call `client.addBreadcrumb(message)`, where message is just a string:
+
+```js
+client.addBreadcrumb('test breadcrumb');
+```
+
+#### Using `BreadcrumbMessage`:
+
+Create your own `BreadcrumbMessage` object and send more than just a message with `client.addBreadcrumb(BreadcrumbMessage)`.
+
+The structure of the type `BreadcrumbMessage` is as shown here:
+
+```js
+BreadcrumbMessage: {
+    level: "debug" | "info" | "warning" | "error";
+    category: string;
+    message: string;
+    customData?: CustomData;
+}
+```
+
+Breadcrumbs can be cleared with `client.clearBreadcrumbs()`.
+
+#### Breadcrumbs and ExpressJS
+
+Raygun4Node provides a special ExpressJS middleware that helps to scope Breadcrumbs to a specific request.
+As well, this middleware will add a Breadcrumb with information about the performed request.
+
+To set up, add the Raygun Breadcrumbs ExpressJS handler before configuring any endpoints.
+
+```js
+// Add the Raygun Breadcrumb ExpressJS handler
+app.use(raygunClient.expressHandlerBreadcrumbs);
+
+// Setup the rest of the app, e.g.
+app.use("/", routes);
+```
+
 ### Batched error transport
 
 You can enable a batched transport mode for the Raygun client by passing `{batch: true}` when initializing.
@@ -316,10 +362,6 @@ In a future version the batch transport will likely be enabled by default.
 Raygun can cache errors thrown by your Node application when it's running in 'offline' mode. By default the offline cache is disabled. Raygun4Node doesn't detect network state change, that is up to the application using the library.
 
 Raygun includes an on-disk cache provider out of the box, which required write permissions to the folder you wish to use. You cal also pass in your own cache storage.
-
-### Breadcrumbs
-
-
 
 ##### Getting setup with the default offline provide
 

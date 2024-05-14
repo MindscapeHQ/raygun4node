@@ -1,8 +1,8 @@
 import type { AsyncLocalStorage } from "async_hooks";
-import type { Breadcrumb, InternalBreadcrumb } from "./types";
+import type { BreadcrumbMessage, Breadcrumb } from "./types";
 const debug = require("debug")("raygun");
 
-let asyncLocalStorage: AsyncLocalStorage<InternalBreadcrumb[]> | null = null;
+let asyncLocalStorage: AsyncLocalStorage<Breadcrumb[]> | null = null;
 
 try {
   asyncLocalStorage = new (require("async_hooks").AsyncLocalStorage)();
@@ -58,8 +58,8 @@ function getCallsite(): SourceFile | null {
 }
 
 export function addBreadcrumb(
-  breadcrumb: string | Breadcrumb,
-  type: InternalBreadcrumb["type"] = "manual",
+  breadcrumb: string | BreadcrumbMessage,
+  type: Breadcrumb["type"] = "manual",
 ) {
   const crumbs = getBreadcrumbs();
 
@@ -68,7 +68,7 @@ export function addBreadcrumb(
   }
 
   if (typeof breadcrumb === "string") {
-    const expandedBreadcrumb: Breadcrumb = {
+    const expandedBreadcrumb: BreadcrumbMessage = {
       message: breadcrumb,
       level: "info",
       category: "",
@@ -79,8 +79,8 @@ export function addBreadcrumb(
 
   const callsite = getCallsite();
 
-  const internalCrumb: InternalBreadcrumb = {
-    ...(breadcrumb as Breadcrumb),
+  const internalCrumb: Breadcrumb = {
+    ...(breadcrumb as BreadcrumbMessage),
     category: breadcrumb.category || "",
     message: breadcrumb.message || "",
     level: breadcrumb.level || "info",
@@ -98,7 +98,7 @@ export function addBreadcrumb(
   crumbs.push(internalCrumb);
 }
 
-export function getBreadcrumbs(): InternalBreadcrumb[] | null {
+export function getBreadcrumbs(): Breadcrumb[] | null {
   if (!asyncLocalStorage) {
     return null;
   }
@@ -109,7 +109,7 @@ export function getBreadcrumbs(): InternalBreadcrumb[] | null {
     return store;
   }
 
-  const newStore: InternalBreadcrumb[] = [];
+  const newStore: Breadcrumb[] = [];
 
   debug("[raygun.breadcrumbs.ts] enter with new store");
   asyncLocalStorage.enterWith(newStore);
@@ -117,10 +117,7 @@ export function getBreadcrumbs(): InternalBreadcrumb[] | null {
   return newStore;
 }
 
-export function runWithBreadcrumbs(
-  f: () => void,
-  store: InternalBreadcrumb[] = [],
-) {
+export function runWithBreadcrumbs(f: () => void, store: Breadcrumb[] = []) {
   if (!asyncLocalStorage) {
     f();
     return;

@@ -9,7 +9,7 @@
 "use strict";
 
 import {
-  Breadcrumb,
+  BreadcrumbMessage,
   callVariadicCallback,
   Callback,
   CustomData,
@@ -202,7 +202,7 @@ class Raygun {
    * Adds breadcrumb to current context
    * @param breadcrumb either a string message or a Breadcrumb object
    */
-  addBreadcrumb(breadcrumb: string | Breadcrumb) {
+  addBreadcrumb(breadcrumb: string | BreadcrumbMessage) {
     breadcrumbs.addBreadcrumb(breadcrumb);
   }
 
