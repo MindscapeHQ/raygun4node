@@ -4,7 +4,7 @@ import { getBreadcrumbs } from "./raygun.breadcrumbs";
 
 const debug = require("debug")("raygun").bind(
   null,
-  "[raygun.breadcrumbs.express.js]",
+  "[raygun.breadcrumbs.express.ts]",
 );
 
 /**

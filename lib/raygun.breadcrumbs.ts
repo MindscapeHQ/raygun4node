@@ -1,6 +1,6 @@
 import type { AsyncLocalStorage } from "async_hooks";
 import type { Breadcrumb, InternalBreadcrumb } from "./types";
-const debug = require("debug")("raygun").bind(null, "[raygun.breadcrumbs.js]");
+const debug = require("debug")("raygun").bind(null, "[raygun.breadcrumbs.ts]");
 
 let asyncLocalStorage: AsyncLocalStorage<InternalBreadcrumb[]> | null = null;
 
