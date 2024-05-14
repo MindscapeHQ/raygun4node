@@ -193,8 +193,8 @@ test("custom breadcrumb objects", {}, async function (t) {
     category: "CATEGORY",
     message: "MESSAGE",
     customData: {
-      "custom": "data",
-    }
+      custom: "data",
+    },
   });
 
   client.onBeforeSend(function (payload) {
@@ -212,4 +212,3 @@ test("custom breadcrumb objects", {}, async function (t) {
 
   testEnv.stop();
 });
-
