@@ -212,3 +212,29 @@ test("custom breadcrumb objects", {}, async function (t) {
 
   testEnv.stop();
 });
+
+test("clear breadcrumbs", {}, async function (t) {
+  const testEnv = await makeClientWithMockServer();
+  const client = testEnv.client;
+
+  // Add one Breadcrumb
+  client.addBreadcrumb("SHOULD BE CLEARED");
+
+  // Clear breadcrumbs
+  client.clearBreadcrumbs();
+
+  // Add one Breadcrumb
+  client.addBreadcrumb("BREADCRUMB");
+
+  client.onBeforeSend(function (payload) {
+    // Only BREADCRUMB should exist
+    t.equal(payload.details.breadcrumbs.length, 1);
+    t.equal(payload.details.breadcrumbs[0].message, "BREADCRUMB");
+    return payload;
+  });
+
+  // Send Raygun error
+  await client.send(new Error());
+
+  testEnv.stop();
+});

@@ -362,7 +362,7 @@ class Raygun {
    */
   expressHandlerBreadcrumbs(req: Request, res: Response, next: NextFunction) {
     breadcrumbs.runWithBreadcrumbs(() => {
-      breadcrumbs.addRequestBreadcrumb(req, res);
+      breadcrumbs.addRequestBreadcrumb(req);
       // Make the current breadcrumb store available to the express error handler
       res.locals.breadcrumbs = breadcrumbs.getBreadcrumbs();
       next();

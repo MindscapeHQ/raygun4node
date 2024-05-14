@@ -64,8 +64,6 @@ export function addBreadcrumb(
 ) {
   const crumbs = getBreadcrumbs();
 
-  debug("using breadcrum store:", crumbs);
-
   if (!crumbs) {
     return;
   }
@@ -96,13 +94,12 @@ export function addBreadcrumb(
     lineNumber: callsite?.lineNumber || undefined,
   };
 
-  debug("[breadcrumbs.ts] recorded breadcrumb:", internalCrumb);
+  debug(`recorded breadcrumb: ${internalCrumb}`);
 
   crumbs.push(internalCrumb);
 }
 
-export function addRequestBreadcrumb(request: Request, response: Response) {
-  debug(`Add request breadcrumb: ${request}`);
+export function addRequestBreadcrumb(request: Request) {
   const crumbs = getBreadcrumbs();
 
   if (!crumbs) {
@@ -117,6 +114,8 @@ export function addRequestBreadcrumb(request: Request, response: Response) {
     timestamp: Number(new Date()),
     type: "request",
   };
+
+  debug(`recorded request breadcrumb: ${internalCrumb}`);
 
   crumbs.push(internalCrumb);
 }
@@ -148,8 +147,8 @@ export function runWithBreadcrumbs(
     f();
     return;
   }
-  debug("running function with breadcrumbs");
 
+  debug("running function with breadcrumbs");
   asyncLocalStorage.run(store, f);
 }
 
