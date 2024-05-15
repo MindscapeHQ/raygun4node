@@ -291,6 +291,60 @@ const myBeforeSend = function (payload, exception, customData, request, tags) {
 Raygun.onBeforeSend(myBeforeSend);
 ```
 
+### Breadcrumbs
+
+Breadcrumbs can be sent to Raygun to provide additional information to look into and debug issues stemming from crash reports.
+
+Breadcrumbs can be created in two ways.
+
+#### Simple string:
+
+Call `client.addBreadcrumb(message)`, where message is just a string:
+
+```js
+client.addBreadcrumb('test breadcrumb');
+```
+
+#### Using `BreadcrumbMessage`:
+
+Create your own `BreadcrumbMessage` object and send more than just a message with `client.addBreadcrumb(BreadcrumbMessage)`.
+
+The structure of the type `BreadcrumbMessage` is as shown here:
+
+```js
+BreadcrumbMessage: {
+    level: "debug" | "info" | "warning" | "error";
+    category: string;
+    message: string;
+    customData?: CustomData;
+}
+```
+
+Breadcrumbs can be cleared with `client.clearBreadcrumbs()`.
+
+#### Breadcrumbs and ExpressJS
+
+Raygun4Node provides a custom ExpressJS middleware that helps to scope Breadcrumbs to a specific request.
+As well, this middleware will add a Breadcrumb with information about the performed request.
+
+To set up, add the Raygun Breadcrumbs ExpressJS handler before configuring any endpoints.
+
+```js
+// Add the Raygun Breadcrumb ExpressJS handler
+app.use(raygunClient.expressHandlerBreadcrumbs);
+
+// Setup the rest of the app, e.g.
+app.use("/", routes);
+```
+
+This middleware can be user together with the provided ExpressJS error handler `expressHandler`.
+The order in which the middlewares are configured is important. `expressHandlerBreadcrumbs` should go first to scope breadcrumbs correctly.
+
+```js
+app.use(raygunClient.expressHandlerBreadcrumbs);
+app.use(raygunClient.expressHandler);
+```
+
 ### Batched error transport
 
 You can enable a batched transport mode for the Raygun client by passing `{batch: true}` when initializing.

@@ -24,7 +24,10 @@ import {
   CustomData,
   Environment,
   BuiltError,
+  Breadcrumb,
 } from "./types";
+
+const debug = require("debug")("raygun");
 
 type UserMessageData = RawUserData | string | undefined;
 
@@ -275,5 +278,15 @@ export class RaygunMessageBuilder {
       data.uuid = userData.uuid;
     }
     return data;
+  }
+
+  setBreadcrumbs(breadcrumbs: Breadcrumb[] | null) {
+    debug(
+      `[raygun.messageBuilder.ts] Added breadcrumbs: ${breadcrumbs?.length || 0}`,
+    );
+    if (breadcrumbs) {
+      this.message.details.breadcrumbs = [...breadcrumbs];
+    }
+    return this;
   }
 }

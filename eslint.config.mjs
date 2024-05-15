@@ -19,6 +19,7 @@ export default tseslint.config(
             // Add node globals to ignore undefined
             globals: {
                 "__dirname": false,
+                "__filename": false,
                 "console": false,
                 "module": false,
                 "process": false,
