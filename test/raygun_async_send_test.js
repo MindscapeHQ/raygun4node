@@ -39,7 +39,7 @@ test("async send complex", {}, function (t) {
     .setVersion("1.0.0.0");
 
   client
-    .send(new Error())
+    .send({ exception: new Error() })
     .then((response) => {
       t.equal(response.statusCode, 202);
       t.end();
@@ -63,7 +63,7 @@ test("async send with inner error", {}, function (t) {
     apiKey: API_KEY,
   });
   client
-    .send(new Error())
+    .send({ exception: new Error() })
     .then((response) => {
       t.equal(response.statusCode, 202);
       t.end();
@@ -85,7 +85,7 @@ test("async send with verror", {}, function (t) {
     apiKey: API_KEY,
   });
   client
-    .send(error)
+    .send({ exception: error })
     .then((response) => {
       t.equal(response.statusCode, 202);
       t.end();
@@ -150,7 +150,7 @@ test("check that tags get merged", {}, function (t) {
   });
 
   client
-    .send(new Error(), {}, null, ["Tag2"])
+    .send(new Error(), { tags: ["Tag2"] })
     .then((message) => {
       t.end();
     })
@@ -169,9 +169,9 @@ test("send with expressHandler custom data", function (t) {
     return { test: "data" };
   };
   client._send = client.send;
-  client.send = (err, data, params, tags) => {
+  client.send = (exception, { customData, request, tags }) => {
     client.send = client._send;
-    t.equal(data.test, "data");
+    t.equal(customData.test, "data");
     t.end();
     return Promise.resolve(null);
   };

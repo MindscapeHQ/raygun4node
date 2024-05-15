@@ -24,6 +24,7 @@ import {
   SendOptions,
   Tag,
   Transport,
+  SendParameters,
 } from "./types";
 import * as breadcrumbs from "./raygun.breadcrumbs";
 import * as breadcrumbsExpressJs from "./raygun.breadcrumbs.express";
@@ -231,10 +232,11 @@ class Raygun {
    */
   async send(
     exception: Error | string,
-    customData?: CustomData,
-    request?: RequestParams,
-    tags?: Tag[],
-  ): Promise<IncomingMessage | null> {
+    {
+      customData,
+      request,
+      tags,
+    }: SendParameters = {}): Promise<IncomingMessage | null> {
     const sendOptionsResult = this.buildSendOptions(
       exception,
       customData,
@@ -304,7 +306,12 @@ class Raygun {
     tags?: Tag[],
   ) {
     // call async send but redirect response to provided legacy callback
-    this.send(exception, customData, request, tags)
+    this.send(exception,
+      {
+        customData: customData,
+        request: request,
+        tags: tags,
+      })
       .then((response) => {
         if (callback) {
           callVariadicCallback(callback, null, response);
@@ -398,21 +405,25 @@ class Raygun {
       body: req.body,
     };
 
-    // If a local store of breadcrumbs exist in the response
-    // run in scoped breadcrumbs store
+    const sendParams = {
+      customData: customData || {},
+      request: requestParams,
+      tags: ["UnhandledException"],
+    };
+
     if (res.locals && res.locals.breadcrumbs) {
       breadcrumbs.runWithBreadcrumbs(() => {
         debug("sending express error with scoped breadcrumbs store");
-        this.send(err, customData || {}, requestParams, [
-          "UnhandledException",
-        ]).catch((err) => {
+        // If a local store of breadcrumbs exist in the response
+        // run in scoped breadcrumbs store
+        this.send(err, sendParams).catch((err) => {
           console.error("[Raygun] Failed to send Express error", err);
         });
       }, res.locals.breadcrumbs);
     } else {
       debug("sending express error with global breadcrumbs store");
       // Otherwise, run with the global breadcrumbs store
-      this.send(err, customData || {}, requestParams, ["UnhandledException"])
+      this.send(err, sendParams)
         .then((response) => {
           // Clear global breadcrumbs store after successful sent
           breadcrumbs.clear();

@@ -211,3 +211,9 @@ export type Breadcrumb = {
 export type BreadcrumbMessage = Partial<
   Pick<Breadcrumb, "level" | "category" | "message" | "customData">
 >;
+
+export interface SendParameters {
+  customData?: CustomData;
+  request?: RequestParams;
+  tags?: Tag[];
+}
