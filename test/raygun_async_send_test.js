@@ -39,7 +39,7 @@ test("async send complex", {}, function (t) {
     .setVersion("1.0.0.0");
 
   client
-    .send( new Error())
+    .send(new Error())
     .then((response) => {
       t.equal(response.statusCode, 202);
       t.end();
