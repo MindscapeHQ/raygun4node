@@ -407,11 +407,11 @@ class Raygun {
       tags: ["UnhandledException"],
     };
 
+    // If a local store of breadcrumbs exist in the response
+    // run in scoped breadcrumbs store
     if (res.locals && res.locals.breadcrumbs) {
       breadcrumbs.runWithBreadcrumbs(() => {
         debug("sending express error with scoped breadcrumbs store");
-        // If a local store of breadcrumbs exist in the response
-        // run in scoped breadcrumbs store
         this.send(err, sendParams).catch((err) => {
           console.error("[Raygun] Failed to send Express error", err);
         });
