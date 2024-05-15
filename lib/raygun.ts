@@ -232,11 +232,8 @@ class Raygun {
    */
   async send(
     exception: Error | string,
-    {
-      customData,
-      request,
-      tags,
-    }: SendParameters = {}): Promise<IncomingMessage | null> {
+    { customData, request, tags }: SendParameters = {},
+  ): Promise<IncomingMessage | null> {
     const sendOptionsResult = this.buildSendOptions(
       exception,
       customData,
@@ -306,12 +303,11 @@ class Raygun {
     tags?: Tag[],
   ) {
     // call async send but redirect response to provided legacy callback
-    this.send(exception,
-      {
-        customData: customData,
-        request: request,
-        tags: tags,
-      })
+    this.send(exception, {
+      customData: customData,
+      request: request,
+      tags: tags,
+    })
       .then((response) => {
         if (callback) {
           callVariadicCallback(callback, null, response);
