@@ -304,9 +304,9 @@ class Raygun {
   ) {
     // call async send but redirect response to provided legacy callback
     this.send(exception, {
-      customData: customData,
-      request: request,
-      tags: tags,
+      customData,
+      request,
+      tags,
     })
       .then((response) => {
         if (callback) {

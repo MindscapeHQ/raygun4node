@@ -39,7 +39,7 @@ test("async send complex", {}, function (t) {
     .setVersion("1.0.0.0");
 
   client
-    .send({ exception: new Error() })
+    .send( new Error())
     .then((response) => {
       t.equal(response.statusCode, 202);
       t.end();
@@ -63,7 +63,7 @@ test("async send with inner error", {}, function (t) {
     apiKey: API_KEY,
   });
   client
-    .send({ exception: new Error() })
+    .send(new Error())
     .then((response) => {
       t.equal(response.statusCode, 202);
       t.end();
@@ -85,7 +85,7 @@ test("async send with verror", {}, function (t) {
     apiKey: API_KEY,
   });
   client
-    .send({ exception: error })
+    .send(error)
     .then((response) => {
       t.equal(response.statusCode, 202);
       t.end();
