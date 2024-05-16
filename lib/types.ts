@@ -211,3 +211,7 @@ export type Breadcrumb = {
 export type BreadcrumbMessage = Partial<
   Pick<Breadcrumb, "level" | "category" | "message" | "customData">
 >;
+
+export type ApmBridge = {
+  notify(error: string | Error, correlationId: string): void;
+};
