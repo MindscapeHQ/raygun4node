@@ -215,3 +215,9 @@ export type BreadcrumbMessage = Partial<
 export type ApmBridge = {
   notify(error: string | Error, correlationId: string): void;
 };
+
+export interface SendParameters {
+  customData?: CustomData;
+  request?: RequestParams;
+  tags?: Tag[];
+}

@@ -141,12 +141,23 @@ The callback should be a node-style callback: `function(err, response) { /*...*/
 it will only be called when the transmission is successful. This is included for
 backwards compatibility; the Node-style callback should be preferred.
 
+### Send Parameters
+
+The `send()` method accepts a series of optional named parameters, defined as follows:
+
+```js
+client.send(error, { customData, request, tags });
+```
+
+Each one of these parameters is optional.
+They are explained in detail the following sections.
+
 ### Sending custom data
 
 You can pass custom data in on the Send() function, as the second parameter. For instance (based off the call in test/raygun_test.js):
 
 ```javascript
-client.send(new Error(), { 'mykey': 'beta' });
+client.send(new Error(), { customData: { 'mykey': 'beta' } });
 ```
 
 #### Sending custom data with Expressjs
@@ -165,7 +176,7 @@ raygunClient.expressCustomData = function (err, req) {
 
 You can send the request data in the Send() function, as the fourth parameter. For example:
 ```javascript
-client.send(new Error(), {}, request);
+client.send(new Error(), { request: request });
 ```
 
 If you want to filter any of the request data then you can pass in an array of keys to filter when
@@ -179,7 +190,7 @@ const raygunClient = new raygun.Client().init({ apiKey: 'YOUR_API_KEY', filters:
 
 You can add tags to your error in the Send() function, as the fifth parameter. For example:
 ```javascript
-client.send(new Error(), {}, {}, ['Custom Tag 1', 'Important Error']);
+client.send(new Error(), { tags: ['Custom Tag 1', 'Important Error'] });
 ```
 
 Tags can also be set globally using setTags
