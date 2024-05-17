@@ -1,6 +1,6 @@
 var express = require("express");
 var path = require("path");
-var favicon = require('serve-favicon');
+var favicon = require("serve-favicon");
 var logger = require("morgan");
 var cookieParser = require("cookie-parser");
 var bodyParser = require("body-parser");
@@ -24,7 +24,7 @@ app.set("view engine", "ejs");
 // Add the Raygun breadcrumb Express handler
 app.use(raygunClient.expressHandlerBreadcrumbs);
 
-app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(favicon(__dirname + "/public/favicon.ico"));
 app.use(logger("dev"));
 app.use(bodyParser.json());
 app.use(
