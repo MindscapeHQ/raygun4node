@@ -2,7 +2,7 @@
 
 [![GitHub CI](https://github.com/MindscapeHQ/raygun4node/actions/workflows/node.js.yml/badge.svg)](https://github.com/MindscapeHQ/raygun4node/actions)
 
-Raygun.io package for Node, written in TypeScript.
+Raygun.com package for Node, written in TypeScript.
 
 # Where is my app API key?
 
@@ -277,7 +277,7 @@ This feature is preferable to using the `domains` module for this purpose, as `d
 
 ### Changing the API endpoint
 
-You can change the endpoint that error messages are sent to by specifying the `host`, `port`, and `useSSL` properties in the `raygunClient.init()` options hash. By default, `host` is `api.raygun.io`, `port` is `443`, and `useSSL` is `true`.
+You can change the endpoint that error messages are sent to by specifying the `host`, `port`, and `useSSL` properties in the `raygunClient.init()` options hash. By default, `host` is `api.raygun.com`, `port` is `443`, and `useSSL` is `true`.
 
 ### onBeforeSend
 
