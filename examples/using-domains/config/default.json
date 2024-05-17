@@ -1,5 +1,5 @@
 {
-	"Raygun":{
-		"Key":"YOUR_API_KEY"
-	}
+  "Raygun": {
+    "Key": "YOUR_API_KEY"
+  }
 }
