@@ -196,6 +196,9 @@ export function callVariadicCallback<T>(
 
 export type Callback<T> = CallbackNoError<T> | CallbackWithError<T>;
 
+/**
+ * Internal type, sent to the Raygun.com as part of MessageDetails
+ */
 export type Breadcrumb = {
   timestamp: number;
   level: "debug" | "info" | "warning" | "error";
@@ -208,6 +211,9 @@ export type Breadcrumb = {
   lineNumber?: number;
 };
 
+/**
+ * Public type, for users to create their own custom Breadcrumb
+ */
 export type BreadcrumbMessage = Partial<
   Pick<Breadcrumb, "level" | "category" | "message" | "customData">
 >;
