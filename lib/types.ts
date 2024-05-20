@@ -197,7 +197,7 @@ export function callVariadicCallback<T>(
 export type Callback<T> = CallbackNoError<T> | CallbackWithError<T>;
 
 /**
- * Internal type, sent to the Raygun.com as part of MessageDetails
+ * Internal type, sent to the Raygun API as part of MessageDetails
  */
 export type Breadcrumb = {
   timestamp: number;
