@@ -1,3 +1,22 @@
+## 1.0.0
+
+- chore(deps-dev): bump typescript-eslint from 7.8.0 to 7.9.0 (#229) (2024-05-20)
+- chore(deps-dev): bump @eslint/js from 9.2.0 to 9.3.0 (#228) (2024-05-20)
+- chore(deps-dev): bump @types/node from 20.12.11 to 20.12.12 (#227) (2024-05-20)
+- chore: code cleanup (#225) (2024-05-20)
+- fix: #138 New APM Bridge Setup (#222) (2024-05-20)
+- chore: apply prettier to all files in examples (#226) (2024-05-19)
+- feat: #219 Better Send parameters (#221) (2024-05-17)
+- feat: Breadcrumbs (#210) (2024-05-15)
+- chore(deps-dev): bump @stylistic/eslint-plugin from 2.0.0 to 2.1.0 (#214) (2024-05-13)
+- chore(deps-dev): bump tap from 18.7.2 to 18.8.0 (#213) (2024-05-13)
+- chore(deps-dev): bump @types/node from 20.12.8 to 20.12.11 (#212) (2024-05-13)
+- chore(deps-dev): bump semver from 7.6.0 to 7.6.2 (#211) (2024-05-13)
+- docs: Update status badge in README.md (#209) (2024-05-10)
+- refactor: #205 Setup eslint style (#207) (2024-05-09)
+- refactor: #197 Refactor to use Promises internally (#200) (2024-05-09)
+- refactor: #184 Cleanup debug/log messages and styles (#194) (2024-05-08)
+
 ## 0.15.0-0
 - async/await `send()` support
 - Upgrade dependencies
