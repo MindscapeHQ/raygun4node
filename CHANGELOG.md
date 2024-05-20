@@ -17,6 +17,13 @@
 - refactor: #197 Refactor to use Promises internally (#200) (2024-05-09)
 - refactor: #184 Cleanup debug/log messages and styles (#194) (2024-05-08)
 
+**BREAKING CHANGES**
+
+- `send()` method signature changed.
+- APM Bridge setup process changed.
+
+See README.md for more information.
+
 ## 0.15.0-0
 - async/await `send()` support
 - Upgrade dependencies
