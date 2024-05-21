@@ -12,7 +12,7 @@ test("reporting uncaught exceptions", async function (t) {
 
   await util
     .promisify(childProcess.exec)(
-      "node -r ts-node/register ./raygun_uncaught_exception_app.js",
+      "node -r ts-node/register ./raygun_unhandled_rejection_app.js",
       {
         cwd: __dirname,
         stdio: "inherit",
@@ -30,7 +30,7 @@ test("reporting uncaught exceptions", async function (t) {
   testEnvironment.stop();
 
   t.equal(message.details.error.message, "test");
-  // Ensure that the error was reported by the uncaughtExceptionMonitor listener
-  deepEqual(message.details.tags, ["uncaughtException"]);
+  // Ensure that the error was reported by the unhandledRejection listener
+  deepEqual(message.details.tags, ["unhandledRejection"]);
   t.end();
 });

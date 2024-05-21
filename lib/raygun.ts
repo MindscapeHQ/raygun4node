@@ -337,8 +337,20 @@ class Raygun {
       return;
     }
 
+    // Handles uncaught exceptions, e.g. missing try/catch on a throw.
     process.on("uncaughtExceptionMonitor", (e) => {
-      this.sendSync(e);
+      this.sendSync(e, ["uncaughtException"]);
+    });
+
+    // Handles uncaught Promise rejections, e.g. missing .catch(...) on a Promise.
+    // Unhandled Promise rejections are not caught by the "uncaughtExceptionMonitor".
+    process.on("unhandledRejection", (reason, promise) => {
+      if (reason instanceof Error || typeof reason === "string") {
+        this.sendSync(reason, ["unhandledRejection"]);
+      } else {
+        // `reason` type is unknown, wrap in String
+        this.sendSync(`Unhandled Rejection: ${reason}`, ["unhandledRejection"]);
+      }
     });
   }
 
@@ -346,10 +358,11 @@ class Raygun {
    * Send error using synchronous transport.
    * Only used to report uncaught exceptions.
    * @param exception error to report
+   * @param tags optional tags
    * @private
    */
-  private sendSync(exception: Error | string): void {
-    const result = this.buildSendOptions(exception);
+  private sendSync(exception: Error | string, tags?: Tag[]): void {
+    const result = this.buildSendOptions(exception, null, undefined, tags);
 
     if (result.valid) {
       raygunSyncTransport.send(result.options);
