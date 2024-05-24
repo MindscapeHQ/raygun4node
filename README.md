@@ -333,7 +333,13 @@ BreadcrumbMessage: {
 }
 ```
 
-Breadcrumbs can be cleared with `client.clearBreadcrumbs()`.
+#### Sending Breadcrumbs
+
+When an error message is sent to Raygun Crash Reporting, all the registered Breadcrumbs will be attached automatically.
+
+After the error message has been sent, the registered Breadcrumbs list be cleared automatically.
+
+Otherwise, you can also clear Breadcrumbs with `client.clearBreadcrumbs()`.
 
 #### Breadcrumbs and ExpressJS
 
