@@ -154,7 +154,7 @@ They are explained in detail the following sections.
 
 ### Sending custom data
 
-You can pass custom data in on the Send() function, as the second parameter. For instance (based off the call in test/raygun_test.js):
+You can pass custom data in on the Send() function, as the `customData` parameter. For instance (based off the call in test/raygun_test.js):
 
 ```javascript
 client.send(new Error(), { customData: { 'mykey': 'beta' } });
@@ -174,7 +174,8 @@ raygunClient.expressCustomData = function (err, req) {
 
 ### Sending request data
 
-You can send the request data in the Send() function, as the fourth parameter. For example:
+You can send the request data in the Send() function, as the `request` parameter. For example:
+
 ```javascript
 client.send(new Error(), { request: request });
 ```
@@ -188,7 +189,8 @@ const raygunClient = new raygun.Client().init({ apiKey: 'YOUR_API_KEY', filters:
 
 ### Tags
 
-You can add tags to your error in the Send() function, as the fifth parameter. For example:
+You can add tags to your error in the Send() function, as the `tags` parameter. For example:
+
 ```javascript
 client.send(new Error(), { tags: ['Custom Tag 1', 'Important Error'] });
 ```
