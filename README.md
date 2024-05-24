@@ -357,7 +357,7 @@ app.use("/", routes);
 ```
 
 This middleware can be used together with the provided ExpressJS error handler `expressHandler`.
-The order in which the middlewares are configured is important. `expressHandlerBreadcrumbs` should go first to scope breadcrumbs correctly.
+The order in which the middlewares are configured is important. `expressHandlerBreadcrumbs` must go first to scope breadcrumbs correctly.
 
 ```js
 app.use(raygunClient.expressHandlerBreadcrumbs);
