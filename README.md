@@ -550,6 +550,10 @@ curl
 
 All requests use the same authentication methods as the upload call (Basic Authentication and Token Authentication).
 
+### Known Issues
+
+- Node will show compilation warnings when using Raygun4Node in Webpack applications.
+
 ### Examples
 View a screencast on creating an app with Node.js and Express.js, then hooking up the error handling and sending them at [https://raygun.com/blog/2013/07/video-nodejs-error-handling-with-raygun/](https://raygun.com/blog/2013/07/video-nodejs-error-handling-with-raygun/)
 
