@@ -492,20 +492,6 @@ const raygunClient = new raygun.Client().init({
 
 Including column numbers can enable source mapping if you have minified or transpiled code in your stack traces.
 
-### APM Bridge Setup
-
-Raygun4Node can be used in conjunction with Raygun APM for Node.js.
-
-Follow the instructions on https://raygun.com/platform/apm to set up your application.
-
-Then, call to `setApmBridge()` to connect both packages:
-
-```js
-raygunClient.setApmBridge(require("raygun-apm/lib/src/crash_reporting"));
-```
-
-When this package sends an error report to Raygun, it will notify automatically the Raygun APM package, and attach a Correlation ID to the error sent.
-
 ### Source maps
 
 Raygun supports source mapping for Node.js stacktraces which include column numbers. To enable this feature you will need to upload your map files to the JavaScript Source Map Center and enable the processing of Node.js error stacktraces.
@@ -563,6 +549,10 @@ curl
 ```
 
 All requests use the same authentication methods as the upload call (Basic Authentication and Token Authentication).
+
+### Known Issues
+
+- Node will show compilation warnings when using Raygun4Node in Webpack applications.
 
 ### Examples
 View a screencast on creating an app with Node.js and Express.js, then hooking up the error handling and sending them at [https://raygun.com/blog/2013/07/video-nodejs-error-handling-with-raygun/](https://raygun.com/blog/2013/07/video-nodejs-error-handling-with-raygun/)

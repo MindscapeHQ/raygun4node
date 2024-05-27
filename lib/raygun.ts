@@ -9,7 +9,6 @@
 "use strict";
 
 import {
-  ApmBridge,
   BreadcrumbMessage,
   callVariadicCallback,
   Callback,
@@ -46,7 +45,20 @@ type SendOptionsResult =
 
 const debug = require("debug")("raygun");
 
-let apmBridge: undefined | null | ApmBridge = undefined;
+let apmBridge:
+  | undefined
+  | null
+  | { notify(e: string | Error, s: string): void } = undefined;
+
+try {
+  if (module.parent) {
+    apmBridge = module.parent.require("raygun-apm/lib/src/crash_reporting");
+  } else {
+    apmBridge = require("raygun-apm/lib/src/crash_reporting");
+  }
+} catch (e) {
+  apmBridge = null;
+}
 
 type SendCB = (error: Error | null, items: string[] | undefined) => void;
 
@@ -141,15 +153,6 @@ class Raygun {
     }
 
     return this;
-  }
-
-  /**
-   * Set Raygun APM Bridge dependency.
-   * Usage: call with `client.setApmBridge(require("raygun-apm/lib/src/crash_reporting"))`
-   * @param bridge APM Crash Reporting module
-   */
-  setApmBridge(bridge: ApmBridge) {
-    apmBridge = bridge;
   }
 
   user(req?: RequestParams): RawUserData | null {
@@ -486,13 +489,11 @@ class Raygun {
 
     if (apmBridge) {
       const correlationId = uuidv4();
-      apmBridge.notify(exception, correlationId);
-      message.details.correlationId = correlationId;
-      debug(
-        `[raygun.ts] Notify APM Bridge with exception ${exception} and correlation id ${correlationId}`,
-      );
-    }
 
+      apmBridge.notify(exception, correlationId);
+
+      message.details.correlationId = correlationId;
+    }
     const apiKey = this._apiKey;
 
     if (!apiKey) {
