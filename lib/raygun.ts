@@ -9,6 +9,7 @@
 "use strict";
 
 import {
+  BreadcrumbMessage,
   callVariadicCallback,
   Callback,
   CustomData,
@@ -23,9 +24,12 @@ import {
   SendOptions,
   Tag,
   Transport,
+  SendParameters,
 } from "./types";
+import * as breadcrumbs from "./raygun.breadcrumbs";
+import { addRequestBreadcrumb } from "./raygun.breadcrumbs.express";
 import type { IncomingMessage } from "http";
-import type { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import { RaygunBatchTransport } from "./raygun.batch";
 import { RaygunMessageBuilder } from "./raygun.messageBuilder";
 import { OfflineStorage } from "./raygun.offline";
@@ -64,22 +68,39 @@ function emptyCallback() {}
 
 class Raygun {
   _apiKey: string | undefined;
+
   _filters: string[] = [];
+
   _user: RawUserData | undefined;
+
   _version: string = "";
+
   _host: string | undefined;
+
   _port: number | undefined;
+
   _useSSL: boolean | undefined;
+
   _onBeforeSend: Hook<Message> | undefined;
+
   _offlineStorage: IOfflineStorage | undefined;
+
   _isOffline: boolean | undefined;
+
   _offlineStorageOptions: OfflineStorageOptions | undefined;
+
   _groupingKey: Hook<string> | undefined;
+
   _tags: Tag[] | undefined;
+
   _useHumanStringForObject: boolean | undefined;
+
   _reportColumnNumbers: boolean | undefined;
+
   _innerErrorFieldName: string | undefined;
+
   _batch: boolean = false;
+
   _batchTransport: RaygunBatchTransport | undefined;
 
   init(options: RaygunOptions) {
@@ -99,7 +120,7 @@ class Raygun {
     this._reportColumnNumbers = options.reportColumnNumbers;
     this._innerErrorFieldName = options.innerErrorFieldName || "cause"; // VError function to retrieve inner error;
 
-    debug(`[raygun.ts] Client initialized`);
+    debug("[raygun.ts] Client initialized");
 
     if (options.reportUncaughtExceptions) {
       this.reportUncaughtExceptions();
@@ -178,6 +199,21 @@ class Raygun {
     this._tags = tags;
   }
 
+  /**
+   * Adds breadcrumb to current context
+   * @param breadcrumb either a string message or a Breadcrumb object
+   */
+  addBreadcrumb(breadcrumb: string | BreadcrumbMessage) {
+    breadcrumbs.addBreadcrumb(breadcrumb);
+  }
+
+  /**
+   * Manually clear stored breadcrumbs for current context
+   */
+  clearBreadcrumbs() {
+    breadcrumbs.clear();
+  }
+
   transport(): Transport {
     if (this._batch && this._batchTransport) {
       return this._batchTransport;
@@ -196,26 +232,64 @@ class Raygun {
    */
   async send(
     exception: Error | string,
-    customData?: CustomData,
-    request?: RequestParams,
-    tags?: Tag[],
+    { customData, request, tags }: SendParameters = {},
   ): Promise<IncomingMessage | null> {
-    // Convert internal sendWithCallback implementation to a Promise.
-    return new Promise((resolve, reject) => {
-      this.sendWithCallback(
-        exception,
-        customData,
-        function (err, message) {
-          if (err != null) {
-            reject(err);
-          } else {
-            resolve(message);
-          }
-        },
-        request,
-        tags,
+    const sendOptionsResult = this.buildSendOptions(
+      exception,
+      customData,
+      request,
+      tags,
+    );
+
+    const message = sendOptionsResult.message;
+
+    if (!sendOptionsResult.valid) {
+      console.error(
+        "[Raygun4Node] Encountered an error sending an error to Raygun. No API key is configured, please ensure .init is called with api key. See docs for more info.",
       );
-    });
+      return Promise.reject(sendOptionsResult.message);
+    }
+
+    const sendOptions = sendOptionsResult.options;
+    if (this._isOffline) {
+      // Server is offline, store in Offline Storage
+      return new Promise((resolve, reject) => {
+        this.offlineStorage().save(JSON.stringify(message), (error) => {
+          if (error) {
+            console.error(
+              "[Raygun4Node] Error storing message while offline",
+              error,
+            );
+            reject(error);
+          } else {
+            debug("[raygun.ts] Stored message while offline");
+            // Resolved value is null because message is stored
+            resolve(null);
+          }
+        });
+      });
+    } else {
+      // wrap Promise and add duration debug info
+      const stopTimer = startTimer();
+      // Use current transport to send request.
+      // Transport can be batch or default.
+      return this.transport()
+        .send(sendOptions)
+        .then((response) => {
+          const durationInMs = stopTimer();
+          debug(
+            `[raygun.ts] Successfully sent message (duration=${durationInMs}ms)`,
+          );
+          return response;
+        })
+        .catch((error) => {
+          const durationInMs = stopTimer();
+          debug(
+            `[raygun.ts] Error sending message (duration=${durationInMs}ms): ${error}`,
+          );
+          return error;
+        });
+    }
   }
 
   /**
@@ -227,39 +301,23 @@ class Raygun {
     callback?: Callback<IncomingMessage>,
     request?: RequestParams,
     tags?: Tag[],
-  ): Message {
-    const sendOptionsResult = this.buildSendOptions(
-      exception,
+  ) {
+    // call async send but redirect response to provided legacy callback
+    this.send(exception, {
       customData,
-      callback,
       request,
       tags,
-    );
-
-    const message = sendOptionsResult.message;
-
-    if (!sendOptionsResult.valid) {
-      console.error(
-        `[Raygun4Node] Encountered an error sending an error to Raygun. No API key is configured, please ensure .init() is called with api key. See docs for more info.`,
-      );
-      return sendOptionsResult.message;
-    }
-
-    const sendOptions = sendOptionsResult.options;
-
-    if (this._isOffline) {
-      // make the save callback type compatible with Callback<IncomingMessage>
-      const saveCallback = callback
-        ? (err: Error | null) => callVariadicCallback(callback, err, null)
-        : emptyCallback;
-      this.offlineStorage().save(JSON.stringify(message), saveCallback);
-    } else {
-      // Use current transport to send request.
-      // Transport can be batch or default.
-      this.transport().send(sendOptions);
-    }
-
-    return message;
+    })
+      .then((response) => {
+        if (callback) {
+          callVariadicCallback(callback, null, response);
+        }
+      })
+      .catch((error) => {
+        if (callback) {
+          callVariadicCallback(callback, error, null);
+        }
+      });
   }
 
   private reportUncaughtExceptions() {
@@ -273,7 +331,7 @@ class Raygun {
       (major === 13 && minor < 7)
     ) {
       console.log(
-        `[Raygun4Node] Warning: reportUncaughtExceptions requires at least Node v12.17.0 or v13.7.0. Uncaught exceptions will not be automatically reported.`,
+        "[Raygun4Node] Warning: reportUncaughtExceptions requires at least Node v12.17.0 or v13.7.0. Uncaught exceptions will not be automatically reported.",
       );
 
       return;
@@ -298,6 +356,31 @@ class Raygun {
     }
   }
 
+  /**
+   * Attach as express middleware to create a breadcrumb store scope per request.
+   * e.g. `app.use(raygun.expressHandlerBreadcrumbs);`
+   * Then call to `raygun.addBreadcrumb(...)` to add breadcrumbs to the future Raygun `send` call.
+   * @param req
+   * @param res
+   * @param next
+   */
+  expressHandlerBreadcrumbs(req: Request, res: Response, next: NextFunction) {
+    breadcrumbs.runWithBreadcrumbs(() => {
+      addRequestBreadcrumb(req);
+      // Make the current breadcrumb store available to the express error handler
+      res.locals.breadcrumbs = breadcrumbs.getBreadcrumbs();
+      next();
+    });
+  }
+
+  /**
+   * Attach as express middleware to report application errors to Raygun automatically.
+   * e.g. `app.use(raygun.expressHandler);`
+   * @param err
+   * @param req
+   * @param res
+   * @param next
+   */
   expressHandler(err: Error, req: Request, res: Response, next: NextFunction) {
     let customData;
 
@@ -318,17 +401,40 @@ class Raygun {
       body: req.body,
     };
 
-    this.send(err, customData || {}, requestParams, [
-      "UnhandledException",
-    ]).catch((err) => {
-      console.log(`[Raygun] Failed to send Express error: ${err}`);
-    });
+    const sendParams = {
+      customData: customData || {},
+      request: requestParams,
+      tags: ["UnhandledException"],
+    };
+
+    // If a local store of breadcrumbs exist in the response
+    // run in scoped breadcrumbs store
+    if (res.locals && res.locals.breadcrumbs) {
+      breadcrumbs.runWithBreadcrumbs(() => {
+        debug("sending express error with scoped breadcrumbs store");
+        this.send(err, sendParams).catch((err) => {
+          console.error("[Raygun] Failed to send Express error", err);
+        });
+      }, res.locals.breadcrumbs);
+    } else {
+      debug("sending express error with global breadcrumbs store");
+      // Otherwise, run with the global breadcrumbs store
+      this.send(err, sendParams)
+        .then((response) => {
+          // Clear global breadcrumbs store after successful sent
+          breadcrumbs.clear();
+        })
+        .catch((err) => {
+          console.error("[Raygun] Failed to send Express error", err);
+        });
+    }
+
     next(err);
   }
 
   stop() {
     if (this._batchTransport) {
-      debug(`[raygun.ts] Batch transport stopped`);
+      debug("[raygun.ts] Batch transport stopped");
       this._batchTransport.stopProcessing();
     }
   }
@@ -336,7 +442,6 @@ class Raygun {
   private buildSendOptions(
     exception: Error | string,
     customData?: CustomData,
-    callback?: Callback<IncomingMessage>,
     request?: RequestParams,
     tags?: Tag[],
   ): SendOptionsResult {
@@ -363,6 +468,7 @@ class Raygun {
       .setUserCustomData(customData)
       .setUser(this.user(request) || this._user)
       .setVersion(this._version)
+      .setBreadcrumbs(breadcrumbs.getBreadcrumbs())
       .setTags(mergedTags);
 
     let message = builder.build();
@@ -394,34 +500,11 @@ class Raygun {
       return { valid: false, message };
     }
 
-    function wrappedCallback(
-      error: Error | null,
-      response: IncomingMessage | null,
-    ) {
-      const durationInMs = stopTimer();
-      if (error) {
-        debug(
-          `[raygun.ts] Error sending message (duration=${durationInMs}ms): ${error}`,
-        );
-      } else {
-        debug(
-          `[raygun.ts] Successfully sent message (duration=${durationInMs}ms)`,
-        );
-      }
-      if (!callback) {
-        return;
-      }
-      return callVariadicCallback(callback, error, response);
-    }
-
-    const stopTimer = startTimer();
-
     return {
       valid: true,
       message,
       options: {
         message: JSON.stringify(message),
-        callback: wrappedCallback,
         http: {
           host: this._host,
           port: this._port,
@@ -442,13 +525,23 @@ class Raygun {
     };
 
     return {
-      // TODO: MessageTransport ignores any errors from the send callback, could this be improved?
       send(message: string) {
-        transport.send({
-          message,
-          callback: () => {},
-          http: httpOptions,
-        });
+        transport
+          .send({
+            message,
+            http: httpOptions,
+          })
+          .then((response) => {
+            debug(
+              `[raygun.ts] Sent message from offline transport: ${response}`,
+            );
+          })
+          .catch((error) => {
+            console.error(
+              "[Raygun4Node] Failed to send message from offline transport",
+              error,
+            );
+          });
       },
     };
   }

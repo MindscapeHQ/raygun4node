@@ -52,6 +52,7 @@ export type MessageDetails = {
   machineName: string;
   environment: Environment;
   correlationId: string | null;
+  breadcrumbs?: Breadcrumb[];
 };
 
 export type Environment = {
@@ -68,12 +69,8 @@ export type Tag = string;
 
 export type SendOptions = {
   message: string;
-  // TODO: Remove Callback in SendOptions and use Promises internally
-  callback: Callback<IncomingMessage>;
   http: HTTPOptions;
 };
-
-export type SendOptionsWithoutCB = Omit<SendOptions, "callback">;
 
 export type HTTPOptions = {
   useSSL: boolean;
@@ -132,7 +129,7 @@ export type OfflineStorageOptions = {
 };
 
 export type Transport = {
-  send(options: SendOptions): void;
+  send(options: SendOptions): Promise<IncomingMessage>;
 };
 
 export type MessageTransport = {
@@ -198,3 +195,31 @@ export function callVariadicCallback<T>(
 }
 
 export type Callback<T> = CallbackNoError<T> | CallbackWithError<T>;
+
+/**
+ * Internal type, sent to the Raygun API as part of MessageDetails
+ */
+export type Breadcrumb = {
+  timestamp: number;
+  level: "debug" | "info" | "warning" | "error";
+  type: "manual" | "navigation" | "click-event" | "request" | "console";
+  category: string;
+  message: string;
+  customData?: CustomData;
+  className?: string;
+  methodName?: string;
+  lineNumber?: number;
+};
+
+/**
+ * Public type, for users to create their own custom Breadcrumb
+ */
+export type BreadcrumbMessage = Partial<
+  Pick<Breadcrumb, "level" | "category" | "message" | "customData">
+>;
+
+export interface SendParameters {
+  customData?: CustomData;
+  request?: RequestParams;
+  tags?: Tag[];
+}

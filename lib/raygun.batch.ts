@@ -32,8 +32,11 @@ const MAX_BATCH_INNER_SIZE_BYTES = MAX_BATCH_SIZE_BYTES - 2; // for the starting
 
 export class RaygunBatchTransport {
   private timerId: NodeJS.Timeout | null = null;
+
   private httpOptions: HTTPOptions;
+
   private interval: number;
+
   private batchId: number = 0;
 
   private batchState: BatchState = { messages: [], messageSizeInBytes: 0 };
@@ -45,23 +48,33 @@ export class RaygunBatchTransport {
 
   /**
    * Enqueues send request to batch processor.
-   * Callback in SendOptions is called when the message is eventually processed.
-   * @param options
+   * @param options send options without callback
+   * @return Promise with response or error if rejected
    */
-  send(options: SendOptions) {
-    this.onIncomingMessage({
-      serializedMessage: options.message,
-      callback: options.callback,
-    });
+  send(options: SendOptions): Promise<IncomingMessage> {
+    return new Promise((resolve, reject) => {
+      this.onIncomingMessage({
+        serializedMessage: options.message,
+        // TODO: Switch to using Promises internally
+        // See issue: https://github.com/MindscapeHQ/raygun4node/issues/199
+        callback: (error, message) => {
+          if (error) {
+            reject(error);
+          } else if (message) {
+            resolve(message);
+          }
+        },
+      });
 
-    if (!this.timerId) {
-      this.timerId = setTimeout(() => this.processBatch(), 1000);
-    }
+      if (!this.timerId) {
+        this.timerId = setTimeout(() => this.processBatch(), 1000);
+      }
+    });
   }
 
   stopProcessing() {
     if (this.timerId) {
-      debug(`[raygun.batch.ts] Batch transport - stopping`);
+      debug("[raygun.batch.ts] Batch transport - stopping");
       clearInterval(this.timerId);
 
       this.timerId = null;
@@ -76,11 +89,9 @@ export class RaygunBatchTransport {
       const messageSize = Math.ceil(messageLength / 1024);
       const startOfMessage = serializedMessage.slice(0, 1000);
 
-      console.warn(
-        `[raygun4node] Error is too large to send to Raygun (${messageSize}kb)\nStart of error: ${startOfMessage}`,
-      );
-
-      return;
+      const errorMessage = `Error is too large to send to Raygun (${messageSize}kb)\nStart of error: ${startOfMessage}`;
+      console.error(`[Raygun4Node] ${errorMessage}`);
+      throw Error(errorMessage);
     }
 
     const messageIsTooLargeToAddToBatch =
@@ -151,6 +162,7 @@ export class RaygunBatchTransport {
       }
 
       // TODO: Callbacks are processed in batch, see how can this be implemented with Promises
+      // See issue: https://github.com/MindscapeHQ/raygun4node/issues/199
       for (const callback of callbacks) {
         if (callback) {
           callVariadicCallback(callback, err, response);
@@ -166,8 +178,15 @@ export class RaygunBatchTransport {
 
     sendBatch({
       message: payload,
-      callback: runAllCallbacks,
       http: this.httpOptions,
-    });
+    })
+      .then((response) => {
+        // Call to original callbacks for success
+        runAllCallbacks(null, response);
+      })
+      .catch((error) => {
+        // Call to original callbacks for error
+        runAllCallbacks(error, null);
+      });
   }
 }

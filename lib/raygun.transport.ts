@@ -12,27 +12,27 @@ import http from "http";
 import https from "https";
 
 import { IncomingMessage } from "http";
-import {
-  isCallbackWithError,
-  callVariadicCallback,
-  SendOptions,
-} from "./types";
+import { SendOptions } from "./types";
 
 const API_HOST = "api.raygun.io";
 const DEFAULT_ENDPOINT = "/entries";
 const BATCH_ENDPOINT = "/entries/bulk";
 
-export function sendBatch(options: SendOptions) {
+export function sendBatch(options: SendOptions): Promise<IncomingMessage> {
   return send(options, BATCH_ENDPOINT);
 }
 
-// TODO: Convert this method callbacks to Promise.
 /**
  * Transport implementation that sends error to Raygun.
  * Errors are reported back via callback.
- * @param options
+ * @param options without callback
+ * @param path service endpoint
+ * @return Promise with IncomingMessage or rejected with Error
  */
-export function send(options: SendOptions, path = DEFAULT_ENDPOINT) {
+export function send(
+  options: SendOptions,
+  path = DEFAULT_ENDPOINT,
+): Promise<IncomingMessage> {
   try {
     const data = Buffer.from(options.message);
 
@@ -49,32 +49,33 @@ export function send(options: SendOptions, path = DEFAULT_ENDPOINT) {
       },
     };
 
-    const cb = function (response: IncomingMessage) {
-      if (options.callback) {
-        return callVariadicCallback(options.callback, null, response);
-      }
-    };
-
-    const httpLib = options.http.useSSL ? https : http;
-    const request = httpLib.request(httpOptions, cb);
-
-    request.on("error", function (e) {
-      console.log(
-        `[Raygun4Node] Error ${e.message} occurred while attempting to send error with message: ${options.message}`,
+    // Wrap HTTP request in Promise
+    return new Promise((resolve, reject) => {
+      const httpLib = options.http.useSSL ? https : http;
+      const request = httpLib.request(
+        httpOptions,
+        (response: IncomingMessage) => {
+          // request completed successfully
+          resolve(response);
+        },
       );
 
-      // If the callback has two parameters, it should expect an `error` value.
-      if (options.callback && isCallbackWithError(options.callback)) {
-        options.callback(e, null);
-      }
-    });
+      request.on("error", function (e) {
+        console.error(
+          `[Raygun4Node] error ${e.message} occurred while attempting to send error with message: ${options.message}`,
+        );
 
-    request.write(data);
-    request.end();
+        // request failed
+        reject(e);
+      });
+
+      request.write(data);
+      request.end();
+    });
   } catch (e) {
-    // TODO: Non-HTTP errors are being ignored, should be better pass them up?
-    console.log(
-      `[Raygun4Node] Error ${e} occurred while attempting to send error with message: ${options.message}`,
+    console.error(
+      `[Raygun4Node] error ${e} occurred while attempting to send error with message: ${options.message}`,
     );
+    return Promise.reject(e);
   }
 }

@@ -9,11 +9,11 @@
 "use strict";
 
 import { spawnSync } from "child_process";
-import { SendOptionsWithoutCB } from "./types";
+import { SendOptions } from "./types";
 
 const requestProcessSource = require.resolve("./raygun.sync.worker");
 
-function syncRequest(httpOptions: SendOptionsWithoutCB) {
+function syncRequest(httpOptions: SendOptions) {
   const requestProcess = spawnSync("node", [requestProcessSource], {
     input: JSON.stringify(httpOptions),
   });
@@ -27,7 +27,7 @@ function syncRequest(httpOptions: SendOptionsWithoutCB) {
  * Only used to report uncaught exceptions.
  * @param options
  */
-export function send(options: SendOptionsWithoutCB) {
+export function send(options: SendOptions) {
   try {
     syncRequest(options);
   } catch (e) {

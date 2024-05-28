@@ -1,8 +1,8 @@
 # Raygun4Node
 
-[![Build Status](https://travis-ci.org/MindscapeHQ/raygun4node.svg?branch=master)](https://travis-ci.org/MindscapeHQ/raygun4node)
+[![GitHub CI](https://github.com/MindscapeHQ/raygun4node/actions/workflows/node.js.yml/badge.svg)](https://github.com/MindscapeHQ/raygun4node/actions)
 
-Raygun.io package for Node, written in TypeScript.
+Raygun.com package for Node, written in TypeScript.
 
 # Where is my app API key?
 
@@ -141,12 +141,23 @@ The callback should be a node-style callback: `function(err, response) { /*...*/
 it will only be called when the transmission is successful. This is included for
 backwards compatibility; the Node-style callback should be preferred.
 
+### Send Parameters
+
+The `send()` method accepts a series of optional named parameters, defined as follows:
+
+```js
+client.send(error, { customData, request, tags });
+```
+
+Each one of these parameters is optional.
+They are explained in detail the following sections.
+
 ### Sending custom data
 
-You can pass custom data in on the Send() function, as the second parameter. For instance (based off the call in test/raygun_test.js):
+You can pass custom data in on the Send() function, as the `customData` parameter. For instance (based off the call in test/raygun_test.js):
 
 ```javascript
-client.send(new Error(), { 'mykey': 'beta' });
+client.send(new Error(), { customData: { 'mykey': 'beta' } });
 ```
 
 #### Sending custom data with Expressjs
@@ -163,9 +174,10 @@ raygunClient.expressCustomData = function (err, req) {
 
 ### Sending request data
 
-You can send the request data in the Send() function, as the fourth parameter. For example:
+You can send the request data in the Send() function, as the `request` parameter. For example:
+
 ```javascript
-client.send(new Error(), {}, request);
+client.send(new Error(), { request: request });
 ```
 
 If you want to filter any of the request data then you can pass in an array of keys to filter when
@@ -177,9 +189,10 @@ const raygunClient = new raygun.Client().init({ apiKey: 'YOUR_API_KEY', filters:
 
 ### Tags
 
-You can add tags to your error in the Send() function, as the fifth parameter. For example:
+You can add tags to your error in the Send() function, as the `tags` parameter. For example:
+
 ```javascript
-client.send(new Error(), {}, {}, ['Custom Tag 1', 'Important Error']);
+client.send(new Error(), { tags: ['Custom Tag 1', 'Important Error'] });
 ```
 
 Tags can also be set globally using setTags
@@ -266,7 +279,7 @@ This feature is preferable to using the `domains` module for this purpose, as `d
 
 ### Changing the API endpoint
 
-You can change the endpoint that error messages are sent to by specifying the `host`, `port`, and `useSSL` properties in the `raygunClient.init()` options hash. By default, `host` is `api.raygun.io`, `port` is `443`, and `useSSL` is `true`.
+You can change the endpoint that error messages are sent to by specifying the `host`, `port`, and `useSSL` properties in the `raygunClient.init()` options hash. By default, `host` is `api.raygun.com`, `port` is `443`, and `useSSL` is `true`.
 
 ### onBeforeSend
 
@@ -289,6 +302,66 @@ const myBeforeSend = function (payload, exception, customData, request, tags) {
 }
 
 Raygun.onBeforeSend(myBeforeSend);
+```
+
+### Breadcrumbs
+
+Breadcrumbs can be sent to Raygun to provide additional information to look into and debug issues stemming from crash reports.
+
+Breadcrumbs can be created in two ways.
+
+#### Simple string:
+
+Call `client.addBreadcrumb(message)`, where message is just a string:
+
+```js
+client.addBreadcrumb('test breadcrumb');
+```
+
+#### Using `BreadcrumbMessage`:
+
+Create your own `BreadcrumbMessage` object and send more than just a message with `client.addBreadcrumb(BreadcrumbMessage)`.
+
+The structure of the type `BreadcrumbMessage` is as shown here:
+
+```js
+BreadcrumbMessage: {
+    level: "debug" | "info" | "warning" | "error";
+    category: string;
+    message: string;
+    customData?: CustomData;
+}
+```
+
+#### Sending Breadcrumbs
+
+When an error message is sent to Raygun Crash Reporting, all the registered Breadcrumbs will be attached automatically.
+
+After the error message has been sent, the registered Breadcrumbs list be cleared automatically.
+
+Otherwise, you can also clear Breadcrumbs with `client.clearBreadcrumbs()`.
+
+#### Breadcrumbs and ExpressJS
+
+Raygun4Node provides a custom ExpressJS middleware that helps to scope Breadcrumbs to a specific request.
+As well, this middleware will add a Breadcrumb with information about the performed request.
+
+To set up, add the Raygun Breadcrumbs ExpressJS handler before configuring any endpoints.
+
+```js
+// Add the Raygun Breadcrumb ExpressJS handler
+app.use(raygunClient.expressHandlerBreadcrumbs);
+
+// Setup the rest of the app, e.g.
+app.use("/", routes);
+```
+
+This middleware can be used together with the provided ExpressJS error handler `expressHandler`.
+The order in which the middlewares are configured is important. `expressHandlerBreadcrumbs` must go first to scope breadcrumbs correctly.
+
+```js
+app.use(raygunClient.expressHandlerBreadcrumbs);
+app.use(raygunClient.expressHandler);
 ```
 
 ### Batched error transport
@@ -476,6 +549,10 @@ curl
 ```
 
 All requests use the same authentication methods as the upload call (Basic Authentication and Token Authentication).
+
+### Known Issues
+
+- Node will show compilation warnings when using Raygun4Node in Webpack applications.
 
 ### Examples
 View a screencast on creating an app with Node.js and Express.js, then hooking up the error handling and sending them at [https://raygun.com/blog/2013/07/video-nodejs-error-handling-with-raygun/](https://raygun.com/blog/2013/07/video-nodejs-error-handling-with-raygun/)

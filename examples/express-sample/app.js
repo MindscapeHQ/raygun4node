@@ -1,24 +1,11 @@
-var config = require("config");
-
-if (config.Raygun.Key === "YOUR_API_KEY") {
-  console.error(
-    `[Raygun4Node-Express-Sample] You need to set your Raygun API key in the config file`,
-  );
-  process.exit(1);
-}
-
-// Setup Raygun
-var raygun = require("raygun");
-var raygunClient = new raygun.Client().init({
-  apiKey: config.Raygun.Key,
-});
-
 var express = require("express");
 var path = require("path");
+var favicon = require("serve-favicon");
 var logger = require("morgan");
 var cookieParser = require("cookie-parser");
 var bodyParser = require("body-parser");
 var sassMiddleware = require("node-sass-middleware");
+var raygunClient = require("./raygun.client");
 
 var routes = require("./routes/index");
 var users = require("./routes/users");
@@ -34,8 +21,10 @@ raygunClient.user = function (req) {
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(__dirname + '/public/favicon.ico'));
+// Add the Raygun breadcrumb Express handler
+app.use(raygunClient.expressHandlerBreadcrumbs);
+
+app.use(favicon(__dirname + "/public/favicon.ico"));
 app.use(logger("dev"));
 app.use(bodyParser.json());
 app.use(
@@ -58,7 +47,9 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", routes);
 app.use("/users", users);
 
-// Add the Raygun Express handler
+// Add the Raygun error Express handler
 app.use(raygunClient.expressHandler);
+
+raygunClient.addBreadcrumb("Express Server started!");
 
 module.exports = app;
