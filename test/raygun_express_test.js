@@ -149,3 +149,29 @@ test("string exceptions are sent intact", async function (t) {
 
   t.same(message.details.error.message, "my string error");
 });
+
+test("modify error payload in onBeforeSend", async function (t) {
+  t.plan(1);
+
+  const testEnvironment = await makeClientWithMockServer();
+  const raygunClient = testEnvironment.client;
+
+  const nextRequest = testEnvironment.nextRequest();
+
+  // Modify message in onBeforeSend
+  raygunClient.onBeforeSend((message) => {
+    message.details.error.message = "New Message";
+    return message;
+  });
+
+  // Send "Original Message"
+  await raygunClient.send(new Error("Original Message"));
+
+  const message = await nextRequest;
+
+  testEnvironment.stop();
+
+  // expect modified "New Message"
+  t.same(message.details.error.message, "New Message");
+  t.end();
+});

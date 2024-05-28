@@ -119,6 +119,32 @@ test("async send with OnBeforeSend", {}, function (t) {
     });
 });
 
+test("onBeforeSend returns null, cancel send", {}, function (t) {
+  t.plan(2);
+
+  let client = new Raygun.Client().init({
+    apiKey: API_KEY,
+  });
+
+  client.onBeforeSend(function (payload) {
+    // onBeforeSend is called and the payload is valid
+    t.ok(payload);
+    // Returning null cancels send action
+    return null;
+  });
+
+  client
+    .send(new Error())
+    .then((response) => {
+      // Send finishes, response is null
+      t.equal(response, null);
+      t.end();
+    })
+    .catch((err) => {
+      t.fail(err);
+    });
+});
+
 test("check that tags get passed through in async send", {}, function (t) {
   let tag = ["Test"];
   let client = new Raygun.Client().init({ apiKey: "TEST" });

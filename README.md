@@ -287,18 +287,18 @@ Call `Raygun.onBeforeSend()`, passing in a function which takes up to 5 paramete
 
 You can also pass this in as an option to `init()` like this: `raygunClient.init({ onBeforeSend: function(payload) { return payload; } });`
 
-From the supplied function, you should return either the payload (intact or mutated as per your needs), or false.
+From the supplied function, you should return either the payload (intact or mutated as per your needs), or `null`.
 
 If your function returns a truthy object, Raygun4Node will attempt to send it as supplied. Thus, you can mutate it as per your needs - preferably only the values if you wish to filter out data that is not taken care of by the filters. You can also of course return it as supplied.
 
-If, after inspecting the payload, you wish to discard it and abort the send to Raygun, simply return false.
+If, after inspecting the payload, you wish to discard it and abort sending it to Raygun, simply return `null`.
 
-By example:
+For example:
 
 ```javascript
 const myBeforeSend = function (payload, exception, customData, request, tags) {
   console.log(payload); // Modify the payload here if necessary
-  return payload; // Return false here to abort the send
+  return payload; // Return null here instead of payload to abort the send
 }
 
 Raygun.onBeforeSend(myBeforeSend);

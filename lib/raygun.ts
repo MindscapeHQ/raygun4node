@@ -40,7 +40,7 @@ import * as raygunSyncTransport from "./raygun.sync.transport";
 import { v4 as uuidv4 } from "uuid";
 
 type SendOptionsResult =
-  | { valid: true; message: Message; options: SendOptions }
+  | { valid: true; message: Message; options: SendOptions; skip: boolean }
   | { valid: false; message: Message };
 
 const debug = require("debug")("raygun");
@@ -81,7 +81,7 @@ class Raygun {
 
   _useSSL: boolean | undefined;
 
-  _onBeforeSend: Hook<Message> | undefined;
+  _onBeforeSend: Hook<Message | null> | undefined;
 
   _offlineStorage: IOfflineStorage | undefined;
 
@@ -175,7 +175,12 @@ class Raygun {
     return this;
   }
 
-  onBeforeSend(onBeforeSend: Hook<Message>) {
+  /**
+   * Access or mutate the candidate error payload immediately before it is sent,
+   * or skip the sending action by returning null.
+   * @param onBeforeSend callback that must return a Message object to send, or null to skip sending it.
+   */
+  onBeforeSend(onBeforeSend: Hook<Message | null>) {
     this._onBeforeSend = onBeforeSend;
     return this;
   }
@@ -248,6 +253,13 @@ class Raygun {
         "[Raygun4Node] Encountered an error sending an error to Raygun. No API key is configured, please ensure .init is called with api key. See docs for more info.",
       );
       return Promise.reject(sendOptionsResult.message);
+    }
+
+    if (sendOptionsResult.skip) {
+      console.log(
+        `[Raygun4Node] Skip sending message: ${sendOptionsResult.message.details.error}.`,
+      );
+      return Promise.resolve(null);
     }
 
     const sendOptions = sendOptionsResult.options;
@@ -352,6 +364,12 @@ class Raygun {
     const result = this.buildSendOptions(exception);
 
     if (result.valid) {
+      if (result.skip) {
+        console.log(
+          `[Raygun4Node] Skip sending message: ${result.message.details.error}.`,
+        );
+        return;
+      }
       raygunSyncTransport.send(result.options);
     }
   }
@@ -446,6 +464,7 @@ class Raygun {
     tags?: Tag[],
   ): SendOptionsResult {
     let mergedTags: Tag[] = [];
+    let skip = false;
 
     if (this._tags) {
       mergedTags = mergedTags.concat(this._tags);
@@ -480,11 +499,20 @@ class Raygun {
           : null;
     }
 
-    if (this._onBeforeSend) {
-      message =
-        typeof this._onBeforeSend === "function"
-          ? this._onBeforeSend(message, exception, customData, request, tags)
-          : message;
+    if (this._onBeforeSend && typeof this._onBeforeSend === "function") {
+      const _message = this._onBeforeSend(
+        message,
+        exception,
+        customData,
+        request,
+        tags,
+      );
+      if (_message) {
+        message = _message;
+      } else {
+        debug("[raygun.ts] onBeforeSend returned null, cancelling send");
+        skip = true;
+      }
     }
 
     if (apmBridge) {
@@ -503,6 +531,7 @@ class Raygun {
     return {
       valid: true,
       message,
+      skip: skip,
       options: {
         message: JSON.stringify(message),
         http: {
