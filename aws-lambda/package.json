@@ -1,0 +1,27 @@
+{
+  "name": "@raygun/aws-lambda",
+  "version": "0.0.1",
+  "description": "Raygun Crash Reporting for AWS Lambda functions",
+  "main": "raygun.aws.js",
+  "scripts": {
+    "test": "tap test/*_test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MindscapeHQ/raygun4node.git"
+  },
+  "keywords": [
+    "aws",
+    "lambda",
+    "function",
+    "raygun",
+    "crash",
+    "reporting"
+  ],
+  "author": "Raygun",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MindscapeHQ/raygun4node/issues"
+  },
+  "homepage": "https://github.com/MindscapeHQ/raygun4node#readme"
+}
