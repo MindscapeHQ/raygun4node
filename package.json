@@ -32,9 +32,9 @@
   ],
   "scripts": {
     "//eslint": "performs static analysis over project files and examples",
-    "eslint": "eslint --fix lib/*.ts test/*.js examples/**/*.js",
+    "eslint": "eslint --fix lib/*.ts test/*.js examples/**/*.js aws-lambda/lib/*.ts aws-lambda/test/*.js",
     "//prettier": "performs code formatting over project files and examples",
-    "prettier": "prettier --write lib/*.ts test/*.js examples",
+    "prettier": "prettier --write lib/*.ts test/*.js examples aws-lambda/lib/*.ts aws-lambda/test/*.js",
     "//prepare": "prepare project for distribution",
     "prepare": "tsc",
     "//test": "runs tests on main project",

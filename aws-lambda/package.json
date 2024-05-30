@@ -2,9 +2,23 @@
   "name": "@raygun/aws-lambda",
   "version": "0.0.1",
   "description": "Raygun Crash Reporting for AWS Lambda functions",
-  "main": "raygun.aws.js",
+  "main": "build/raygun.aws.js",
+  "types": "build/raygun.aws.d.ts",
   "scripts": {
-    "test": "tap test/*_test.js"
+    "//prepare": "prepare project for distribution",
+    "prepare": "tsc",
+    "//test": "runs tests on main project",
+    "test": "tap --disable-coverage test/*_test.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.8",
+    "tap": "^19.0.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "@types/aws-lambda": "^8.10.138",
+    "raygun": "^1.0.0"
   },
   "repository": {
     "type": "git",
