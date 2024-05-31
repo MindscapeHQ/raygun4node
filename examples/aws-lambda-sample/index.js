@@ -1,6 +1,5 @@
 const raygun = require("raygun");
 const { awsHandler } = require("@raygun/aws-lambda");
-const {call} = require("express");
 
 const client = new raygun.Client().init({ apiKey: process.env.RAYGUN });
 
