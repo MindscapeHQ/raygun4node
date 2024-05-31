@@ -127,6 +127,18 @@ export function runWithBreadcrumbs(f: () => void, store: Breadcrumb[] = []) {
   asyncLocalStorage.run(store, f);
 }
 
+export function runWithBreadcrumbsAsync<T>(
+  f: () => Promise<T>,
+  store: Breadcrumb[] = [],
+): Promise<T> {
+  if (!asyncLocalStorage) {
+    return f();
+  }
+
+  debug("[raygun.breadcrumbs.ts] running async function with breadcrumbs");
+  return asyncLocalStorage.run(store, f);
+}
+
 export function clear() {
   if (!asyncLocalStorage) {
     return;

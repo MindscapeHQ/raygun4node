@@ -1,5 +1,6 @@
 import { Client } from "raygun";
 import { Context, Handler } from "aws-lambda";
+import { runWithBreadcrumbsAsync } from "raygun/build/raygun.breadcrumbs";
 
 export type AwsHandlerConfig = {
   client: Client;
@@ -29,6 +30,43 @@ function createAsyncHandler<TEvent, TResult>(
     });
 }
 
+async function runHandler<TEvent, TResult>(
+  awsHandlerConfig: AwsHandlerConfig,
+  event: TEvent,
+  context: Context,
+  asyncHandler: AsyncHandler<TEvent, TResult>,
+) {
+  awsHandlerConfig.client.addBreadcrumb(
+    `Running AWS Function: ${context.functionName}`,
+  );
+
+  try {
+    // Call to original handler and return value
+    return await asyncHandler(event, context);
+  } catch (e) {
+    // Capture error and send to Raygun
+
+    // Prepare send parameters
+    const customData = {
+      context: context,
+    };
+    const tags = ["AWS Handler"];
+    const sendParams = {
+      customData,
+      tags,
+    };
+
+    if (e instanceof Error || typeof e === "string") {
+      await awsHandlerConfig.client.send(e, sendParams);
+    } else {
+      await awsHandlerConfig.client.send(`AWS Handler error: ${e}`, sendParams);
+    }
+
+    // rethrow exception to AWS
+    throw e;
+  }
+}
+
 export function awsHandler<TEvent, TResult>(
   awsHandlerConfig: AwsHandlerConfig,
   handler: Handler<TEvent, TResult>,
@@ -43,27 +81,9 @@ export function awsHandler<TEvent, TResult>(
   }
 
   return async (event: TEvent, context: Context) => {
-    awsHandlerConfig.client.addBreadcrumb(`Function: ${context.functionName}`);
-
-    try {
-      // Call to original handler and return value
-      return await asyncHandler(event, context);
-    } catch (e) {
-      // Capture error and send to Raygun
-      if (e instanceof Error || typeof e === "string") {
-        await awsHandlerConfig.client.send(e, {
-          customData: context,
-          tags: ["awsHandler"],
-        });
-      } else {
-        await awsHandlerConfig.client.send(`awsHandler error: ${e}`, {
-          customData: context,
-          tags: ["awsHandler"],
-        });
-      }
-
-      // rethrow exception to AWS
-      throw e;
-    }
+    // Scope breadcrumbs to this handler event
+    return runWithBreadcrumbsAsync(() => {
+      return runHandler(awsHandlerConfig, event, context, asyncHandler);
+    });
   };
 }

@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@types/aws-lambda": "^8.10.138",
-    "raygun": "^1.0.0"
+    "raygun": "file:../"
   },
   "repository": {
     "type": "git",
