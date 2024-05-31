@@ -9,7 +9,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "raygun": "^1.0.0",
+    "raygun": "file:../..",
     "@raygun/aws-lambda": "file:../../aws-lambda"
   }
 }
