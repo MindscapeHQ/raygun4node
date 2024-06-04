@@ -1,0 +1,25 @@
+name: AWS Lambda Handler
+
+on:
+  push:
+    branches: [ "master", "develop" ]
+  pull_request:
+    branches: [ "master", "develop" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        cache: 'npm'
+    - run: npm ci
+      working-directory: ./aws-lambda
+    - run: npm test
+      working-directory: ./aws-lambda
+#    - run: npm run eslint
+#      working-directory: ./aws-lambda
+
+# TODO: Setup eslint and prettier for AWS Lambda project
