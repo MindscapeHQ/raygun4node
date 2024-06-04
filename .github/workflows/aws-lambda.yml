@@ -15,6 +15,7 @@ jobs:
       uses: actions/setup-node@v4
       with:
         cache: 'npm'
+    # TODO: Remove when no longer using file dependency
     - run: npm ci
       working-directory: ./
     - run: npm ci
