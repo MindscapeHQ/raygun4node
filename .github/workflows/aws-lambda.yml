@@ -16,6 +16,8 @@ jobs:
       with:
         cache: 'npm'
     - run: npm ci
+      working-directory: ./
+    - run: npm ci
       working-directory: ./aws-lambda
     - run: npm test
       working-directory: ./aws-lambda
