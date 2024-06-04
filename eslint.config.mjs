@@ -25,6 +25,7 @@ export default tseslint.config(
                 "process": false,
                 "require": false,
                 "setTimeout": false,
+                "exports": false,
             }
         },
         rules: {
