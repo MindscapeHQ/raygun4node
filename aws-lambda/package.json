@@ -13,7 +13,11 @@
     "test": "tap --disable-coverage test/*_test.js"
   },
   "devDependencies": {
+    "@eslint/js": "^9.2.0",
+    "@stylistic/eslint-plugin": "^2.0.0",
+    "@stylistic/eslint-plugin-ts": "^2.0.0",
     "@types/node": "^20.12.8",
+    "eslint": "^8.57.0",
     "tap": "^19.0.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
