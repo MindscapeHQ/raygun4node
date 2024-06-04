@@ -93,7 +93,7 @@ export function addBreadcrumb(
     lineNumber: callsite?.lineNumber || undefined,
   };
 
-  debug(`[raygun.breadcrumbs.ts] recorded breadcrumb: ${internalCrumb}`);
+  debug(`[raygun.breadcrumbs.ts] recorded breadcrumb: ${internalCrumb.message}`);
 
   crumbs.push(internalCrumb);
 }
@@ -125,6 +125,18 @@ export function runWithBreadcrumbs(f: () => void, store: Breadcrumb[] = []) {
 
   debug("[raygun.breadcrumbs.ts] running function with breadcrumbs");
   asyncLocalStorage.run(store, f);
+}
+
+export function runWithBreadcrumbsAsync<T>(
+  f: () => Promise<T>,
+  store: Breadcrumb[] = [],
+): Promise<T> {
+  if (!asyncLocalStorage) {
+    return f();
+  }
+
+  debug("[raygun.breadcrumbs.ts] running async function with breadcrumbs");
+  return asyncLocalStorage.run(store, f);
 }
 
 export function clear() {
