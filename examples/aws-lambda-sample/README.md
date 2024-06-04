@@ -26,11 +26,11 @@ TODO
 ## Interesting files to look
 
 - `raygun.client.js`
-    - Setup of Raygun (lines 9-14)
+  - Setup of Raygun (lines 9-14)
 - `app.js`
-    - Sets the user (lines 17-19)
-    - Attaches Raygun Breadcrumb middleware to Express (line 26)
-    - Attaches Raygun to Express (line 53)
+  - Sets the user (lines 17-19)
+  - Attaches Raygun Breadcrumb middleware to Express (line 26)
+  - Attaches Raygun to Express (line 53)
 - `routes/index.js`
-    - `/send` endpoint: Sends a custom error to Raygun (lines 11-34)
-    - `/error` endpoint: Tries to use a fake object, which bounces up to the Express handler (lines 36-49)
+  - `/send` endpoint: Sends a custom error to Raygun (lines 11-34)
+  - `/error` endpoint: Tries to use a fake object, which bounces up to the Express handler (lines 36-49)
