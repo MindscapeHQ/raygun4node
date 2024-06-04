@@ -51,5 +51,5 @@ jobs:
           # "dry" causes that if any file is modified, the job fails
           dry: True
           # "write" performs changes in place
-          prettier_options: --write lib/*.ts test/*.js examples/**/*.js
+          prettier_options: --write lib/*.ts test/*.js examples/**/*.js aws-lambda/lib/*.ts aws-lambda/test/*.js
           github_token: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
