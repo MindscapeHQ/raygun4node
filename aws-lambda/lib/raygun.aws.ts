@@ -70,7 +70,7 @@ async function runHandler<TEvent, TResult>(
 export function awsHandler<TEvent, TResult>(
   awsHandlerConfig: AwsHandlerConfig,
   handler: Handler<TEvent, TResult>,
-): Handler<TEvent, TResult> {
+): AsyncHandler<TEvent, TResult> {
   let asyncHandler: AsyncHandler<TEvent, TResult>;
   if (handler.length <= 2) {
     // handler is async (event, context)
