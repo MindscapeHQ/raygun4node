@@ -22,7 +22,7 @@ jobs:
       working-directory: ./aws-lambda
     - run: npm test
       working-directory: ./aws-lambda
-#    - run: npm run eslint
-#      working-directory: ./aws-lambda
+    - run: npm run eslint
+      working-directory: ./aws-lambda
 
 # TODO: Setup eslint and prettier for AWS Lambda project
