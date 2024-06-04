@@ -93,7 +93,9 @@ export function addBreadcrumb(
     lineNumber: callsite?.lineNumber || undefined,
   };
 
-  debug(`[raygun.breadcrumbs.ts] recorded breadcrumb: ${internalCrumb.message}`);
+  debug(
+    `[raygun.breadcrumbs.ts] recorded breadcrumb: ${internalCrumb.message}`,
+  );
 
   crumbs.push(internalCrumb);
 }
