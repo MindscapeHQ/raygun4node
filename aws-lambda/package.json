@@ -1,5 +1,5 @@
 {
-  "name": "@raygun/aws-lambda",
+  "name": "@raygun.io/aws-lambda",
   "version": "0.0.1",
   "description": "Raygun Crash Reporting for AWS Lambda functions",
   "main": "build/raygun.aws.js",

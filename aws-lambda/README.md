@@ -13,7 +13,7 @@ Provides two main advantages compared to using Raygun directly:
 
 ## Getting Started
 
-Install the module with: `npm install @raygun/aws-lambda`
+Install the module with: `npm install @raygun.io/aws-lambda`
 
 Set up the Raygun client as described in the [Raygun package](https://www.npmjs.com/package/raygun).
 
