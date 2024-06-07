@@ -1,7 +1,7 @@
 {
   "name": "raygun",
   "description": "Raygun package for Node.js, written in TypeScript",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "homepage": "https://github.com/MindscapeHQ/raygun4node",
   "author": {
     "name": "Raygun",
