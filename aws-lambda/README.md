@@ -87,6 +87,8 @@ exports.handler = awsHandler({ client }, async function (event, context) {
 });
 ```
 
+**Important:** The `awsHandler` will rethrow the error back to AWS once it has been captured.
+
 ### Adding breadcrumbs to Raygun error reports
 
 Breadcumbs are included automatically to all error reports sent from the `awsHandler` or when using the `send()` method.

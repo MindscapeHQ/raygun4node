@@ -53,7 +53,7 @@ RaygunError
 Response
 {
   "errorType": "string",
-  "errorMessage": "AWS Error from callback!",
+  "errorMessage": "It's an AWS error!",
   "trace": []
 }
 
