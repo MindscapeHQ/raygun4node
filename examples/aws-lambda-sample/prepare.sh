@@ -12,7 +12,7 @@ echo "...done!"
 echo
 
 # Build the AWS Lambda package
-echo "Building @raygun/aws-lambda package..."
+echo "Building @raygun.io/aws-lambda package..."
 cd ../../aws-lambda || exit
 npm install > /dev/null
 cd "$original_dir" || exit
