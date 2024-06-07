@@ -356,7 +356,7 @@ class Raygun {
 
   /**
    * Send error using synchronous transport.
-   * Only used to report uncaught exceptions.
+   * Only used internally to report uncaught exceptions or unhandled promises.
    * @param exception error to report
    * @param tags optional tags
    * @private
