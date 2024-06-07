@@ -34,7 +34,7 @@ Before running the example, you have to complete the following setup.
 
 ![Screenshot from 2024-06-06 10-33-33](https://github.com/MindscapeHQ/raygun4node/assets/2494376/54eb500e-5ede-43b1-a3ee-b39acb589a94)
 
-3. Create a new event with the following content:
+3. Under the `Test` tab, create a new event with the following content:
 
 ![Screenshot from 2024-06-06 10-32-57](https://github.com/MindscapeHQ/raygun4node/assets/2494376/9fad284b-584d-41d8-a9de-fcdf1a11a341)
 
