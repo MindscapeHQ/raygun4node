@@ -1,3 +1,15 @@
+## 1.1.0
+
+- feat: Part of #220 add internal runWithBreadcrumbsAsync function (#245) (2024-06-05)
+- fix: onBeforeSend allows to skip messages (#231) (2024-05-28)
+- chore(deps-dev): bump @eslint/js from 9.3.0 to 9.4.0 (#243) (2024-06-03)
+- chore(deps-dev): bump @types/node from 20.12.12 to 20.14.0 (#242) (2024-06-03)
+- chore(deps-dev): bump prettier from 3.2.5 to 3.3.0 (#241) (2024-06-03)
+- chore(deps): bump debug from 4.3.4 to 4.3.5 (#240) (2024-06-03)
+- chore(deps-dev): bump typescript-eslint from 7.10.0 to 7.11.0 (#239) (2024-06-03)
+- chore(deps-dev): bump tap from 18.8.0 to 19.0.2 (#237) (2024-05-28)
+- chore(deps-dev): bump typescript-eslint from 7.9.0 to 7.10.0 (2024-05-27)
+
 ## 1.0.0
 
 - feat: #219 Better Send parameters (#221) (2024-05-17)
