@@ -137,7 +137,7 @@ export class RaygunMessageBuilder {
     this._filters = options.filters || [];
 
     this.message = {
-      occurredOn: new Date(),
+      occurredOn: options.timestamp || new Date(),
       details: {
         client: {
           name: "raygun-node",
