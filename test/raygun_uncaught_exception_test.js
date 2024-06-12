@@ -10,6 +10,9 @@ test("reporting uncaught exceptions", async function (t) {
   const testEnvironment = await makeClientWithMockServer();
   const messagePromise = testEnvironment.nextRequest();
 
+  // Launch raygun_uncaught_exception_app.js which throws an exception
+  // which should be caught by the Raygun client automatically,
+  // and the error report is available in the messagePromise.
   await util
     .promisify(childProcess.exec)(
       "node -r ts-node/register ./raygun_uncaught_exception_app.js",
@@ -25,6 +28,7 @@ test("reporting uncaught exceptions", async function (t) {
     )
     .catch(() => {});
 
+  // Captured error report is available
   const message = await messagePromise;
 
   testEnvironment.stop();
