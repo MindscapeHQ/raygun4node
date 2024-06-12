@@ -10,4 +10,5 @@ new Raygun.Client().init({
   reportUncaughtExceptions: true,
 });
 
+// Throw uncaught exception, should be captured by Raygun client
 throw new Error("test");
