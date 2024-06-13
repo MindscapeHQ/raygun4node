@@ -233,19 +233,22 @@ class Raygun {
    * @param customData to attach to the error report.
    * @param request custom RequestParams.
    * @param tags to attach to the error report.
-   * @param timestamp to provide a custom timestamp as Date object.
+   * @param timestamp to provide a custom timestamp as Date object or number in milliseconds since epoch.
    * @return IncomingMessage if message was delivered, null if stored, rejected with Error if failed.
    */
   async send(
     exception: Error | string,
     { customData, request, tags, timestamp }: SendParameters = {},
   ): Promise<IncomingMessage | null> {
+    // Convert timestamp in milliseconds since epoch to Date
+    const _timestamp = typeof timestamp === "number" ? new Date(timestamp) : timestamp;
+
     const sendOptionsResult = this.buildSendOptions(
       exception,
       customData,
       request,
       tags,
-      timestamp,
+      _timestamp,
     );
 
     const message = sendOptionsResult.message;

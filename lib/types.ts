@@ -223,5 +223,5 @@ export interface SendParameters {
   customData?: CustomData;
   request?: RequestParams;
   tags?: Tag[];
-  timestamp?: Date;
+  timestamp?: Date | number;
 }
