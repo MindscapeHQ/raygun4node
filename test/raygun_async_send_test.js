@@ -234,11 +234,11 @@ test("provide custom timestamp as number to send", {}, function (t) {
   });
 
   client
-      .send(new Error(), { timestamp })
-      .then((message) => {
-        t.end();
-      })
-      .catch((err) => {
-        t.fail(err);
-      });
+    .send(new Error(), { timestamp })
+    .then((message) => {
+      t.end();
+    })
+    .catch((err) => {
+      t.fail(err);
+    });
 });

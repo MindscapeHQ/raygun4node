@@ -241,7 +241,8 @@ class Raygun {
     { customData, request, tags, timestamp }: SendParameters = {},
   ): Promise<IncomingMessage | null> {
     // Convert timestamp in milliseconds since epoch to Date
-    const _timestamp = typeof timestamp === "number" ? new Date(timestamp) : timestamp;
+    const _timestamp =
+      typeof timestamp === "number" ? new Date(timestamp) : timestamp;
 
     const sendOptionsResult = this.buildSendOptions(
       exception,
