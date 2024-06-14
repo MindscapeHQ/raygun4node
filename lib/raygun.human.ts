@@ -16,7 +16,8 @@ const symbolEqual = "=";
  * @param obj input object to stringify
  * @param level level of recursion, should start at 0
  */
-export function humanString(obj: object, level: number = 0): string {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function humanString(obj: any, level: number = 0): string {
   if (!obj) {
     return "null";
   }

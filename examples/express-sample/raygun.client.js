@@ -11,7 +11,6 @@ if (config.Raygun.Key === "YOUR_API_KEY") {
 var raygun = require("raygun");
 var raygunClient = new raygun.Client().init({
   apiKey: config.Raygun.Key,
-  useHumanStringForObject: true,
 });
 
 module.exports = raygunClient;
