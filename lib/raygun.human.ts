@@ -38,7 +38,8 @@ export function humanString(obj: any, level: number = 0): string {
   // Iterate over all object properties
   Object.keys(obj).forEach(function (key) {
     // Recursive call increases level
-    out += symbolSeparator + key + symbolEqual + humanString(obj[key], level + 1);
+    out +=
+      symbolSeparator + key + symbolEqual + humanString(obj[key], level + 1);
   });
 
   // Remove the initial `, ` before return

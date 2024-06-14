@@ -90,7 +90,10 @@ test("basic builder tests", function (t) {
 
     var message = builder.build();
     tt.ok(message.details.error.message);
-    tt.equal(message.details.error.message, "base={message=error, myself=..., other=...}");
+    tt.equal(
+      message.details.error.message,
+      "base={message=error, myself=..., other=...}",
+    );
     tt.ok(message.details.groupingKey);
     tt.end();
   });
