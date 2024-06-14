@@ -37,7 +37,7 @@ router.get("/send", function (req, res, next) {
   });
 
   raygunClient
-    .send("Custom Raygun Error in /send endpoint", { tags: ["request"] })
+    .send(Symbol("foo"), { tags: ["request"] })
     .then((message) => {
       res.render("send", {
         title: "Sent custom error to Raygun",
