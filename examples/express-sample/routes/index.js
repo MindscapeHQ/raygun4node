@@ -9,6 +9,23 @@ router.get("/", function (req, res, next) {
   });
 });
 
+router.get("/skip", function (req, res, next) {
+  raygunClient
+    .send("Error to skip")
+    .then((message) => {
+      res.render("send", {
+        title: "Skip sending message",
+        body: `Message should be null: ${message}`,
+      });
+    })
+    .catch((error) => {
+      res.render("send", {
+        title: "Failed to send error to Raygun",
+        body: error.toString(),
+      });
+    });
+});
+
 router.get("/send", function (req, res, next) {
   raygunClient.addBreadcrumb({
     level: "debug",

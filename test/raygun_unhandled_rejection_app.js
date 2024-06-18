@@ -10,5 +10,10 @@ new Raygun.Client().init({
   reportUncaughtExceptions: true,
 });
 
-// Throw uncaught exception, should be captured by Raygun client
-throw new Error("test");
+// Run a Promise without .catch()
+new Promise(() => {
+  // Cause an error
+  throw new Error("test");
+}).then(() => {
+  // Should not be reached
+});

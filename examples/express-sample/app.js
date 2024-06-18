@@ -50,6 +50,21 @@ app.use("/users", users);
 // Add the Raygun error Express handler
 app.use(raygunClient.expressHandler);
 
+// Optional: Configure onBeforeSend
+raygunClient.onBeforeSend((message, exception, customData, request, tags) => {
+  console.log(
+    `[app.js] onBeforeSend called with error: ${message.details.error.message}`,
+  );
+
+  // If the message contains the word "skip", do not send the message to Raygun
+  if (message.details.error.message.indexOf("skip") > -1) {
+    console.log("[app.js] skip sending message");
+    return null;
+  }
+
+  return message;
+});
+
 raygunClient.addBreadcrumb("Express Server started!");
 
 module.exports = app;
