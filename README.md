@@ -206,6 +206,8 @@ client.setTags(['Tag1', 'Tag2']);
 You can specify the exact time your error occurred in the Send() function with the `timestamp` parameter.
 Otherwise, the current time will be used.
 
+This can be useful when combining Raygun together with other logger tools that provide a timestamp.
+
 In milliseconds since epoch:
 
 ```javascript
