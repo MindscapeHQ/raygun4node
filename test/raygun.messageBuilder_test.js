@@ -81,6 +81,19 @@ test("basic builder tests", function (t) {
   });
 });
 
+test("custom timestamp", function (t) {
+  const timestamp = new Date(2024, 1, 2, 3, 45, 12, 345);
+  const builder = new MessageBuilder({ timestamp });
+  const message = builder.build();
+
+  t.test("occurred on is custom timestamp", function (tt) {
+    tt.equal(message.occurredOn, timestamp);
+    tt.end();
+  });
+
+  t.end();
+});
+
 test("error builder tests", function (t) {
   var builder = new MessageBuilder();
   builder.setErrorDetails(new Error());
