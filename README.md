@@ -201,6 +201,25 @@ Tags can also be set globally using setTags
 client.setTags(['Tag1', 'Tag2']);
 ```
 
+### Timestamp
+
+You can specify the exact time your error occurred in the Send() function with the `timestamp` parameter.
+Otherwise, the current time will be used.
+
+This can be useful when combining Raygun together with other logger tools that provide a timestamp.
+
+In milliseconds since epoch:
+
+```javascript
+client.send(new Error(), { timestamp: 1718268992929 });
+```
+
+As `Date` object:
+
+```javascript
+client.send(new Error(), { timestamp: new Date(2024, 5, 13, 10, 0, 0) });
+```
+
 ### Customers
 
 New in 0.4: You can set **raygunClient.user** to a function that returns the user name or email address of the currently logged in user.

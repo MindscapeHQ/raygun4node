@@ -31,8 +31,11 @@ export function send(options: SendOptions) {
   try {
     syncRequest(options);
   } catch (e) {
-    // TODO: Is there a reason we ignore errors here?
-    console.log(
+    // Catch all errors from a synchronous request and display them in the console
+    // This synchronous transport is only used internally to report internal errors,
+    // i.e. uncaught exceptions and unhandled rejection promises.
+    // We need to handle any exceptions internally because the users cannot process these.
+    console.error(
       `[Raygun4Node] Error ${e} occurred while attempting to send error with message: ${options.message}`,
     );
   }

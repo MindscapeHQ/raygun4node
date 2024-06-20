@@ -10,6 +10,7 @@ export type MessageBuilderOptions = {
   useHumanStringForObject?: boolean;
   innerErrorFieldName?: string;
   filters?: string[];
+  timestamp?: Date;
 };
 
 export type StackFrame = {
@@ -222,4 +223,5 @@ export interface SendParameters {
   customData?: CustomData;
   request?: RequestParams;
   tags?: Tag[];
+  timestamp?: Date | number;
 }

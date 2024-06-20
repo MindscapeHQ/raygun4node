@@ -233,17 +233,23 @@ class Raygun {
    * @param customData to attach to the error report.
    * @param request custom RequestParams.
    * @param tags to attach to the error report.
+   * @param timestamp to provide a custom timestamp as Date object or number in milliseconds since epoch.
    * @return IncomingMessage if message was delivered, null if stored, rejected with Error if failed.
    */
   async send(
     exception: Error | string,
-    { customData, request, tags }: SendParameters = {},
+    { customData, request, tags, timestamp }: SendParameters = {},
   ): Promise<IncomingMessage | null> {
+    // Convert timestamp in milliseconds since epoch to Date
+    const _timestamp =
+      typeof timestamp === "number" ? new Date(timestamp) : timestamp;
+
     const sendOptionsResult = this.buildSendOptions(
       exception,
       customData,
       request,
       tags,
+      _timestamp,
     );
 
     const message = sendOptionsResult.message;
@@ -475,6 +481,7 @@ class Raygun {
     customData?: CustomData,
     request?: RequestParams,
     tags?: Tag[],
+    timestamp?: Date,
   ): SendOptionsResult {
     let mergedTags: Tag[] = [];
     let skip = false;
@@ -492,6 +499,7 @@ class Raygun {
       useHumanStringForObject: this._useHumanStringForObject,
       reportColumnNumbers: this._reportColumnNumbers,
       innerErrorFieldName: this._innerErrorFieldName,
+      timestamp: timestamp,
     })
       .setErrorDetails(exception)
       .setRequestDetails(request)

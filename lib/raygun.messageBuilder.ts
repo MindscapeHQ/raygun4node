@@ -27,11 +27,12 @@ import {
   Breadcrumb,
 } from "./types";
 
+import { humanString } from "./raygun.human";
+
 const debug = require("debug")("raygun");
 
 type UserMessageData = RawUserData | string | undefined;
 
-const humanString = require("object-to-human-string");
 const packageDetails = require("../package.json");
 
 /**
@@ -137,7 +138,7 @@ export class RaygunMessageBuilder {
     this._filters = options.filters || [];
 
     this.message = {
-      occurredOn: new Date(),
+      occurredOn: options.timestamp || new Date(),
       details: {
         client: {
           name: "raygun-node",
