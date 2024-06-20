@@ -312,6 +312,8 @@ class Raygun {
 
   /**
    * @deprecated sendWithCallback is a deprecated method. Instead, use send, which supports async/await calls.
+   *
+   * See: https://github.com/MindscapeHQ/raygun4node/issues/262
    */
   sendWithCallback(
     exception: Error | string,
