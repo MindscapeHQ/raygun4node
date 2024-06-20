@@ -63,7 +63,6 @@
   "dependencies": {
     "@types/express": "^4.17.21",
     "debug": "^4.3.4",
-    "object-to-human-string": "0.0.3",
     "stack-trace": "0.0.10",
     "uuid": "^10.0.0"
   },

@@ -27,11 +27,12 @@ import {
   Breadcrumb,
 } from "./types";
 
+import { humanString } from "./raygun.human";
+
 const debug = require("debug")("raygun");
 
 type UserMessageData = RawUserData | string | undefined;
 
-const humanString = require("object-to-human-string");
 const packageDetails = require("../package.json");
 
 /**

@@ -54,7 +54,46 @@ test("basic builder tests", function (t) {
 
     var message = builder.build();
     tt.ok(message.details.error.message);
-    tt.equal("name=Test", message.details.error.message);
+    tt.equal(message.details.error.message, "name=Test");
+    tt.ok(message.details.groupingKey);
+    tt.end();
+  });
+
+  // Reference: https://github.com/MindscapeHQ/raygun4node/issues/68
+  t.test("humanise Symbol object string", function (tt) {
+    var builder = new MessageBuilder({ useHumanStringForObject: true });
+    builder.setErrorDetails({ symbol: Symbol("Test") });
+    var message = builder.build();
+    tt.ok(message.details.error.message);
+    tt.equal(message.details.error.message, "symbol=Symbol(Test)");
+    tt.ok(message.details.groupingKey);
+    tt.end();
+  });
+
+  t.test("humanise self-referencing complex error string", function (tt) {
+    var builder = new MessageBuilder({ useHumanStringForObject: true });
+
+    // error self-references, causing a potential infinite recursion in the filter method
+    // Causes exception: Maximum call stack size exceeded
+    let error = {
+      message: "error",
+    };
+    // second level self-reference
+    let other = {
+      otherMessage: "other",
+      error: error,
+    };
+    error.myself = error;
+    error.other = other;
+
+    builder.setErrorDetails({ base: error });
+
+    var message = builder.build();
+    tt.ok(message.details.error.message);
+    tt.equal(
+      message.details.error.message,
+      "base={message=error, myself=..., other=...}",
+    );
     tt.ok(message.details.groupingKey);
     tt.end();
   });
