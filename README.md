@@ -383,6 +383,29 @@ app.use(raygunClient.expressHandlerBreadcrumbs);
 app.use(raygunClient.expressHandler);
 ```
 
+#### Console logs and Breadcrumbs
+
+You can enable registering all `console.log` messages as Breadcrumbs by setting the `consoleBreadcrumbs` option to `true` when initializing the client.
+
+```js
+const {Raygun} = require('raygun');
+
+const raygunClient = new Raygun.Client().init({
+  apiKey: 'YOUR_API_KEY',
+  consoleBreadcrumbs: true
+});
+```
+
+Once enabled, all calls to `console.log()`, `console.error()` and similar `console` methods will be automatically added as Breadcrumbs and attached to Raygun crash reports.
+
+```js
+// Example, calling to console.log():
+console.log("my log");
+
+// Will be like calling:
+client.addBreadcrumb({ message: "my log", level: "info" }, "console");
+```
+
 ### Batched error transport
 
 You can enable a batched transport mode for the Raygun client by passing `{batch: true}` when initializing.
