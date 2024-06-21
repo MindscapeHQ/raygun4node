@@ -1,5 +1,7 @@
 import type { AsyncLocalStorage } from "async_hooks";
 import type { BreadcrumbMessage, Breadcrumb } from "./types";
+import { format } from "node:util";
+
 const debug = require("debug")("raygun");
 
 let asyncLocalStorage: AsyncLocalStorage<Breadcrumb[]> | null = null;
@@ -150,4 +152,38 @@ export function clear() {
     "[raygun.breadcrumbs.ts] clearing stored breadcrumbs, entering with new store",
   );
   asyncLocalStorage.enterWith([]);
+}
+
+export function setupConsoleBreadcrumbs() {
+  // Map console methods to a Breadcrumb level
+  const consoleMethods: [keyof typeof console, Breadcrumb["level"]][] = [
+    ["debug", "debug"],
+    ["log", "info"],
+    ["info", "info"],
+    ["warn", "warning"],
+    ["error", "error"],
+  ];
+
+  // Extend all console methods to call to addBreadcrumb
+  for (const [method, level] of consoleMethods) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const oldMethod = (console as any)[method];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (console as any)[method] = function logWithBreadcrumb<T>(
+      this: T,
+      // Ensure we preserve all original arguments
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ...args: any[]
+    ) {
+      // Dynamically import module because require is not supported
+      import("ansi-regex").then((ansiRegex) => {
+        const regex = ansiRegex.default();
+        // Call to node-util format like the original console methods
+        // and remove any ansi encoding (e.g. console colors) using replace
+        addBreadcrumb({ message: format(...args).replace(regex, ""), level }, "console");
+      });
+      // Still call original method
+      return oldMethod.apply(this, args);
+    };
+  }
 }

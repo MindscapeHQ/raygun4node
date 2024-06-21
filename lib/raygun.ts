@@ -38,6 +38,7 @@ import * as raygunTransport from "./raygun.transport";
 import * as raygunSyncTransport from "./raygun.sync.transport";
 
 import { v4 as uuidv4 } from "uuid";
+import { setupConsoleBreadcrumbs } from "./raygun.breadcrumbs";
 
 type SendOptionsResult =
   | { valid: true; message: Message; options: SendOptions; skip: boolean }
@@ -124,6 +125,10 @@ class Raygun {
 
     if (options.reportUncaughtExceptions) {
       this.reportUncaughtExceptions();
+    }
+
+    if (options.consoleBreadcrumbs) {
+      setupConsoleBreadcrumbs();
     }
 
     if (options.batch && this._apiKey) {
