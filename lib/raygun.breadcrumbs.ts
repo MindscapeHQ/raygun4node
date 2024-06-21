@@ -1,7 +1,9 @@
 import type { AsyncLocalStorage } from "async_hooks";
 import type { BreadcrumbMessage, Breadcrumb } from "./types";
 import { format } from "node:util";
+import ansiRegex from "ansi-regex";
 
+const regex = ansiRegex();
 const debug = require("debug")("raygun");
 
 let asyncLocalStorage: AsyncLocalStorage<Breadcrumb[]> | null = null;
@@ -175,13 +177,9 @@ export function setupConsoleBreadcrumbs() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ...args: any[]
     ) {
-      // Dynamically import module because require is not supported
-      import("ansi-regex").then((ansiRegex) => {
-        const regex = ansiRegex.default();
-        // Call to node-util format like the original console methods
-        // and remove any ansi encoding (e.g. console colors) using replace
-        addBreadcrumb({ message: format(...args).replace(regex, ""), level }, "console");
-      });
+      // Call to node-util format like the original console methods
+      // and remove any ansi encoding (e.g. console colors) using replace
+      addBreadcrumb({ message: format(...args).replace(regex, ""), level }, "console");
       // Still call original method
       return oldMethod.apply(this, args);
     };
