@@ -238,3 +238,30 @@ test("clear breadcrumbs", {}, async function (t) {
 
   testEnv.stop();
 });
+
+test("Console Breadcrumbs", {}, async function (t) {
+  t.plan(4);
+  const testEnv = await makeClientWithMockServer({ consoleBreadcrumbs: true });
+  const client = testEnv.client;
+
+  // Call to console log with a formatted String
+  console.log("This is a %s", "console.log");
+
+  client.onBeforeSend(function (payload) {
+    // Raygun payload should include breadcrumb from log
+    t.equal(payload.details.breadcrumbs.length, 1);
+    // String is formatted
+    t.equal(payload.details.breadcrumbs[0].message, "This is a console.log");
+    // Type should be console, so it is displayed with the right icon on Raygun
+    t.equal(payload.details.breadcrumbs[0].type, "console");
+    // console.log is level info
+    t.equal(payload.details.breadcrumbs[0].level, "info");
+    return payload;
+  });
+
+  // Send Raygun error
+  await client.send(new Error());
+
+  testEnv.stop();
+  t.end();
+});
