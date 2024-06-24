@@ -141,6 +141,25 @@ test("user function is called even if request is not present", async function (t
   t.same(message.details.user, { email: "test@null.null" });
 });
 
+test("provide userInfo in send method", async function (t) {
+  t.plan(1);
+
+  const testEnvironment = await makeClientWithMockServer();
+  const raygunClient = testEnvironment.client;
+
+  const userInfo = { email: "test@null.null" };
+
+  const nextRequest = testEnvironment.nextRequest();
+
+  raygunClient.send(new Error("example error"), { userInfo });
+
+  const message = await nextRequest;
+
+  testEnvironment.stop();
+
+  t.same(message.details.user, { email: "test@null.null" });
+});
+
 test("string exceptions are sent intact", async function (t) {
   t.plan(1);
 
