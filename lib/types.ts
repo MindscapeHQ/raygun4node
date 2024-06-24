@@ -174,6 +174,8 @@ export type RaygunOptions = {
   reportUncaughtExceptions?: boolean;
 };
 
+// TODO: Remove all Callback related types when sendWithCallback is finally removed
+// See: https://github.com/MindscapeHQ/raygun4node/issues/262
 export type CallbackNoError<T> = (t: T | null) => void;
 export type CallbackWithError<T> = (e: Error | null, t: T | null) => void;
 

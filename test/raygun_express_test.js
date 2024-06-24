@@ -55,14 +55,22 @@ test("batch reporting errors", async function (t) {
 });
 
 test("batch transport discards massive errors", async function (t) {
+  t.plan(5);
   const { client, server, stop, nextBatchRequest } =
     await makeClientWithMockServer({
       batch: true,
       batchFrequency: 1000,
     });
 
-  client.send(new Error("a".repeat(MAX_BATCH_SIZE_BYTES)));
-  client.send(new Error("b"));
+  client.send(new Error("a".repeat(MAX_BATCH_SIZE_BYTES))).catch((error) => {
+    // Will throw message too big error
+    t.ok(error);
+  });
+
+  client.send(new Error("b")).then((message) => {
+    // Will complete normally
+    t.ok(message);
+  });
 
   try {
     await nextBatchRequest({ maxWait: 2000 });
