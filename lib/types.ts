@@ -226,4 +226,5 @@ export interface SendParameters {
   request?: RequestParams;
   tags?: Tag[];
   timestamp?: Date | number;
+  userInfo?: RawUserData;
 }
