@@ -15,7 +15,9 @@ router.get("/skip", function (req, res, next) {
   raygunClient
     .send("Error to skip")
     .then((message) => {
-      console.debug(`Called raygunClient.send, response: ${message.statusCode}`);
+      console.debug(
+        `Called raygunClient.send, response: ${message.statusCode}`,
+      );
       res.render("send", {
         title: "Skip sending message",
         body: `Message should be null: ${message}`,
@@ -44,7 +46,9 @@ router.get("/send", function (req, res, next) {
   raygunClient
     .send("Custom Raygun Error in /send endpoint", { tags: ["request"] })
     .then((message) => {
-      console.debug(`Called raygunClient.send, response: ${message.statusCode}`);
+      console.debug(
+        `Called raygunClient.send, response: ${message.statusCode}`,
+      );
       res.render("send", {
         title: "Sent custom error to Raygun",
         body: `Raygun status code: ${message.statusCode}`,

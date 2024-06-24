@@ -179,7 +179,10 @@ export function setupConsoleBreadcrumbs() {
     ) {
       // Call to node-util format like the original console methods
       // and remove any ansi encoding (e.g. console colors) using replace
-      addBreadcrumb({ message: format(...args).replace(regex, ""), level }, "console");
+      addBreadcrumb(
+        { message: format(...args).replace(regex, ""), level },
+        "console",
+      );
       // Still call original method
       return oldMethod.apply(this, args);
     };
