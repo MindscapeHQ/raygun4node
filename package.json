@@ -46,7 +46,7 @@
     "@stylistic/eslint-plugin-ts": "^2.0.0",
     "@types/node": "^20.12.8",
     "@types/stack-trace": "0.0.33",
-    "@types/uuid": "^9.0.8",
+    "@types/uuid": "^10.0.0",
     "eslint": "^8.57.0",
     "express": "^4.19.2",
     "http-terminator": "^3.2.0",
