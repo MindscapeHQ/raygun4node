@@ -155,12 +155,19 @@ class Raygun {
     return this;
   }
 
+  /**
+   * Override this method to provide user data from the send() method original request parameters.
+   * @param req as RequestParams, may be null if send() was called without providing request parameters.
+   */
   user(req?: RequestParams): RawUserData | null {
     return null;
   }
 
-  // This function is deprecated, is provided for legacy apps and will be
-  // removed in 1.0: use raygun.user instead
+  /**
+   * Sets a user globally.
+   * @deprecated Implement user(request) callback or provide userInfo in send() method call instead
+   * @param user as RawUserData
+   */
   setUser(user: RawUserData) {
     this._user = user;
     return this;
