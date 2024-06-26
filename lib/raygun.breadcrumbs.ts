@@ -88,8 +88,6 @@ export function addBreadcrumb(
     type,
     className: callsite?.fileName,
     methodName: callsite?.functionName,
-
-    // TODO - do we need to do any source mapping?
     lineNumber: callsite?.lineNumber || undefined,
   };
 
