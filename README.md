@@ -238,11 +238,11 @@ This package offers three different ways to do that:
 The following properties can be provided as user information:
 
 - `identifier` is the user identifier. This will be used to uniquely identify the user within Raygun. This is the only required parameter, but is only required if you are using customers tracking.
-- `isAnonymous` is a bool indicating whether the user is anonymous or actually has a user account. Even if this is set to true, you should still give the user a unique identifier of some kind.
-- `email` is the user's email address.
-- `fullName` is the user's full name.
-- `firstName` is the user's first or preferred name.
 - `uuid` is the identifier of the device the app is running on. This could be used to correlate user accounts over multiple machines.
+- `firstName` is the user's first or preferred name.
+- `lastName` is the user's surname name.
+- `fullName` is the user's full name.
+- `email` is the user's email address.
 
 All properties are `strings`. Any other properties will be discarded.
 
