@@ -18,13 +18,13 @@ import {
   MessageTransport,
   IOfflineStorage,
   OfflineStorageOptions,
-  RawUserData,
   RaygunOptions,
   RequestParams,
   SendOptions,
   Tag,
   Transport,
   SendParameters,
+  UserMessageData,
 } from "./types";
 import * as breadcrumbs from "./raygun.breadcrumbs";
 import { addRequestBreadcrumb } from "./raygun.breadcrumbs.express";
@@ -71,7 +71,7 @@ class Raygun {
 
   _filters: string[] = [];
 
-  _user: RawUserData | undefined;
+  _user: UserMessageData | undefined;
 
   _version: string = "";
 
@@ -159,7 +159,7 @@ class Raygun {
    * Override this method to provide user data from the send() method original request parameters.
    * @param req as RequestParams, may be null if send() was called without providing request parameters.
    */
-  user(req?: RequestParams): RawUserData | null {
+  user(req?: RequestParams): UserMessageData | null {
     return null;
   }
 
@@ -168,7 +168,7 @@ class Raygun {
    * @deprecated Implement user(request) callback or provide userInfo in send() method call instead
    * @param user as RawUserData
    */
-  setUser(user: RawUserData) {
+  setUser(user: UserMessageData) {
     this._user = user;
     return this;
   }
@@ -493,7 +493,7 @@ class Raygun {
     request?: RequestParams,
     tags?: Tag[],
     timestamp?: Date,
-    userInfo?: RawUserData,
+    userInfo?: UserMessageData,
   ): SendOptionsResult {
     let mergedTags: Tag[] = [];
     let skip = false;

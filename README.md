@@ -237,12 +237,11 @@ This package offers three different ways to do that:
 
 The following properties can be provided as user information:
 
-- `identifier` is the user identifier. This will be used to uniquely identify the user within Raygun. This is the only required parameter, but is only required if you are using customers tracking.
-- `uuid` is the identifier of the device the app is running on. This could be used to correlate user accounts over multiple machines.
-- `firstName` is the user's first or preferred name.
-- `lastName` is the user's surname name.
-- `fullName` is the user's full name.
-- `email` is the user's email address.
+- `identifier`: Unique identifier for the user is the user identifier.
+- `email`: User's email address.
+- `firstName`: User's first name (what you would use if you were emailing them - "Hi {{firstName}}, ...")
+- `fullName`: User's full name.
+- `uuid`: Device unique identifier. Useful if sending errors from a mobile device.
 
 All properties are `strings`. Any other properties will be discarded.
 
@@ -252,10 +251,16 @@ Example:
 userInfo = {
     identifier: "123",
     email: "user@example.com",
-    fullName: "Fullname",
     firstName: "First name",
+    fullName: "Fullname",
     uuid: "a25dfe58-8db3-496c-8768-375595139375",
 }
+```
+
+For legacy support reasons, you can also provide the `string` identifier directly as the user information:
+
+```js
+setUser("123");
 ```
 
 #### `userInfo` parameter in `send()`

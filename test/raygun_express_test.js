@@ -128,7 +128,7 @@ test("user function is called even if request is not present", async function (t
   const testEnvironment = await makeClientWithMockServer();
   const raygunClient = testEnvironment.client;
 
-  raygunClient.user = () => ({ email: "test@null.null" });
+  raygunClient.user = () => ({ identifier: "id" });
 
   const nextRequest = testEnvironment.nextRequest();
 
@@ -138,7 +138,7 @@ test("user function is called even if request is not present", async function (t
 
   testEnvironment.stop();
 
-  t.same(message.details.user, { email: "test@null.null" });
+  t.same(message.details.user, { identifier: "id" });
 });
 
 test("provide userInfo in send method", async function (t) {
@@ -147,7 +147,7 @@ test("provide userInfo in send method", async function (t) {
   const testEnvironment = await makeClientWithMockServer();
   const raygunClient = testEnvironment.client;
 
-  const userInfo = { email: "test@null.null" };
+  const userInfo = { identifier: "id" };
 
   const nextRequest = testEnvironment.nextRequest();
 
@@ -157,7 +157,7 @@ test("provide userInfo in send method", async function (t) {
 
   testEnvironment.stop();
 
-  t.same(message.details.user, { email: "test@null.null" });
+  t.same(message.details.user, { identifier: "id" });
 });
 
 test("string exceptions are sent intact", async function (t) {
