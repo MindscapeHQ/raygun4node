@@ -516,6 +516,7 @@ Including column numbers can enable source mapping if you have minified or trans
 Raygun supports source mapping for Node.js stacktraces which include column numbers. To enable this feature you will need to upload your map files to the JavaScript Source Map Center and enable the processing of Node.js error stacktraces.
 
 ##### Using Private Source Maps with Node.js apps
+
 Raygun supports source mapping for Node.js stacktraces which include column numbers. To enable this feature simply upload your map files as per the instructions on this page and enable the processing of Node.js errors with this setting in Raygun.
 
 ### Node.js source maps
@@ -572,6 +573,7 @@ All requests use the same authentication methods as the upload call (Basic Authe
 ### Known Issues
 
 - Node will show compilation warnings when using Raygun4Node in Webpack applications.
+- Although Breadcrumbs report the source filename, code line and function name, these are not processed using source maps like with stack traces.
 
 ### Examples
 View a screencast on creating an app with Node.js and Express.js, then hooking up the error handling and sending them at [https://raygun.com/blog/2013/07/video-nodejs-error-handling-with-raygun/](https://raygun.com/blog/2013/07/video-nodejs-error-handling-with-raygun/)
