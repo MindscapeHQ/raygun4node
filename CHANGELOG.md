@@ -1,7 +1,6 @@
 ## 1.2.0
 
-TODO: Add the missing PRs here once merged!
-
+- feat: #218 Optional `userInfo` in `send()`
 - feat: #65 Custom timestamp parameter (#254)
 - fix: #68 Better humanize string functionality (#255)
 - doc: #196 add documentation on handling errors in sync transport (#259)
