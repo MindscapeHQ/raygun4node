@@ -107,21 +107,38 @@ export type RequestDetails = {
 };
 
 export type UserDetails = {
+  // Unique identifier for the user
   identifier?: string;
-  uuid?: string;
+  // Flag indicating if the user is anonymous or not
+  // Users should not be modifying this member manually
+  isAnonymous?: boolean;
+  // User's first name (what you would use if you were emailing them - "Hi {{firstName}}, ...")
   firstName?: string;
-  lastName?: string;
+  // User's full name
   fullName?: string;
+  // User's email address
   email?: string;
+  // Device unique identifier. Useful if sending errors from a mobile device.
+  uuid?: string;
 };
 
+/**
+ * Either a string identifier or a RawUserData object
+ * Supports legacy clients providing identifier directly
+ */
+export type UserMessageData = RawUserData | string;
+
 export type RawUserData = {
+  // Unique identifier for the user
   identifier?: string;
-  uuid?: string;
+  // User's first name (what you would use if you were emailing them - "Hi {{firstName}}, ...")
   firstName?: string;
-  lastName?: string;
+  // User's full name
   fullName?: string;
+  // User's email address
   email?: string;
+  // Device unique identifier. Useful if sending errors from a mobile device.
+  uuid?: string;
 };
 
 export type OfflineStorageOptions = {
@@ -226,4 +243,5 @@ export interface SendParameters {
   request?: RequestParams;
   tags?: Tag[];
   timestamp?: Date | number;
+  userInfo?: UserMessageData;
 }

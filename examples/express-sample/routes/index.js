@@ -36,8 +36,17 @@ router.get("/send", function (req, res, next) {
     },
   });
 
+  // Provide custom user info in /send endpoint
+  const userInfo = {
+    identifier: "123456",
+    email: "custom@example.com",
+  };
+
   raygunClient
-    .send("Custom Raygun Error in /send endpoint", { tags: ["request"] })
+    .send("Custom Raygun Error in /send endpoint", {
+      tags: ["request"],
+      userInfo,
+    })
     .then((message) => {
       res.render("send", {
         title: "Sent custom error to Raygun",

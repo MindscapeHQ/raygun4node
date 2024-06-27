@@ -146,7 +146,7 @@ backwards compatibility; the Node-style callback should be preferred.
 The `send()` method accepts a series of optional named parameters, defined as follows:
 
 ```js
-client.send(error, { customData, request, tags });
+client.send(error, { customData, request, tags, timestamp, userInfo });
 ```
 
 Each one of these parameters is optional.
@@ -222,7 +222,60 @@ client.send(new Error(), { timestamp: new Date(2024, 5, 13, 10, 0, 0) });
 
 ### Customers
 
-New in 0.4: You can set **raygunClient.user** to a function that returns the user name or email address of the currently logged in user.
+You can attach user information to every Raygun Crash Report.
+
+It will be transmitted with the error sent, and a count of affected customers will appear on the dashboard in the error group view.
+If you provide an email address, and the user has associated a Gravatar with it, their picture will be also displayed.
+
+This package offers three different ways to do that:
+
+1. Provide the `userInfo` parameter in the `send()` method.
+2. Implement the `user(request)` method.
+3. Call to the `setUser(user)` method (not recommended and deprecated).
+
+#### User information object
+
+The following properties can be provided as user information:
+
+- `identifier`: Unique identifier for the user is the user identifier.
+- `email`: User's email address.
+- `firstName`: User's first name (what you would use if you were emailing them - "Hi {{firstName}}, ...")
+- `fullName`: User's full name.
+- `uuid`: Device unique identifier. Useful if sending errors from a mobile device.
+
+All properties are `strings`. Any other properties will be discarded.
+
+Example:
+
+```js
+userInfo = {
+    identifier: "123",
+    email: "user@example.com",
+    firstName: "First name",
+    fullName: "Fullname",
+    uuid: "a25dfe58-8db3-496c-8768-375595139375",
+}
+```
+
+For legacy support reasons, you can also provide the `string` identifier directly as the user information:
+
+```js
+setUser("123");
+```
+
+#### `userInfo` parameter in `send()`
+
+Provide the `userInfo` optional parameter in the `send()` method call:
+
+```javascript
+client.send(new Error(), { userInfo });
+```
+
+This provided user information will take priority over the `user(request)` and `setUser(user)` methods.
+
+#### Implement `raygunClient.user(req)`
+
+You can set `raygunClient.user` to a function that returns the user name or email address of the currently logged in user.
 
 An example, using the Passport.js middleware:
 
@@ -242,32 +295,15 @@ raygunClient.user = function (req) {
 }
 ```
 
-#### raygunClient.user(req)
-
 **Param**: *req*: the current request.
 **Returns**: The current user's identifier, or an object that describes the user.
 
-This will be transmitted with each message sent, and a count of affected customers will appear on the dashboard in the error group view. If you return an email address, and the user has associated a Gravatar with it, their picture will be also displayed.
+#### Global `setUser(user)` method
 
-If you return an object, it may have any of the following properties (only identifier is required):
+You can set the user information globally by calling `setUser(user)` and providing the user information.
 
-`identifier` is the user identifier. This will be used to uniquely identify the user within Raygun. This is the only required parameter, but is only required if you are using customers tracking.
-
-`isAnonymous` is a bool indicating whether the user is anonymous or actually has a user account. Even if this is set to true, you should still give the user a unique identifier of some kind.
-
-`email` is the user's email address.
-
-`fullName` is the user's full name.
-
-`firstName` is the user's first or preferred name.
-
-`uuid` is the identifier of the device the app is running on. This could be used to correlate user accounts over multiple machines.
-
-Any other properties will be discarded.
-
-**Note:** setUser deprecated in 0.4
-
-Release 0.3 previously had a setUser function that accepted a string or function to specify the user, however it did not accept arguments. This method is considered deprecated and will be removed in the 1.0 release, thus it is advised to update your code to set it with the new *user* function.
+This is not recommended, the method has been marked as _deprecated_ and will be eventually removed.
+It is advised to update your code to set it with the `user(request)` method or provide the `userInfo` in the `send()` call.
 
 ### Version tracking
 

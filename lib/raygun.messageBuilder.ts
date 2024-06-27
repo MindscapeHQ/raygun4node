@@ -25,13 +25,12 @@ import {
   Environment,
   BuiltError,
   Breadcrumb,
+  UserMessageData,
 } from "./types";
 
 import { humanString } from "./raygun.human";
 
 const debug = require("debug")("raygun");
-
-type UserMessageData = RawUserData | string | undefined;
 
 const packageDetails = require("../package.json");
 
@@ -238,9 +237,12 @@ export class RaygunMessageBuilder {
     return this;
   }
 
-  setUser(user: (() => UserMessageData) | UserMessageData) {
-    let userData: UserMessageData;
+  setUser(user: (() => UserMessageData) | UserMessageData | undefined) {
+    if (!user) {
+      return this;
+    }
 
+    let userData: UserMessageData;
     if (user instanceof Function) {
       userData = user();
     } else {
@@ -265,6 +267,9 @@ export class RaygunMessageBuilder {
     const data: UserDetails = {};
     if (userData.identifier) {
       data.identifier = userData.identifier;
+    } else {
+      // Mark user as Anonymous if no identifier is provided
+      data.isAnonymous = true;
     }
     if (userData.email) {
       data.email = userData.email;
