@@ -50,7 +50,7 @@ export class RaygunBatchTransport {
 
   /**
    * Enqueues send request to batch processor.
-   * @param options send options without callback
+   * @param options - send options without callback
    * @return Promise with response or error if rejected
    */
   send(options: SendOptions): Promise<IncomingMessage> {
