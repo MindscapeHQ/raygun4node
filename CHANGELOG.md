@@ -1,3 +1,21 @@
+## 1.2.0
+
+- feat: #218 Optional `userInfo` in `send()`
+- feat: #65 Custom timestamp parameter (#254)
+- fix: #68 Better humanize string functionality (#255)
+- doc: #196 add documentation on handling errors in sync transport (#259)
+- refactor: #199 batch callbacks (#261)
+- chore: #224 add clarification on sourcemaps and breadcrumbs (#270)
+- chore(deps-dev): bump @types/node from 20.14.2 to 20.14.8 (#268)
+- chore(deps-dev): bump @types/uuid from 9.0.8 to 10.0.0 (#267)
+- chore(deps-dev): bump @stylistic/eslint-plugin from 2.1.0 to 2.2.2 (#265)
+- chore(deps-dev): bump typescript-eslint from 7.13.0 to 7.13.1 (#264)
+- chore(deps-dev): bump typescript-eslint from 7.11.0 to 7.13.0 (#258)
+- chore(deps-dev): bump prettier from 3.3.0 to 3.3.2 (#257)
+- chore(deps-dev): bump tap from 19.0.2 to 19.2.5 (#256)
+- chore(deps): bump uuid from 9.0.1 to 10.0.0 (#250)
+- chore(deps-dev): bump @types/node from 20.14.0 to 20.14.2 (#247)
+
 ## 1.1.0
 
 - feat: Part of #220 add internal runWithBreadcrumbsAsync function (#245) (2024-06-05)
