@@ -239,11 +239,13 @@ The following properties can be provided as user information:
 
 - `identifier`: Unique identifier for the user is the user identifier.
 - `email`: User's email address.
+- `isAnonymous`: Flag indicating if the user is anonymous or not.
 - `firstName`: User's first name (what you would use if you were emailing them - "Hi {{firstName}}, ...")
 - `fullName`: User's full name.
 - `uuid`: Device unique identifier. Useful if sending errors from a mobile device.
 
-All properties are `strings`. Any other properties will be discarded.
+All properties are `strings` except `isAnonymous`, which is a boolean.
+As well, they are all optional. Any other properties will be discarded.
 
 Example:
 
@@ -251,6 +253,7 @@ Example:
 userInfo = {
     identifier: "123",
     email: "user@example.com",
+    isAnonymous: false,
     firstName: "First name",
     fullName: "Fullname",
     uuid: "a25dfe58-8db3-496c-8768-375595139375",
@@ -287,6 +290,7 @@ raygunClient.user = function (req) {
     return {
       identifier: req.user.username,
       email: req.user.email,
+      isAnonymous: false,
       fullName: req.user.fullName,
       firstName: req.user.firstName,
       uuid: req.user.deviceID

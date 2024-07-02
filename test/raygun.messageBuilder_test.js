@@ -365,12 +365,14 @@ test("user and version builder tests", function (t) {
       return {
         identifier: "testuser",
         email: "test@example.com",
+        isAnonymous: true,
         notSupportedProp: "ignore",
       };
     });
     var message = builder.build();
     tt.equal(message.details.user.identifier, "testuser");
     tt.equal(message.details.user.email, "test@example.com");
+    tt.equal(message.details.user.isAnonymous, true);
     tt.equal(message.details.user.notSupportedProp, undefined);
     tt.end();
   });
