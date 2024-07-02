@@ -4,6 +4,7 @@ import eslint from '@eslint/js';
 import stylistic from '@stylistic/eslint-plugin';
 import stylisticTs from '@stylistic/eslint-plugin-ts';
 import tseslint from 'typescript-eslint';
+import tsdocPlugin from 'eslint-plugin-tsdoc';
 
 export default tseslint.config(
     // Basic eslint rules
@@ -15,6 +16,9 @@ export default tseslint.config(
     // Eslint rules for TS
     ...tseslint.configs.recommended,
     {
+        plugins: {
+            ['tsdoc']: tsdocPlugin,
+        },
         languageOptions: {
             // Add node globals to ignore undefined
             globals: {
@@ -59,6 +63,8 @@ export default tseslint.config(
             "@stylistic/ts/no-extra-parens": ["off", 0],
             "@stylistic/ts/quote-props": ["off", 0],
             "@stylistic/ts/space-before-function-paren": ["off", 0],
+            // Documentation format check
+            "tsdoc/syntax": "warn"
         }
     }
 );

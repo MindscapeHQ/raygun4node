@@ -103,6 +103,16 @@ class Raygun {
 
   _batchTransport: RaygunBatchTransport | undefined;
 
+  /**
+   * Initializes the Raygun Client.
+   * Use like:
+   * ```js
+   * const raygunClient = new Raygun.Client().init({
+   *   apiKey: 'YOUR_API_KEY'
+   * });
+   * ```
+   * @param options - Raygun Client options
+   */
   init(options: RaygunOptions) {
     this._apiKey = options.apiKey;
     this._filters = options.filters || [];
@@ -157,7 +167,7 @@ class Raygun {
 
   /**
    * Override this method to provide user data from the send() method original request parameters.
-   * @param req as RequestParams, may be null if send() was called without providing request parameters.
+   * @param req - as RequestParams, may be null if send() was called without providing request parameters.
    */
   user(req?: RequestParams): UserMessageData | null {
     return null;
@@ -166,17 +176,33 @@ class Raygun {
   /**
    * Sets a user globally.
    * @deprecated Implement user(request) callback or provide userInfo in send() method call instead
-   * @param user as RawUserData
+   * @param user - as RawUserData
    */
   setUser(user: UserMessageData) {
     this._user = user;
     return this;
   }
 
+  /**
+   * If you're using the `raygunClient.expressHandler`, you can send custom data along by setting this function.
+   *
+   * ```js
+   * raygunClient.expressCustomData = function (err, req) {
+   *   return { 'level': err.level };
+   * };
+   * ```
+   *
+   * @param error - error captured
+   * @param request - original request object
+   */
   expressCustomData(error: Error, request: Request) {
     return {};
   }
 
+  /**
+   * Set the version of the calling application
+   * @param version - Version as String
+   */
   setVersion(version: string) {
     this._version = version;
     return this;
@@ -185,35 +211,52 @@ class Raygun {
   /**
    * Access or mutate the candidate error payload immediately before it is sent,
    * or skip the sending action by returning null.
-   * @param onBeforeSend callback that must return a Message object to send, or null to skip sending it.
+   * @param onBeforeSend - callback that must return a Message object to send, or null to skip sending it.
    */
   onBeforeSend(onBeforeSend: Hook<Message | null>) {
     this._onBeforeSend = onBeforeSend;
     return this;
   }
 
+  /**
+   * Set the grouping key. Also, available as `init()` configuration parameter.
+   * @param groupingKey - grouping key method callback
+   */
   groupingKey(groupingKey: Hook<string>) {
     this._groupingKey = groupingKey;
     return this;
   }
 
+  /**
+   * Notifies the Raygun Client that the machine is offline.
+   * Raygun Crash Reports will be stored and sent when the machine is back online.
+   */
   offline() {
     this.offlineStorage().init(this._offlineStorageOptions);
     this._isOffline = true;
   }
 
+  /**
+   * Notifies the Raygun Client that the machine is online.
+   * Stored Raygun Crash Reports will be delivered.
+   * @param callback - sent result callback
+   */
   online(callback?: SendCB) {
     this._isOffline = false;
     this.offlineStorage().send(callback || emptyCallback);
   }
 
+  /**
+   * Set global tags to Raygun Client
+   * @param tags - list of Tags
+   */
   setTags(tags: Tag[]) {
     this._tags = tags;
   }
 
   /**
    * Adds breadcrumb to current context
-   * @param breadcrumb either a string message or a Breadcrumb object
+   * @param breadcrumb - either a string message or a Breadcrumb object
    */
   addBreadcrumb(breadcrumb: string | BreadcrumbMessage) {
     breadcrumbs.addBreadcrumb(breadcrumb);
@@ -236,13 +279,13 @@ class Raygun {
 
   /**
    * Sends exception to Raygun.
-   * @param exception to send.
-   * @param customData to attach to the error report.
-   * @param request custom RequestParams.
-   * @param tags to attach to the error report.
-   * @param timestamp to provide a custom timestamp as Date object or number in milliseconds since epoch.
-   * @param userInfo to provide the user information to this error report. Has priority over the user(request) method.
-   * @return IncomingMessage if message was delivered, null if stored, rejected with Error if failed.
+   * @param exception - exception to send.
+   * @param customData - custom data to attach to the error report.
+   * @param request - custom RequestParams.
+   * @param tags - list of Tags to attach to the error report.
+   * @param timestamp - provides a custom timestamp as Date object or number in milliseconds since epoch.
+   * @param userInfo - provides the user information to this error report. Has priority over the user(request) method.
+   * @returns IncomingMessage if message was delivered, null if stored, rejected with Error if failed.
    */
   async send(
     exception: Error | string,
@@ -386,9 +429,8 @@ class Raygun {
   /**
    * Send error using synchronous transport.
    * Only used internally to report uncaught exceptions or unhandled promises.
-   * @param exception error to report
-   * @param tags optional tags
-   * @private
+   * @param exception - error to report
+   * @param tags - optional tags
    */
   private sendSync(exception: Error | string, tags?: Tag[]): void {
     const result = this.buildSendOptions(exception, null, undefined, tags);
@@ -408,9 +450,9 @@ class Raygun {
    * Attach as express middleware to create a breadcrumb store scope per request.
    * e.g. `app.use(raygun.expressHandlerBreadcrumbs);`
    * Then call to `raygun.addBreadcrumb(...)` to add breadcrumbs to the future Raygun `send` call.
-   * @param req
-   * @param res
-   * @param next
+   * @param req - Express Request
+   * @param res - Express response
+   * @param next - Next Express function
    */
   expressHandlerBreadcrumbs(req: Request, res: Response, next: NextFunction) {
     breadcrumbs.runWithBreadcrumbs(() => {
@@ -424,10 +466,10 @@ class Raygun {
   /**
    * Attach as express middleware to report application errors to Raygun automatically.
    * e.g. `app.use(raygun.expressHandler);`
-   * @param err
-   * @param req
-   * @param res
-   * @param next
+   * @param err - Captured Error by Express
+   * @param req - Express Request
+   * @param res - Express response
+   * @param next - Next Express function
    */
   expressHandler(err: Error, req: Request, res: Response, next: NextFunction) {
     let customData;

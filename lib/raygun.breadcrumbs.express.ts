@@ -6,7 +6,7 @@ const debug = require("debug")("raygun");
 
 /**
  * Parses an ExpressJS Request and adds it to the breadcrumbs store
- * @param request
+ * @param request - ExpressJS request object
  */
 export function addRequestBreadcrumb(request: Request) {
   const crumbs = getBreadcrumbs();

@@ -9,12 +9,13 @@ const symbolEqual = "=";
  * - Maximum one level deep
  *
  * Example:
- * - Object "{ name: "Test" }" becomes string "name=Test" as all is the top level
- * - Object "{ one: { name: "Test" }}" becomes string "one={name=Test}" as one level deep is explored
- * - Object "{ one: { two: { name: "Test" }}}" becomes string "one={two=...}" as the max level deep is reached
+ * - Object `{ name: "Test" }` becomes string `name=Test` as all is the top level
+ * - Object `{ one: { name: "Test" }}` becomes string `one={name=Test}` as one level deep is explored
+ * - Object `{ one: { two: { name: "Test" }}}` becomes string `one={two=...}` as the max level deep is reached
  *
- * @param obj input object to stringify
- * @param level level of recursion, should start at 0
+ * @param obj - input object to stringify
+ * @param level - level of recursion, should start at 0
+ * @returns a formatted String
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function humanString(obj: any, level: number = 0): string {
