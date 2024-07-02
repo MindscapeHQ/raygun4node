@@ -48,7 +48,7 @@ test("basic builder tests", function (t) {
     tt.end();
   });
 
-  t.test("humanise error string", function (tt) {
+  t.test("humanize error string", function (tt) {
     var builder = new MessageBuilder({ useHumanStringForObject: true });
     builder.setErrorDetails({ name: "Test" });
 
@@ -60,7 +60,7 @@ test("basic builder tests", function (t) {
   });
 
   // Reference: https://github.com/MindscapeHQ/raygun4node/issues/68
-  t.test("humanise Symbol object string", function (tt) {
+  t.test("humanize Symbol object string", function (tt) {
     var builder = new MessageBuilder({ useHumanStringForObject: true });
     builder.setErrorDetails({ symbol: Symbol("Test") });
     var message = builder.build();
@@ -70,7 +70,7 @@ test("basic builder tests", function (t) {
     tt.end();
   });
 
-  t.test("humanise self-referencing complex error string", function (tt) {
+  t.test("humanize self-referencing complex error string", function (tt) {
     var builder = new MessageBuilder({ useHumanStringForObject: true });
 
     // error self-references, causing a potential infinite recursion in the filter method
@@ -98,7 +98,7 @@ test("basic builder tests", function (t) {
     tt.end();
   });
 
-  t.test("humanise leaves strings intact", function (tt) {
+  t.test("humanize leaves strings intact", function (tt) {
     var builder = new MessageBuilder({ useHumanStringForObject: true });
     builder.setErrorDetails("my awesome error");
 
@@ -108,7 +108,7 @@ test("basic builder tests", function (t) {
     tt.end();
   });
 
-  t.test("dont humanise string", function (tt) {
+  t.test("dont humanize string", function (tt) {
     var builder = new MessageBuilder({ useHumanStringForObject: false });
     builder.setErrorDetails({ name: "Test" });
 

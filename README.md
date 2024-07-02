@@ -298,7 +298,7 @@ raygunClient.user = function (req) {
 **Param**: *req*: the current request.
 **Returns**: The current user's identifier, or an object that describes the user.
 
-#### Global `setUser(user)` method
+#### Global `setUser(user)` method (Deprecated)
 
 You can set the user information globally by calling `setUser(user)` and providing the user information.
 
