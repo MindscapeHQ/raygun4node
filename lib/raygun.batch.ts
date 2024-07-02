@@ -1,29 +1,31 @@
 import { sendBatch } from "./raygun.transport";
 import { startTimer } from "./timer";
 import type { IncomingMessage } from "http";
-import {
-  callVariadicCallback,
-  Callback,
-  HTTPOptions,
-  SendOptions,
-} from "./types";
+import { HTTPOptions, SendOptions } from "./types";
 
 const debug = require("debug")("raygun");
 
-export type MessageAndCallback = {
+export type MessageAndPromise = {
   serializedMessage: string;
-  callback: Callback<IncomingMessage> | null;
+  promise: PromiseReference<IncomingMessage>;
 };
 
 export type PreparedBatch = {
   payload: string;
   messageCount: number;
-  callbacks: Array<Callback<IncomingMessage> | null>;
+  promises: Array<PromiseReference<IncomingMessage>>;
 };
 
 export type BatchState = {
-  messages: MessageAndCallback[];
+  messages: MessageAndPromise[];
   messageSizeInBytes: number;
+};
+
+// Contains the resolve and reject methods of the original promise
+// Allows to call to resolve and reject from outside the Promise scope
+type PromiseReference<T> = {
+  resolve: (message: T) => void;
+  reject: (error: Error) => void;
 };
 
 export const MAX_MESSAGES_IN_BATCH = 100;
@@ -52,24 +54,13 @@ export class RaygunBatchTransport {
    * @return Promise with response or error if rejected
    */
   send(options: SendOptions): Promise<IncomingMessage> {
-    return new Promise((resolve, reject) => {
-      this.onIncomingMessage({
-        serializedMessage: options.message,
-        // TODO: Switch to using Promises internally
-        // See issue: https://github.com/MindscapeHQ/raygun4node/issues/199
-        callback: (error, message) => {
-          if (error) {
-            reject(error);
-          } else if (message) {
-            resolve(message);
-          }
-        },
-      });
+    const promise = this.onIncomingMessage(options.message);
 
-      if (!this.timerId) {
-        this.timerId = setTimeout(() => this.processBatch(), 1000);
-      }
-    });
+    if (!this.timerId) {
+      this.timerId = setTimeout(() => this.processBatch(), 1000);
+    }
+
+    return promise;
   }
 
   stopProcessing() {
@@ -81,8 +72,9 @@ export class RaygunBatchTransport {
     }
   }
 
-  private onIncomingMessage(messageAndCallback: MessageAndCallback) {
-    const { serializedMessage } = messageAndCallback;
+  private onIncomingMessage(
+    serializedMessage: string,
+  ): Promise<IncomingMessage> {
     const messageLength = Buffer.byteLength(serializedMessage, "utf-8");
 
     if (messageLength >= MAX_BATCH_INNER_SIZE_BYTES) {
@@ -108,13 +100,18 @@ export class RaygunBatchTransport {
       this.batchState.messageSizeInBytes += messageLength + 1; // to account for the commas between items
     }
 
-    this.batchState.messages.push(messageAndCallback);
+    const promise = new Promise<IncomingMessage>((resolve, reject) => {
+      const promise = { resolve, reject };
+      this.batchState.messages.push({ serializedMessage, promise });
+    });
 
     const batchIsFull = this.batchState.messages.length === 100;
 
     if (batchIsFull) {
       this.processBatch();
     }
+
+    return promise;
   }
 
   private processBatch() {
@@ -125,7 +122,7 @@ export class RaygunBatchTransport {
     const batch: PreparedBatch = {
       payload: `[${payload}]`,
       messageCount: this.batchState.messages.length,
-      callbacks: this.batchState.messages.map((m) => m.callback),
+      promises: this.batchState.messages.map((m) => m.promise),
     };
 
     this.sendBatch(batch);
@@ -136,7 +133,7 @@ export class RaygunBatchTransport {
   }
 
   private sendBatch(batch: PreparedBatch) {
-    const { payload, messageCount, callbacks } = batch;
+    const { payload, messageCount, promises } = batch;
 
     debug(
       `[raygun.batch.ts] Batch transport - processing (${messageCount} message(s) in batch)`,
@@ -146,7 +143,7 @@ export class RaygunBatchTransport {
 
     this.batchId++;
 
-    const runAllCallbacks = (
+    const resolvePromises = (
       err: Error | null,
       response: IncomingMessage | null,
     ) => {
@@ -155,17 +152,15 @@ export class RaygunBatchTransport {
         debug(
           `[raygun.batch.ts] Batch transport - error sending batch (id=${batchId}, duration=${durationInMs}ms): ${err}`,
         );
+        for (const promise of promises) {
+          promise.reject(err);
+        }
       } else {
         debug(
           `[raygun.batch.ts] Batch transport - successfully sent batch (id=${batchId}, duration=${durationInMs}ms)`,
         );
-      }
-
-      // TODO: Callbacks are processed in batch, see how can this be implemented with Promises
-      // See issue: https://github.com/MindscapeHQ/raygun4node/issues/199
-      for (const callback of callbacks) {
-        if (callback) {
-          callVariadicCallback(callback, err, response);
+        for (const promise of promises) {
+          promise.resolve(response!);
         }
       }
     };
@@ -181,12 +176,10 @@ export class RaygunBatchTransport {
       http: this.httpOptions,
     })
       .then((response) => {
-        // Call to original callbacks for success
-        runAllCallbacks(null, response);
+        resolvePromises(null, response);
       })
       .catch((error) => {
-        // Call to original callbacks for error
-        runAllCallbacks(error, null);
+        resolvePromises(error, null);
       });
   }
 }

@@ -48,18 +48,57 @@ test("basic builder tests", function (t) {
     tt.end();
   });
 
-  t.test("humanise error string", function (tt) {
+  t.test("humanize error string", function (tt) {
     var builder = new MessageBuilder({ useHumanStringForObject: true });
     builder.setErrorDetails({ name: "Test" });
 
     var message = builder.build();
     tt.ok(message.details.error.message);
-    tt.equal("name=Test", message.details.error.message);
+    tt.equal(message.details.error.message, "name=Test");
     tt.ok(message.details.groupingKey);
     tt.end();
   });
 
-  t.test("humanise leaves strings intact", function (tt) {
+  // Reference: https://github.com/MindscapeHQ/raygun4node/issues/68
+  t.test("humanize Symbol object string", function (tt) {
+    var builder = new MessageBuilder({ useHumanStringForObject: true });
+    builder.setErrorDetails({ symbol: Symbol("Test") });
+    var message = builder.build();
+    tt.ok(message.details.error.message);
+    tt.equal(message.details.error.message, "symbol=Symbol(Test)");
+    tt.ok(message.details.groupingKey);
+    tt.end();
+  });
+
+  t.test("humanize self-referencing complex error string", function (tt) {
+    var builder = new MessageBuilder({ useHumanStringForObject: true });
+
+    // error self-references, causing a potential infinite recursion in the filter method
+    // Causes exception: Maximum call stack size exceeded
+    let error = {
+      message: "error",
+    };
+    // second level self-reference
+    let other = {
+      otherMessage: "other",
+      error: error,
+    };
+    error.myself = error;
+    error.other = other;
+
+    builder.setErrorDetails({ base: error });
+
+    var message = builder.build();
+    tt.ok(message.details.error.message);
+    tt.equal(
+      message.details.error.message,
+      "base={message=error, myself=..., other=...}",
+    );
+    tt.ok(message.details.groupingKey);
+    tt.end();
+  });
+
+  t.test("humanize leaves strings intact", function (tt) {
     var builder = new MessageBuilder({ useHumanStringForObject: true });
     builder.setErrorDetails("my awesome error");
 
@@ -69,7 +108,7 @@ test("basic builder tests", function (t) {
     tt.end();
   });
 
-  t.test("dont humanise string", function (tt) {
+  t.test("dont humanize string", function (tt) {
     var builder = new MessageBuilder({ useHumanStringForObject: false });
     builder.setErrorDetails({ name: "Test" });
 
@@ -79,6 +118,19 @@ test("basic builder tests", function (t) {
     tt.end();
     t.end();
   });
+});
+
+test("custom timestamp", function (t) {
+  const timestamp = new Date(2024, 1, 2, 3, 45, 12, 345);
+  const builder = new MessageBuilder({ timestamp });
+  const message = builder.build();
+
+  t.test("occurred on is custom timestamp", function (tt) {
+    tt.equal(message.occurredOn, timestamp);
+    tt.end();
+  });
+
+  t.end();
 });
 
 test("error builder tests", function (t) {

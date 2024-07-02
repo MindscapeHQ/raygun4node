@@ -18,13 +18,13 @@ import {
   MessageTransport,
   IOfflineStorage,
   OfflineStorageOptions,
-  RawUserData,
   RaygunOptions,
   RequestParams,
   SendOptions,
   Tag,
   Transport,
   SendParameters,
+  UserMessageData,
 } from "./types";
 import * as breadcrumbs from "./raygun.breadcrumbs";
 import { addRequestBreadcrumb } from "./raygun.breadcrumbs.express";
@@ -71,7 +71,7 @@ class Raygun {
 
   _filters: string[] = [];
 
-  _user: RawUserData | undefined;
+  _user: UserMessageData | undefined;
 
   _version: string = "";
 
@@ -155,13 +155,20 @@ class Raygun {
     return this;
   }
 
-  user(req?: RequestParams): RawUserData | null {
+  /**
+   * Override this method to provide user data from the send() method original request parameters.
+   * @param req as RequestParams, may be null if send() was called without providing request parameters.
+   */
+  user(req?: RequestParams): UserMessageData | null {
     return null;
   }
 
-  // This function is deprecated, is provided for legacy apps and will be
-  // removed in 1.0: use raygun.user instead
-  setUser(user: RawUserData) {
+  /**
+   * Sets a user globally.
+   * @deprecated Implement user(request) callback or provide userInfo in send() method call instead
+   * @param user as RawUserData
+   */
+  setUser(user: UserMessageData) {
     this._user = user;
     return this;
   }
@@ -233,17 +240,25 @@ class Raygun {
    * @param customData to attach to the error report.
    * @param request custom RequestParams.
    * @param tags to attach to the error report.
+   * @param timestamp to provide a custom timestamp as Date object or number in milliseconds since epoch.
+   * @param userInfo to provide the user information to this error report. Has priority over the user(request) method.
    * @return IncomingMessage if message was delivered, null if stored, rejected with Error if failed.
    */
   async send(
     exception: Error | string,
-    { customData, request, tags }: SendParameters = {},
+    { customData, request, tags, timestamp, userInfo }: SendParameters = {},
   ): Promise<IncomingMessage | null> {
+    // Convert timestamp in milliseconds since epoch to Date
+    const _timestamp =
+      typeof timestamp === "number" ? new Date(timestamp) : timestamp;
+
     const sendOptionsResult = this.buildSendOptions(
       exception,
       customData,
       request,
       tags,
+      _timestamp,
+      userInfo,
     );
 
     const message = sendOptionsResult.message;
@@ -306,6 +321,8 @@ class Raygun {
 
   /**
    * @deprecated sendWithCallback is a deprecated method. Instead, use send, which supports async/await calls.
+   *
+   * See: https://github.com/MindscapeHQ/raygun4node/issues/262
    */
   sendWithCallback(
     exception: Error | string,
@@ -475,6 +492,8 @@ class Raygun {
     customData?: CustomData,
     request?: RequestParams,
     tags?: Tag[],
+    timestamp?: Date,
+    userInfo?: UserMessageData,
   ): SendOptionsResult {
     let mergedTags: Tag[] = [];
     let skip = false;
@@ -492,13 +511,14 @@ class Raygun {
       useHumanStringForObject: this._useHumanStringForObject,
       reportColumnNumbers: this._reportColumnNumbers,
       innerErrorFieldName: this._innerErrorFieldName,
+      timestamp: timestamp,
     })
       .setErrorDetails(exception)
       .setRequestDetails(request)
       .setMachineName()
       .setEnvironmentDetails()
       .setUserCustomData(customData)
-      .setUser(this.user(request) || this._user)
+      .setUser(userInfo || this.user(request) || this._user)
       .setVersion(this._version)
       .setBreadcrumbs(breadcrumbs.getBreadcrumbs())
       .setTags(mergedTags);

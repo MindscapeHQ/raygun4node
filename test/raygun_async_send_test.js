@@ -203,3 +203,42 @@ test("send with expressHandler custom data", function (t) {
   };
   client.expressHandler(new Error(), {}, {}, function () {});
 });
+
+test("provide custom timestamp as date to send", {}, function (t) {
+  let client = new Raygun.Client().init({ apiKey: "TEST" });
+  const timestamp = new Date(2024, 1, 2, 3, 45, 12, 345);
+
+  client.onBeforeSend(function (payload) {
+    t.same(payload.occurredOn, timestamp);
+    return payload;
+  });
+
+  client
+    .send(new Error(), { timestamp })
+    .then((message) => {
+      t.end();
+    })
+    .catch((err) => {
+      t.fail(err);
+    });
+});
+
+test("provide custom timestamp as number to send", {}, function (t) {
+  let client = new Raygun.Client().init({ apiKey: "TEST" });
+  const date = new Date(2024, 1, 2, 3, 45, 12, 345);
+  const timestamp = date.getTime();
+
+  client.onBeforeSend(function (payload) {
+    t.same(payload.occurredOn, date);
+    return payload;
+  });
+
+  client
+    .send(new Error(), { timestamp })
+    .then((message) => {
+      t.end();
+    })
+    .catch((err) => {
+      t.fail(err);
+    });
+});
