@@ -9,7 +9,7 @@
   "author": "dwnz",
   "license": "MIT",
   "dependencies": {
-    "config": "^3.3.11",
+    "config": "^3.3.12",
     "raygun": "file:../.."
   }
 }
