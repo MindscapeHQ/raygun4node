@@ -267,9 +267,9 @@ export class RaygunMessageBuilder {
     const data: UserDetails = {};
     if (userData.identifier) {
       data.identifier = userData.identifier;
-    } else {
-      // Mark user as Anonymous if no identifier is provided
-      data.isAnonymous = true;
+    }
+    if (userData.isAnonymous) {
+      data.isAnonymous = userData.isAnonymous;
     }
     if (userData.email) {
       data.email = userData.email;
