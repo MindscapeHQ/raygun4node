@@ -193,31 +193,6 @@ export type RaygunOptions = {
   reportUncaughtExceptions?: boolean;
 };
 
-// TODO: Remove all Callback related types when sendWithCallback is finally removed
-// See: https://github.com/MindscapeHQ/raygun4node/issues/262
-export type CallbackNoError<T> = (t: T | null) => void;
-export type CallbackWithError<T> = (e: Error | null, t: T | null) => void;
-
-export function isCallbackWithError<T>(
-  cb: Callback<T>,
-): cb is CallbackWithError<T> {
-  return cb.length > 1;
-}
-
-export function callVariadicCallback<T>(
-  callback: Callback<T>,
-  error: Error | null,
-  result: T | null,
-) {
-  if (isCallbackWithError(callback)) {
-    return callback(error, result);
-  } else {
-    return callback(result);
-  }
-}
-
-export type Callback<T> = CallbackNoError<T> | CallbackWithError<T>;
-
 /**
  * Internal type, sent to the Raygun API as part of MessageDetails
  */
