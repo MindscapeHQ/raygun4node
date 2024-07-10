@@ -57,6 +57,11 @@ function getCallsite(): SourceFile | null {
   return callsite;
 }
 
+/**
+ * Adds Breadcrumb to current scope
+ * @param breadcrumb - either String message or BreadcrumbMessage object
+ * @param type - defaults to manual, values as defined in Breadcrumb type
+ */
 export function addBreadcrumb(
   breadcrumb: string | BreadcrumbMessage,
   type: Breadcrumb["type"] = "manual",
@@ -98,6 +103,10 @@ export function addBreadcrumb(
   crumbs.push(internalCrumb);
 }
 
+/**
+ * Obtain list of Breadcrumbs in current scope
+ * @returns List of Breadcrumbs or null if no local storage
+ */
 export function getBreadcrumbs(): Breadcrumb[] | null {
   if (!asyncLocalStorage) {
     return null;
@@ -117,6 +126,11 @@ export function getBreadcrumbs(): Breadcrumb[] | null {
   return newStore;
 }
 
+/**
+ * Run synchronous function in Breadcrumb scope
+ * @param f - function to run
+ * @param store - optional Breadcrumb scope store
+ */
 export function runWithBreadcrumbs(f: () => void, store: Breadcrumb[] = []) {
   if (!asyncLocalStorage) {
     f();
@@ -127,6 +141,11 @@ export function runWithBreadcrumbs(f: () => void, store: Breadcrumb[] = []) {
   asyncLocalStorage.run(store, f);
 }
 
+/**
+ * Run asynchronous function returning a Promise in Breadcrumb scope
+ * @param f - asynchronous function to run
+ * @param store - optional Breadcrumb scope store
+ */
 export function runWithBreadcrumbsAsync<T>(
   f: () => Promise<T>,
   store: Breadcrumb[] = [],
@@ -139,6 +158,9 @@ export function runWithBreadcrumbsAsync<T>(
   return asyncLocalStorage.run(store, f);
 }
 
+/**
+ * Clear the stored Breadcrumbs in current scope
+ */
 export function clear() {
   if (!asyncLocalStorage) {
     return;
