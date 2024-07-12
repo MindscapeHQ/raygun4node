@@ -50,8 +50,8 @@ export class RaygunBatchTransport {
 
   /**
    * Enqueues send request to batch processor.
-   * @param options send options without callback
-   * @return Promise with response or error if rejected
+   * @param options - send options without callback
+   * @returns Promise with response or error if rejected
    */
   send(options: SendOptions): Promise<IncomingMessage> {
     const promise = this.onIncomingMessage(options.message);
@@ -63,6 +63,9 @@ export class RaygunBatchTransport {
     return promise;
   }
 
+  /**
+   * Stops batch transport and clears timerId
+   */
   stopProcessing() {
     if (this.timerId) {
       debug("[raygun.batch.ts] Batch transport - stopping");

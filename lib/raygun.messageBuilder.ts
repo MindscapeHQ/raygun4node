@@ -37,9 +37,10 @@ const packageDetails = require("../package.json");
 /**
  * Filter properties in obj according to provided filters.
  * Also removes any recursive self-referencing object.
- * @param obj object to apply filter
- * @param filters list of keys to filter
- * @param explored Set that contains already explored nodes, used internally
+ * @param obj - object to apply filter
+ * @param filters - list of keys to filter
+ * @param explored - Set that contains already explored nodes, used internally
+ * @returns object after applying the filters
  */
 function filterKeys(
   obj: object,
@@ -70,6 +71,12 @@ function filterKeys(
   return _obj;
 }
 
+/**
+ * Extract stacktrace from provided Error
+ * @param error - error to process
+ * @param options - builder options
+ * @returns created stack trace
+ */
 function getStackTrace(
   error: Error,
   options: MessageBuilderOptions,
@@ -98,6 +105,12 @@ function getStackTrace(
   return stack;
 }
 
+/**
+ * Created an error payload to send
+ * @param error - error to process
+ * @param options - builder options
+ * @returns created error
+ */
 function buildError(
   error: IndexableError,
   options: MessageBuilderOptions,
@@ -153,6 +166,10 @@ export class RaygunMessageBuilder {
     return this.message as Message;
   }
 
+  /**
+   * Add error details to builder
+   * @param error - error to add
+   */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setErrorDetails(error: Error | string | any) {
     if (
@@ -181,6 +198,9 @@ export class RaygunMessageBuilder {
     return this;
   }
 
+  /**
+   * Set environment details from OS to builder
+   */
   setEnvironmentDetails() {
     const environment: Environment = {
       osVersion: `${os.type()} ${os.platform()} ${os.release()}`,
@@ -203,16 +223,28 @@ export class RaygunMessageBuilder {
     return this;
   }
 
+  /**
+   * Set machine name to builder
+   * @param machineName - the machine name, if not provided reads from OS
+   */
   setMachineName(machineName?: string) {
     this.message.details.machineName = machineName || os.hostname();
     return this;
   }
 
+  /**
+   * Set custom data to builder
+   * @param customData - optional CustomData object
+   */
   setUserCustomData(customData?: CustomData) {
     this.message.details.userCustomData = customData;
     return this;
   }
 
+  /**
+   * Set tags to builder
+   * @param tags - List of Tags
+   */
   setTags(tags: Tag[]) {
     if (Array.isArray(tags)) {
       this.message.details.tags = tags;
@@ -220,6 +252,10 @@ export class RaygunMessageBuilder {
     return this;
   }
 
+  /**
+   * Set Request to builder
+   * @param request - optional request object
+   */
   setRequestDetails(request: RequestParams | undefined) {
     if (request) {
       const host = "hostname" in request ? request.hostname : request.host;
@@ -237,6 +273,10 @@ export class RaygunMessageBuilder {
     return this;
   }
 
+  /**
+   * Set user info to builder
+   * @param user - either a function or a UserMessageData object
+   */
   setUser(user: (() => UserMessageData) | UserMessageData | undefined) {
     if (!user) {
       return this;
@@ -258,6 +298,10 @@ export class RaygunMessageBuilder {
     return this;
   }
 
+  /**
+   * Set application version to builder
+   * @param version - version as String
+   */
   setVersion(version: string) {
     this.message.details.version = version;
     return this;
@@ -286,6 +330,10 @@ export class RaygunMessageBuilder {
     return data;
   }
 
+  /**
+   * Set list of breadcrumbs to builder
+   * @param breadcrumbs - optional list of breadcrumbs
+   */
   setBreadcrumbs(breadcrumbs: Breadcrumb[] | null) {
     debug(
       `[raygun.messageBuilder.ts] Added breadcrumbs: ${breadcrumbs?.length || 0}`,
