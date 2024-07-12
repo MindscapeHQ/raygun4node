@@ -35,7 +35,6 @@ test("async send complex", {}, function (t) {
 
   let client = new Raygun.Client()
     .init({ apiKey: API_KEY })
-    .setUser("callum@mindscape.co.nz")
     .setVersion("1.0.0.0");
 
   client

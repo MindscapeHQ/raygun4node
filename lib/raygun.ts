@@ -10,8 +10,6 @@
 
 import {
   BreadcrumbMessage,
-  callVariadicCallback,
-  Callback,
   CustomData,
   Hook,
   Message,
@@ -151,7 +149,6 @@ class Raygun {
     }
 
     this.expressHandler = this.expressHandler.bind(this);
-    this.sendWithCallback = this.sendWithCallback.bind(this);
     this.send = this.send.bind(this);
 
     this._offlineStorage =
@@ -171,16 +168,6 @@ class Raygun {
    */
   user(req?: RequestParams): UserMessageData | null {
     return null;
-  }
-
-  /**
-   * Sets a user globally.
-   * @deprecated Implement user(request) callback or provide userInfo in send() method call instead
-   * @param user - as RawUserData
-   */
-  setUser(user: UserMessageData) {
-    this._user = user;
-    return this;
   }
 
   /**
@@ -360,36 +347,6 @@ class Raygun {
           return error;
         });
     }
-  }
-
-  /**
-   * @deprecated sendWithCallback is a deprecated method. Instead, use send, which supports async/await calls.
-   *
-   * See: https://github.com/MindscapeHQ/raygun4node/issues/262
-   */
-  sendWithCallback(
-    exception: Error | string,
-    customData?: CustomData,
-    callback?: Callback<IncomingMessage>,
-    request?: RequestParams,
-    tags?: Tag[],
-  ) {
-    // call async send but redirect response to provided legacy callback
-    this.send(exception, {
-      customData,
-      request,
-      tags,
-    })
-      .then((response) => {
-        if (callback) {
-          callVariadicCallback(callback, null, response);
-        }
-      })
-      .catch((error) => {
-        if (callback) {
-          callVariadicCallback(callback, error, null);
-        }
-      });
   }
 
   private reportUncaughtExceptions() {
