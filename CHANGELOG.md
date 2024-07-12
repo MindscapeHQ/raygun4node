@@ -1,3 +1,23 @@
+## 2.0.0
+
+- refactor!: #262 remove deprecated methods (#288)
+- fix: #273 enable isAnonymous parameter (#284)
+- docs: #161 Document methods using tsdoc format (#274)
+- chore(deps): bump config in /examples/express-sample (#276)
+- chore(deps): bump config in /examples/using-domains (#282)
+- chore(deps-dev): bump @eslint/js from 9.4.0 to 9.6.0 (#279)
+- chore(deps-dev): bump @stylistic/eslint-plugin from 2.2.2 to 2.3.0 (#286)
+- chore(deps-dev): bump @stylistic/eslint-plugin-ts from 2.2.2 to 2.3.0 (#280)
+- chore(deps-dev): bump @types/node from 20.14.8 to 20.14.9 (#278)
+- chore(deps-dev): bump @types/node from 20.14.9 to 20.14.10 (#285)
+- chore(deps-dev): bump tap from 19.2.5 to 20.0.3 (#277)
+- chore(deps-dev): bump typescript from 5.5.2 to 5.5.3 (#287)
+- chore(deps-dev): bump typescript-eslint from 7.13.1 to 7.15.0 (#283)
+
+**BREAKING CHANGE**
+
+- Removed deprecated methods `setUser()` and `sendWithCallback()`
+
 ## 1.2.0
 
 - feat: #218 Optional `userInfo` in `send()`
