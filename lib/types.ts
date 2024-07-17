@@ -106,11 +106,11 @@ export type RequestDetails = {
   form: object;
 };
 
+// Internal type to attach to crash reports
 export type UserDetails = {
   // Unique identifier for the user
   identifier?: string;
   // Flag indicating if the user is anonymous or not
-  // Users should not be modifying this member manually
   isAnonymous?: boolean;
   // User's first name (what you would use if you were emailing them - "Hi {{firstName}}, ...")
   firstName?: string;
@@ -131,6 +131,8 @@ export type UserMessageData = RawUserData | string;
 export type RawUserData = {
   // Unique identifier for the user
   identifier?: string;
+  // Flag indicating if the user is anonymous or not
+  isAnonymous?: boolean;
   // User's first name (what you would use if you were emailing them - "Hi {{firstName}}, ...")
   firstName?: string;
   // User's full name
@@ -190,31 +192,6 @@ export type RaygunOptions = {
   batchFrequency?: number;
   reportUncaughtExceptions?: boolean;
 };
-
-// TODO: Remove all Callback related types when sendWithCallback is finally removed
-// See: https://github.com/MindscapeHQ/raygun4node/issues/262
-export type CallbackNoError<T> = (t: T | null) => void;
-export type CallbackWithError<T> = (e: Error | null, t: T | null) => void;
-
-export function isCallbackWithError<T>(
-  cb: Callback<T>,
-): cb is CallbackWithError<T> {
-  return cb.length > 1;
-}
-
-export function callVariadicCallback<T>(
-  callback: Callback<T>,
-  error: Error | null,
-  result: T | null,
-) {
-  if (isCallbackWithError(callback)) {
-    return callback(error, result);
-  } else {
-    return callback(result);
-  }
-}
-
-export type Callback<T> = CallbackNoError<T> | CallbackWithError<T>;
 
 /**
  * Internal type, sent to the Raygun API as part of MessageDetails

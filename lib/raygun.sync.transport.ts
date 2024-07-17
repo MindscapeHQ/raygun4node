@@ -25,7 +25,7 @@ function syncRequest(httpOptions: SendOptions) {
  * Spawns a synchronous send request.
  * Errors are not returned and callback is ignored.
  * Only used to report uncaught exceptions.
- * @param options
+ * @param options - Send options
  */
 export function send(options: SendOptions) {
   try {

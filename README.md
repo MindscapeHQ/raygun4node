@@ -126,21 +126,6 @@ client.send(error)
   });
 ```
 
-### Legacy `sendWithCallback`
-
-```javascript
-client.sendWithCallback(new Error(), {}, function (response){ });
-```
-
-The client still provides a legacy `send()` method that supports callbacks instead of `Promises`.
-
-**This method is deprecated and will be removed in the future.**
-
-The callback should be a node-style callback: `function(err, response) { /*...*/ }`.
-*Note*: If the callback only takes one parameter (`function(response){ /*...*/ }`)
-it will only be called when the transmission is successful. This is included for
-backwards compatibility; the Node-style callback should be preferred.
-
 ### Send Parameters
 
 The `send()` method accepts a series of optional named parameters, defined as follows:
@@ -227,11 +212,10 @@ You can attach user information to every Raygun Crash Report.
 It will be transmitted with the error sent, and a count of affected customers will appear on the dashboard in the error group view.
 If you provide an email address, and the user has associated a Gravatar with it, their picture will be also displayed.
 
-This package offers three different ways to do that:
+This package offers two different ways to do that:
 
 1. Provide the `userInfo` parameter in the `send()` method.
 2. Implement the `user(request)` method.
-3. Call to the `setUser(user)` method (not recommended and deprecated).
 
 #### User information object
 
@@ -239,11 +223,13 @@ The following properties can be provided as user information:
 
 - `identifier`: Unique identifier for the user is the user identifier.
 - `email`: User's email address.
+- `isAnonymous`: Flag indicating if the user is anonymous or not.
 - `firstName`: User's first name (what you would use if you were emailing them - "Hi {{firstName}}, ...")
 - `fullName`: User's full name.
 - `uuid`: Device unique identifier. Useful if sending errors from a mobile device.
 
-All properties are `strings`. Any other properties will be discarded.
+All properties are `strings` except `isAnonymous`, which is a boolean.
+As well, they are all optional. Any other properties will be discarded.
 
 Example:
 
@@ -251,6 +237,7 @@ Example:
 userInfo = {
     identifier: "123",
     email: "user@example.com",
+    isAnonymous: false,
     firstName: "First name",
     fullName: "Fullname",
     uuid: "a25dfe58-8db3-496c-8768-375595139375",
@@ -260,7 +247,7 @@ userInfo = {
 For legacy support reasons, you can also provide the `string` identifier directly as the user information:
 
 ```js
-setUser("123");
+raygunClient.send(error, { userInfo: "123" });
 ```
 
 #### `userInfo` parameter in `send()`
@@ -271,7 +258,7 @@ Provide the `userInfo` optional parameter in the `send()` method call:
 client.send(new Error(), { userInfo });
 ```
 
-This provided user information will take priority over the `user(request)` and `setUser(user)` methods.
+This provided user information will take priority over the `user(request)` method.
 
 #### Implement `raygunClient.user(req)`
 
@@ -287,6 +274,7 @@ raygunClient.user = function (req) {
     return {
       identifier: req.user.username,
       email: req.user.email,
+      isAnonymous: false,
       fullName: req.user.fullName,
       firstName: req.user.firstName,
       uuid: req.user.deviceID
@@ -297,13 +285,6 @@ raygunClient.user = function (req) {
 
 **Param**: *req*: the current request.
 **Returns**: The current user's identifier, or an object that describes the user.
-
-#### Global `setUser(user)` method (Deprecated)
-
-You can set the user information globally by calling `setUser(user)` and providing the user information.
-
-This is not recommended, the method has been marked as _deprecated_ and will be eventually removed.
-It is advised to update your code to set it with the `user(request)` method or provide the `userInfo` in the `send()` call.
 
 ### Version tracking
 
