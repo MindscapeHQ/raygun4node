@@ -5,7 +5,7 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     commit-message:
       prefix: "chore"
       include: "scope"
@@ -14,7 +14,7 @@ updates:
   - package-ecosystem: "npm"
     directory: "/examples/express-sample"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     commit-message:
       prefix: "chore"
       include: "scope"
@@ -27,7 +27,7 @@ updates:
   - package-ecosystem: "npm"
     directory: "/examples/using-domains"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     commit-message:
       prefix: "chore"
       include: "scope"
@@ -40,7 +40,7 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     commit-message:
       prefix: "chore"
       include: "scope"
