@@ -28,7 +28,10 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm test
+    # Run static analysis on JS files
     - run: npm run eslint
+    # Run static analysis on TS files
+    - run: npm run tseslint
 
   # Checks code formatting, fails if there are changes after applying prettier.
   # Based on this example here:

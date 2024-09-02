@@ -31,8 +31,10 @@
     "CHANGELOG.md"
   ],
   "scripts": {
-    "//eslint": "performs static analysis over project files and examples",
-    "eslint": "eslint --fix lib/*.ts test/*.js examples/**/*.js",
+    "//eslint": "performs static analysis over JS files and examples",
+    "eslint": "eslint --config eslint.config.mjs --fix test/*.js examples/**/*.js",
+    "//tseslint": "performs static analysis over TS files and examples",
+    "tseslint": "eslint --config tseslint.config.mjs --fix lib/*.ts",
     "//prettier": "performs code formatting over project files and examples",
     "prettier": "prettier --write lib/*.ts test/*.js examples",
     "//prepare": "prepare project for distribution",
