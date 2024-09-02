@@ -422,10 +422,8 @@ test("filter keys tests", function (t) {
     password: "nice try",
     remember: true,
   };
-  var queryString = { username: "admin@raygun.io",
-    remember: false };
-  var headers = { "X-ApiKey": "123456",
-    Host: "app.raygun.io" };
+  var queryString = { username: "admin@raygun.io", remember: false };
+  var headers = { "X-ApiKey": "123456", Host: "app.raygun.io" };
   builder.setRequestDetails({
     body: body,
     query: queryString,

@@ -49,8 +49,7 @@ function makeClientWithMockServer(clientOptions = {}) {
 
       resolve({
         client,
-        server: { entries,
-          bulkEntries },
+        server: { entries, bulkEntries },
         address,
         stop: () => {
           httpTerminator({

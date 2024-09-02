@@ -41,11 +41,9 @@ export class RaygunBatchTransport {
 
   private batchId: number = 0;
 
-  private batchState: BatchState = { messages: [],
-    messageSizeInBytes: 0 };
+  private batchState: BatchState = { messages: [], messageSizeInBytes: 0 };
 
-  constructor(options: { interval: number;
-    httpOptions: HTTPOptions; }) {
+  constructor(options: { interval: number; httpOptions: HTTPOptions }) {
     this.interval = options.interval;
     this.httpOptions = options.httpOptions;
   }
@@ -106,10 +104,8 @@ export class RaygunBatchTransport {
     }
 
     const promise = new Promise<IncomingMessage>((resolve, reject) => {
-      const promise = { resolve,
-        reject };
-      this.batchState.messages.push({ serializedMessage,
-        promise });
+      const promise = { resolve, reject };
+      this.batchState.messages.push({ serializedMessage, promise });
     });
 
     const batchIsFull = this.batchState.messages.length === 100;
@@ -134,8 +130,7 @@ export class RaygunBatchTransport {
 
     this.sendBatch(batch);
 
-    this.batchState = { messages: [],
-      messageSizeInBytes: 0 };
+    this.batchState = { messages: [], messageSizeInBytes: 0 };
 
     this.stopProcessing();
   }
