@@ -78,6 +78,7 @@ export type HTTPOptions = {
   host: string | undefined;
   port: number | undefined;
   apiKey: string;
+  timeout?: number;
 };
 
 // Allow any because users are free to set anything as CustomData
@@ -179,6 +180,7 @@ export type RaygunOptions = {
   host?: string;
   port?: number;
   useSSL?: boolean;
+  timeout?: number;
   onBeforeSend?: Hook<Message>;
   offlineStorage?: IOfflineStorage;
   offlineStorageOptions?: OfflineStorageOptions;

@@ -79,6 +79,8 @@ class Raygun {
 
   _useSSL: boolean | undefined;
 
+  _timeout: number | undefined;
+
   _onBeforeSend: Hook<Message | null> | undefined;
 
   _offlineStorage: IOfflineStorage | undefined;
@@ -118,6 +120,7 @@ class Raygun {
     this._port = options.port;
     this._useSSL = options.useSSL !== false;
     this._onBeforeSend = options.onBeforeSend;
+    this._timeout = options.timeout;
     this._isOffline = options.isOffline;
     this._groupingKey = options.groupingKey;
     this._tags = options.tags;
@@ -570,7 +573,8 @@ class Raygun {
           host: this._host,
           port: this._port,
           useSSL: !!this._useSSL,
-          apiKey,
+          apiKey: apiKey,
+          ...(!this._batch && { timeout: this._timeout || 10000 }), // This can be called in batch mode, where t/o is unwanted, so only set if batch is enabled
         },
       },
     };
@@ -583,6 +587,7 @@ class Raygun {
       port: this._port,
       useSSL: this._useSSL || false,
       apiKey: this._apiKey || "",
+      ...(!this._batch && { timeout: this._timeout || 10000 }), // This can be called in batch mode, where t/o is unwanted, so only set if batch is enabled
     };
 
     return {
