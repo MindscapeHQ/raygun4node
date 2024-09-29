@@ -577,7 +577,7 @@ class Raygun {
           port: this._port,
           useSSL: !!this._useSSL,
           apiKey: apiKey,
-          ...(!this._batch && { timeout: this._timeout || DEFAULT_TIMEOUT }), // This can be called in batch mode, where t/o is unwanted, so only set if batch is enabled
+          ...(!this._batch && { timeout: this._timeout || DEFAULT_TIMEOUT }), // This can be called via batch mode, where the normal timeout is not used, so only set if batch is disabled
         },
       },
     };
@@ -590,7 +590,7 @@ class Raygun {
       port: this._port,
       useSSL: this._useSSL || false,
       apiKey: this._apiKey || "",
-      ...(!this._batch && { timeout: this._timeout || DEFAULT_TIMEOUT }), // This can be called in batch mode, where t/o is unwanted, so only set if batch is enabled
+      ...(!this._batch && { timeout: this._timeout || DEFAULT_TIMEOUT }), // This can be called in batch mode, where the normal timeout is not used, so only set if batch is disabled
     };
 
     return {
