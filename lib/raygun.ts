@@ -61,6 +61,7 @@ try {
 type SendCB = (error: Error | null, items: string[] | undefined) => void;
 
 const DEFAULT_BATCH_FREQUENCY = 1000; // ms
+const DEFAULT_TIMEOUT = 5000; // ms
 
 function emptyCallback() {}
 
@@ -574,7 +575,7 @@ class Raygun {
           port: this._port,
           useSSL: !!this._useSSL,
           apiKey: apiKey,
-          ...(!this._batch && { timeout: this._timeout || 10000 }), // This can be called in batch mode, where t/o is unwanted, so only set if batch is enabled
+          ...(!this._batch && { timeout: this._timeout || DEFAULT_TIMEOUT }), // This can be called in batch mode, where t/o is unwanted, so only set if batch is enabled
         },
       },
     };
@@ -587,7 +588,7 @@ class Raygun {
       port: this._port,
       useSSL: this._useSSL || false,
       apiKey: this._apiKey || "",
-      ...(!this._batch && { timeout: this._timeout || 10000 }), // This can be called in batch mode, where t/o is unwanted, so only set if batch is enabled
+      ...(!this._batch && { timeout: this._timeout || DEFAULT_TIMEOUT }), // This can be called in batch mode, where t/o is unwanted, so only set if batch is enabled
     };
 
     return {
