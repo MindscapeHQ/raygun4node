@@ -192,6 +192,7 @@ export type RaygunOptions = {
   innerErrorFieldName?: string;
   batch?: boolean;
   batchFrequency?: number;
+  batchTimeout?: number;
   reportUncaughtExceptions?: boolean;
 };
 

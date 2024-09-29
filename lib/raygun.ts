@@ -140,6 +140,7 @@ class Raygun {
 
     if (options.batch && this._apiKey) {
       const frequency = options.batchFrequency || DEFAULT_BATCH_FREQUENCY;
+      const batchTimeout = options.batchTimeout || DEFAULT_TIMEOUT;
       this._batch = options.batch;
       this._batchTransport = new RaygunBatchTransport({
         interval: frequency,
@@ -148,6 +149,7 @@ class Raygun {
           port: this._port,
           useSSL: !!this._useSSL,
           apiKey: this._apiKey,
+          timeout: batchTimeout,
         },
       });
     }
