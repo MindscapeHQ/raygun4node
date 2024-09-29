@@ -49,21 +49,21 @@ test("async send complex", {}, function (t) {
 });
 
 test("async send complex with timeout", {}, function (t) {
-    t.plan(1);
+  t.plan(1);
 
-    let client = new Raygun.Client()
-        .init({ apiKey: API_KEY , timeout: 5000 })
-        .setVersion("1.0.0.0");
+  let client = new Raygun.Client()
+    .init({ apiKey: API_KEY, timeout: 5000 })
+    .setVersion("1.0.0.0");
 
-    client
-        .send(new Error())
-        .then((response) => {
-            t.equal(response.statusCode, 202);
-            t.end();
-        })
-        .catch((err) => {
-            t.fail(err);
-        });
+  client
+    .send(new Error())
+    .then((response) => {
+      t.equal(response.statusCode, 202);
+      t.end();
+    })
+    .catch((err) => {
+      t.fail(err);
+    });
 });
 
 test("async send with inner error", {}, function (t) {

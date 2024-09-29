@@ -62,11 +62,11 @@ export function send(
           // if a timeout was set, destroy the request after successful completion
           if (options.http.timeout) {
             debug(
-            `[raygun.transport.ts] Destroying request for message: ${options.message}`,
+              `[raygun.transport.ts] Destroying request for message: ${options.message}`,
             );
             request.destroy();
             debug(
-            `[raygun.transport.ts] Request destroyed for message: ${options.message}`,
+              `[raygun.transport.ts] Request destroyed for message: ${options.message}`,
             );
           }
         },
@@ -78,7 +78,7 @@ export function send(
           console.error(
             `[Raygun4Node] request timed out while attempting to send error with message: ${options.message}`,
           );
-          request.destroy(new Error('Request timed out'));
+          request.destroy(new Error("Request timed out"));
         });
       }
 
