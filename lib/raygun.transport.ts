@@ -73,6 +73,7 @@ export function send(
       );
 
       if (options.http.timeout) {
+        debug(`[raygun.transport.ts] Timeout set: ${options.http.timeout}ms`);
         request.setTimeout(options.http.timeout, () => {
           console.error(
             `[Raygun4Node] request timed out while attempting to send error with message: ${options.message}`,
@@ -80,8 +81,6 @@ export function send(
           request.destroy(new Error('Request timed out'));
         });
       }
-
-      debug(`[raygun.transport.ts] HTTP Options set: ${httpOptions}`);
 
       request.on("error", function (e) {
         console.error(
@@ -97,7 +96,7 @@ export function send(
     });
   } catch (e) {
     console.error(
-      `[Raygun4Node] error ${e} occurred while attempting to send error with message: ${options.message}`,
+      `[Raygun4Node] Error "${e}" occurred while attempting to send error with message: ${options.message}`,
     );
     return Promise.reject(e);
   }
