@@ -148,7 +148,7 @@ class Raygun {
           port: this._port,
           useSSL: !!this._useSSL,
           apiKey: this._apiKey,
-          timeout: this._timeout || DEFAULT_TIMEOUT
+          timeout: this._timeout || DEFAULT_TIMEOUT,
         },
       });
     }
@@ -589,7 +589,7 @@ class Raygun {
       port: this._port,
       useSSL: this._useSSL || false,
       apiKey: this._apiKey || "",
-      timeout: this._timeout || DEFAULT_TIMEOUT, 
+      timeout: this._timeout || DEFAULT_TIMEOUT,
     };
 
     return {
