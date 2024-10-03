@@ -18,6 +18,8 @@ const API_HOST = "api.raygun.io";
 const DEFAULT_ENDPOINT = "/entries";
 const BATCH_ENDPOINT = "/entries/bulk";
 
+const debug = require("debug")("raygun");
+
 export function sendBatch(options: SendOptions): Promise<IncomingMessage> {
   return send(options, BATCH_ENDPOINT);
 }
@@ -57,12 +59,27 @@ export function send(
         (response: IncomingMessage) => {
           // request completed successfully
           resolve(response);
+          // destroy the request after successful completion
+          request.destroy();
+          debug(
+            `[raygun.transport.ts] Request destroyed for message: ${options.message}`,
+          );
         },
       );
 
+      if (options.http.timeout) {
+        debug(`[raygun.transport.ts] Timeout set: ${options.http.timeout}ms`);
+        request.setTimeout(options.http.timeout, () => {
+          console.error(
+            `[Raygun4Node] request timed out while attempting to send error with message: ${options.message}`,
+          );
+          request.destroy(new Error("Request timed out"));
+        });
+      }
+
       request.on("error", function (e) {
         console.error(
-          `[Raygun4Node] error ${e.message} occurred while attempting to send error with message: ${options.message}`,
+          `[Raygun4Node] Error with details "${e.message}" occurred while attempting to send error with message: ${options.message}`,
         );
 
         // request failed
@@ -74,7 +91,7 @@ export function send(
     });
   } catch (e) {
     console.error(
-      `[Raygun4Node] error ${e} occurred while attempting to send error with message: ${options.message}`,
+      `[Raygun4Node] Error "${e}" occurred while attempting to send error with message: ${options.message}`,
     );
     return Promise.reject(e);
   }

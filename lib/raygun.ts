@@ -61,6 +61,7 @@ try {
 type SendCB = (error: Error | null, items: string[] | undefined) => void;
 
 const DEFAULT_BATCH_FREQUENCY = 1000; // ms
+const DEFAULT_TIMEOUT = 5000; // ms
 
 function emptyCallback() {}
 
@@ -78,6 +79,8 @@ class Raygun {
   _port: number | undefined;
 
   _useSSL: boolean | undefined;
+
+  _timeout: number | undefined;
 
   _onBeforeSend: Hook<Message | null> | undefined;
 
@@ -118,6 +121,7 @@ class Raygun {
     this._port = options.port;
     this._useSSL = options.useSSL !== false;
     this._onBeforeSend = options.onBeforeSend;
+    this._timeout = options.timeout;
     this._isOffline = options.isOffline;
     this._groupingKey = options.groupingKey;
     this._tags = options.tags;
@@ -144,6 +148,7 @@ class Raygun {
           port: this._port,
           useSSL: !!this._useSSL,
           apiKey: this._apiKey,
+          timeout: this._timeout || DEFAULT_TIMEOUT,
         },
       });
     }
@@ -570,7 +575,8 @@ class Raygun {
           host: this._host,
           port: this._port,
           useSSL: !!this._useSSL,
-          apiKey,
+          apiKey: apiKey,
+          timeout: this._timeout || DEFAULT_TIMEOUT,
         },
       },
     };
@@ -583,6 +589,7 @@ class Raygun {
       port: this._port,
       useSSL: this._useSSL || false,
       apiKey: this._apiKey || "",
+      timeout: this._timeout || DEFAULT_TIMEOUT,
     };
 
     return {

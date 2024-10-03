@@ -92,13 +92,24 @@ The `send()` function is asynchronous and returns a `Promise` of type `IncomingM
 
 Note that `IncomingMessage` can be `null` if the request was stored because the application was offline.
 
-`IncomingMessage` is the response from the Raygun API - there's nothing in the body, it's just a status code response. 
-If everything went ok, you'll get a 202 response code. 
-Otherwise, we throw 401 for incorrect API keys, 403 if you're over your plan limits, or anything in the 500+ range for internal errors.
+`IncomingMessage` is the response from the Raygun API - there's nothing in the body, it's just a status code response. If everything went ok, you'll get a 202 response code. 
+Otherwise, we return 401 for incorrect API keys, 403 if you're over your plan limits, or anything in the 500+ range for internal errors.
 
-We use the nodejs http/https library to make the POST to Raygun, you can see more documentation about that callback here: https://nodejs.org/api/http.html#http_http_request_options_callback
+We use the nodejs http/https library to make the POST to Raygun, you can see more documentation about that callback here: https://nodejs.org/api/http.html#http_http_request_options_callback .
 
 You can `await` the call to obtain the result, or use `then/catch`.
+
+The default timeout for the transport layer is 5000ms. You can override this value by setting a custom `timeout` (also in ms) when you initialize the Raygun client:
+
+```typescript
+import * as Raygun from 'raygun';
+
+const raygunClient = new Raygun.Client().init({
+  apiKey: 'YOUR_API_KEY',
+  ...
+  timeout: 3000 // defaults to 5000ms
+});
+```
 
 #### Using `await`
 
@@ -418,7 +429,18 @@ If your application generates and reports large volumes of errors, especially in
 
 You can control how often batches are processed and sent by providing a `batchFrequency` option, which is a number in milliseconds.
 
-In a future version the batch transport will likely be enabled by default.
+The default timeout for batch transport calls is 5000ms. You can override this value by setting a custom `timeout` (also in ms) when you initialize the Raygun client:
+
+```typescript
+import * as Raygun from 'raygun';
+
+const raygunClient = new Raygun.Client().init({
+  apiKey: 'YOUR_API_KEY',
+  batch: true,
+  batchFrequency: 5000, // defaults to 1000ms (every second)
+  timeout: 10000 // defaults to 5000ms
+});
+```
 
 ### Offline caching
 
