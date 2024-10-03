@@ -59,16 +59,11 @@ export function send(
         (response: IncomingMessage) => {
           // request completed successfully
           resolve(response);
-          // if a timeout was set, destroy the request after successful completion
-          if (options.http.timeout) {
-            debug(
-              `[raygun.transport.ts] Destroying request for message: ${options.message}`,
-            );
-            request.destroy();
-            debug(
-              `[raygun.transport.ts] Request destroyed for message: ${options.message}`,
-            );
-          }
+          // destroy the request after successful completion
+          request.destroy();
+          debug(
+            `[raygun.transport.ts] Request destroyed for message: ${options.message}`,
+          );
         },
       );
 
