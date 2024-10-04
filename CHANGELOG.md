@@ -1,3 +1,32 @@
+## 2.1.0-alpha
+
+- feat: Add configurable timeouts  (#320) (2024-10-03)
+- feat: Support Node v22 (#317) (2024-09-25)
+- ci: Set dependabot interval to "monthly" (#295) (2024-07-23)
+- chore(deps-dev): bump @stylistic/eslint-plugin-ts from 2.7.2 to 2.8.0 (#323) (2024-10-01)
+- chore(deps-dev): bump @stylistic/eslint-plugin from 2.7.2 to 2.8.0 (#325) (2024-10-01)
+- chore(deps): bump debug from 4.3.5 to 4.3.7 (#324) (2024-10-01)
+- chore(deps-dev): bump eslint from 8.57.0 to 9.11.1 (#326) (2024-10-01)
+- chore(deps): bump serve-static and express (#315) (2024-09-23)
+- chore(deps): bump body-parser and express in /examples/express-sample (#314) (2024-09-23)
+- chore(deps-dev): bump typescript-eslint from 7.17.0 to 8.3.0 (#310) (2024-09-02)
+- chore(deps-dev): bump tap from 21.0.0 to 21.0.1 (#309) (2024-09-02)
+- chore(deps-dev): bump @stylistic/eslint-plugin-ts from 2.6.0 to 2.7.2 (#308) (2024-09-02)
+- chore(deps-dev): bump nock from 13.5.4 to 13.5.5 (#307) (2024-09-02)
+- chore(deps-dev): bump @stylistic/eslint-plugin from 2.6.0 to 2.7.2 (#306) (2024-09-02)
+- chore(deps-dev): bump @types/node from 20.14.11 to 22.0.2 (#303) (2024-08-01)
+- chore(deps-dev): bump @stylistic/eslint-plugin from 2.3.0 to 2.6.0 (#302) (2024-08-01)
+- chore(deps-dev): bump @eslint/js from 9.7.0 to 9.8.0 (#301) (2024-08-01)
+- chore(deps-dev): bump typescript-eslint from 7.16.1 to 7.17.0 (#300) (2024-07-23)
+- chore(deps-dev): bump typescript from 5.5.3 to 5.5.4 (#299) (2024-07-23)
+- chore(deps-dev): bump semver from 7.6.2 to 7.6.3 (#298) (2024-07-22)
+- chore(deps-dev): bump @types/node from 20.14.10 to 20.14.11 (#296) (2024-07-22)
+- chore(deps-dev): bump typescript-eslint from 7.16.0 to 7.16.1 (#297) (2024-07-22)
+- chore(deps-dev): bump tap from 20.0.3 to 21.0.0 (#294) (2024-07-17)
+- chore(deps-dev): bump typescript-eslint from 7.15.0 to 7.16.0 (#293) (2024-07-17)
+- chore(deps-dev): bump prettier from 3.3.2 to 3.3.3 (#292) (2024-07-17)
+- chore(deps-dev): bump @eslint/js from 9.6.0 to 9.7.0 (#291) (2024-07-17)
+
 ## 2.0.0
 
 - refactor!: #262 remove deprecated methods (#288)
