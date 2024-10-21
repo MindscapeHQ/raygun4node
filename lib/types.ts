@@ -70,7 +70,7 @@ export type Tag = string;
 
 export type SendOptions = {
   message: string;
-  http: HTTPOptions;
+  http?: HTTPOptions;
 };
 
 export type HTTPOptions = {

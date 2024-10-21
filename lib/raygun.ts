@@ -571,13 +571,17 @@ class Raygun {
       skip: skip,
       options: {
         message: JSON.stringify(message),
-        http: {
-          host: this._host,
-          port: this._port,
-          useSSL: !!this._useSSL,
-          apiKey: apiKey,
-          timeout: this._timeout || DEFAULT_TIMEOUT,
-        },
+        ...(this._batch
+          ? {}
+          : {
+              http: {
+                host: this._host,
+                port: this._port,
+                useSSL: !!this._useSSL,
+                apiKey: apiKey,
+                timeout: this._timeout || DEFAULT_TIMEOUT,
+              },
+            }),
       },
     };
   }
