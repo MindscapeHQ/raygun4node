@@ -27,7 +27,7 @@ export function addRequestBreadcrumb(request: Request) {
   };
 
   debug(
-    `[raygun.breadcrumbs.express.ts] recorded request breadcrumb: ${internalCrumb}`,
+    `[raygun.breadcrumbs.express.ts] recorded request breadcrumb: ${JSON.stringify(internalCrumb, undefined, 2)}`,
   );
 
   crumbs.push(internalCrumb);

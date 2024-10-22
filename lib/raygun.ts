@@ -38,8 +38,16 @@ import * as raygunSyncTransport from "./raygun.sync.transport";
 import { v4 as uuidv4 } from "uuid";
 
 type SendOptionsResult =
-  | { valid: true; message: Message; options: SendOptions; skip: boolean }
-  | { valid: false; message: Message };
+  | {
+      valid: true;
+      message: Message;
+      options: SendOptions;
+      skip: boolean;
+    }
+  | {
+      valid: false;
+      message: Message;
+    };
 
 const debug = require("debug")("raygun");
 
@@ -61,6 +69,7 @@ try {
 type SendCB = (error: Error | null, items: string[] | undefined) => void;
 
 const DEFAULT_BATCH_FREQUENCY = 1000; // ms
+const DEFAULT_TIMEOUT = 5000; // ms
 
 function emptyCallback() {}
 
@@ -78,6 +87,8 @@ class Raygun {
   _port: number | undefined;
 
   _useSSL: boolean | undefined;
+
+  _timeout: number | undefined;
 
   _onBeforeSend: Hook<Message | null> | undefined;
 
@@ -118,6 +129,7 @@ class Raygun {
     this._port = options.port;
     this._useSSL = options.useSSL !== false;
     this._onBeforeSend = options.onBeforeSend;
+    this._timeout = options.timeout;
     this._isOffline = options.isOffline;
     this._groupingKey = options.groupingKey;
     this._tags = options.tags;
@@ -144,6 +156,7 @@ class Raygun {
           port: this._port,
           useSSL: !!this._useSSL,
           apiKey: this._apiKey,
+          timeout: this._timeout || DEFAULT_TIMEOUT,
         },
       });
     }
@@ -557,7 +570,10 @@ class Raygun {
     const apiKey = this._apiKey;
 
     if (!apiKey) {
-      return { valid: false, message };
+      return {
+        valid: false,
+        message,
+      };
     }
 
     return {
@@ -566,12 +582,17 @@ class Raygun {
       skip: skip,
       options: {
         message: JSON.stringify(message),
-        http: {
-          host: this._host,
-          port: this._port,
-          useSSL: !!this._useSSL,
-          apiKey,
-        },
+        ...(this._batch
+          ? {}
+          : {
+              http: {
+                host: this._host,
+                port: this._port,
+                useSSL: !!this._useSSL,
+                apiKey: apiKey,
+                timeout: this._timeout || DEFAULT_TIMEOUT,
+              },
+            }),
       },
     };
   }
@@ -583,6 +604,7 @@ class Raygun {
       port: this._port,
       useSSL: this._useSSL || false,
       apiKey: this._apiKey || "",
+      timeout: this._timeout || DEFAULT_TIMEOUT,
     };
 
     return {
@@ -590,12 +612,16 @@ class Raygun {
         transport
           .send({
             message,
-            http: httpOptions,
+            ...(transport instanceof RaygunBatchTransport
+              ? {}
+              : { http: httpOptions }),
           })
           .then((response) => {
-            debug(
-              `[raygun.ts] Sent message from offline transport: ${response}`,
-            );
+            if (!(transport instanceof RaygunBatchTransport)) {
+              debug(
+                `[raygun.ts] Sent message from offline transport: ${response?.statusCode} ${response?.statusMessage}`,
+              );
+            }
           })
           .catch((error) => {
             console.error(

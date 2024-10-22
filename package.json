@@ -1,7 +1,7 @@
 {
   "name": "raygun",
   "description": "Raygun package for Node.js, written in TypeScript",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "homepage": "https://github.com/MindscapeHQ/raygun4node",
   "author": {
     "name": "Raygun",
@@ -31,8 +31,10 @@
     "CHANGELOG.md"
   ],
   "scripts": {
-    "//eslint": "performs static analysis over project files and examples",
-    "eslint": "eslint --fix lib/*.ts test/*.js examples/**/*.js",
+    "//eslint": "performs static analysis over JS files and examples",
+    "eslint": "eslint --config eslint.config.mjs --fix test/*.js examples/**/*.js",
+    "//tseslint": "performs static analysis over TS files and examples",
+    "tseslint": "eslint --config tseslint.config.mjs --fix lib/*.ts",
     "//prettier": "performs code formatting over project files and examples",
     "prettier": "prettier --write lib/*.ts test/*.js examples",
     "//prepare": "prepare project for distribution",
@@ -44,10 +46,10 @@
     "@eslint/js": "^9.2.0",
     "@stylistic/eslint-plugin": "^2.0.0",
     "@stylistic/eslint-plugin-ts": "^2.0.0",
-    "@types/node": "^20.12.8",
+    "@types/node": "^22.0.2",
     "@types/stack-trace": "0.0.33",
     "@types/uuid": "^10.0.0",
-    "eslint": "^8.57.0",
+    "eslint": "^9.11.1",
     "eslint-plugin-tsdoc": "^0.3.0",
     "express": "^4.19.2",
     "http-terminator": "^3.2.0",
@@ -55,10 +57,10 @@
     "nock": "~13",
     "prettier": "^3.2.5",
     "semver": "^7.6.0",
-    "tap": "^20.0.3",
+    "tap": "^21.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5",
-    "typescript-eslint": "^7.8.0",
+    "typescript-eslint": "^8.3.0",
     "verror": "^1.10.1"
   },
   "dependencies": {
