@@ -39,21 +39,21 @@ export function send(
     const data = Buffer.from(options.message);
 
     const httpOptions = {
-      host: options.http.host || API_HOST,
-      port: options.http.port || 443,
+      host: options.http?.host || API_HOST,
+      port: options.http?.port || 443,
       path: path,
       method: "POST",
       headers: {
         Host: API_HOST,
         "Content-Type": "application/json",
         "Content-Length": data.length,
-        "X-ApiKey": options.http.apiKey,
+        "X-ApiKey": options.http?.apiKey,
       },
     };
 
     // Wrap HTTP request in Promise
     return new Promise((resolve, reject) => {
-      const httpLib = options.http.useSSL ? https : http;
+      const httpLib = options.http?.useSSL ? https : http;
       const request = httpLib.request(
         httpOptions,
         (response: IncomingMessage) => {
@@ -67,7 +67,7 @@ export function send(
         },
       );
 
-      if (options.http.timeout) {
+      if (options.http?.timeout) {
         debug(`[raygun.transport.ts] Timeout set: ${options.http.timeout}ms`);
         request.setTimeout(options.http.timeout, () => {
           console.error(

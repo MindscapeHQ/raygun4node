@@ -38,8 +38,16 @@ import * as raygunSyncTransport from "./raygun.sync.transport";
 import { v4 as uuidv4 } from "uuid";
 
 type SendOptionsResult =
-  | { valid: true; message: Message; options: SendOptions; skip: boolean }
-  | { valid: false; message: Message };
+  | {
+      valid: true;
+      message: Message;
+      options: SendOptions;
+      skip: boolean;
+    }
+  | {
+      valid: false;
+      message: Message;
+    };
 
 const debug = require("debug")("raygun");
 
@@ -562,7 +570,10 @@ class Raygun {
     const apiKey = this._apiKey;
 
     if (!apiKey) {
-      return { valid: false, message };
+      return {
+        valid: false,
+        message,
+      };
     }
 
     return {
@@ -571,13 +582,17 @@ class Raygun {
       skip: skip,
       options: {
         message: JSON.stringify(message),
-        http: {
-          host: this._host,
-          port: this._port,
-          useSSL: !!this._useSSL,
-          apiKey: apiKey,
-          timeout: this._timeout || DEFAULT_TIMEOUT,
-        },
+        ...(this._batch
+          ? {}
+          : {
+              http: {
+                host: this._host,
+                port: this._port,
+                useSSL: !!this._useSSL,
+                apiKey: apiKey,
+                timeout: this._timeout || DEFAULT_TIMEOUT,
+              },
+            }),
       },
     };
   }
@@ -597,12 +612,16 @@ class Raygun {
         transport
           .send({
             message,
-            http: httpOptions,
+            ...(transport instanceof RaygunBatchTransport
+              ? {}
+              : { http: httpOptions }),
           })
           .then((response) => {
-            debug(
-              `[raygun.ts] Sent message from offline transport: ${response}`,
-            );
+            if (!(transport instanceof RaygunBatchTransport)) {
+              debug(
+                `[raygun.ts] Sent message from offline transport: ${response?.statusCode} ${response?.statusMessage}`,
+              );
+            }
           })
           .catch((error) => {
             console.error(
