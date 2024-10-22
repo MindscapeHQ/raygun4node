@@ -95,7 +95,7 @@ Note that `IncomingMessage` can be `null` if the request was stored because the 
 `IncomingMessage` is the response from the Raygun API - there's nothing in the body, it's just a status code response. If everything went ok, you'll get a 202 response code. 
 Otherwise, we return 401 for incorrect API keys, 403 if you're over your plan limits, or anything in the 500+ range for internal errors.
 
-We use the nodejs http/https library to make the POST to Raygun, you can see more documentation about that callback here: https://nodejs.org/api/http.html#http_http_request_options_callback .
+We use the nodejs `http`/`https` library to make the POST to Raygun, you can see more documentation about that callback here: https://nodejs.org/api/http.html#http_http_request_options_callback .
 
 You can `await` the call to obtain the result, or use `then/catch`.
 
@@ -444,9 +444,9 @@ const raygunClient = new Raygun.Client().init({
 
 ### Offline caching
 
-Raygun can cache errors thrown by your Node application when it's running in 'offline' mode. By default the offline cache is disabled. Raygun4Node doesn't detect network state change, that is up to the application using the library.
+Raygun can cache errors thrown by your Node application when it's running in 'offline' mode. By default the offline cache is disabled. Raygun4Node doesn't detect network state change, that is up to the application using the library to manage online/offline state changes. 
 
-Raygun includes an on-disk cache provider out of the box, which required write permissions to the folder you wish to use. You cal also pass in your own cache storage.
+Raygun includes an on-disk cache provider out of the box, which requires write permissions to the folder you wish to use. You can also pass in your own cache storage. The default, on-disk cache provider will store crash reports as individual `.json` files in the specified directory.
 
 ##### Getting setup with the default offline provide
 
@@ -465,7 +465,7 @@ const raygunClient = new raygun.Client().init({
 
 ##### Changing online/offline state
 
-The Raygun client allows you to set it's online state when your application is running.
+The Raygun client allows you to set its online state when your application is running.
 
 *To mark as offline*
 
@@ -475,7 +475,9 @@ The Raygun client allows you to set it's online state when your application is r
 
     raygunClient.online();
 
-When marking as online any cached errors will be forwarded to Raygun.
+When marking as online any cached errors from the currently configured cache provider will be forwarded to Raygun. This action will respect whatever transport mode (batched or individual HTTP requests) you have currently configured. 
+
+If you change between different cache providers or change the storage directory of the on-disk cache provider, please make sure to trigger processing the offline reports before making such a change.
 
 ##### Custom cache provider
 
