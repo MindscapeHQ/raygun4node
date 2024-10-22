@@ -50,8 +50,6 @@ export default tseslint.config(
             "@stylistic/semi": ["error", "always"],
             // Stick to double quotes
             "@stylistic/quotes": ["error", "double"],
-            // Always indent with two spaces
-            '@stylistic/ts/indent': ['error', 2],
             // Enforce curly braces spacing
             "@stylistic/ts/object-curly-spacing": ["error", "always"],
             // Enforce "one true brace style"
@@ -67,6 +65,7 @@ export default tseslint.config(
             "@stylistic/ts/no-extra-parens": ["off", 0],
             "@stylistic/ts/quote-props": ["off", 0],
             "@stylistic/ts/space-before-function-paren": ["off", 0],
+            "@stylistic/ts/indent": ["off", 0],
             // Documentation format check
             "tsdoc/syntax": "warn",
             //"@stylistic/indent": "off",
