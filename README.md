@@ -463,7 +463,7 @@ const raygunClient = new raygun.Client().init({
 });
 ```
 
-Setting `isOffline: true` tells the provider to start in `offline` mode. It will also trigger initialisations of resp. the connection to the cache as specified in `offlineStorageOptions`. 
+Setting `isOffline: true` tells the provider to start in `offline` mode. It will also trigger initialisations of respectively the connection to the cache as specified in `offlineStorageOptions`. 
 
 ##### Changing online/offline state
 
