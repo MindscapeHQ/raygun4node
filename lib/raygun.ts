@@ -608,9 +608,7 @@ class Raygun {
             message,
             ...(transport instanceof RaygunBatchTransport
               ? {}
-              : {
-                  http: httpOptions,
-                }),
+              : { http: httpOptions }),
           })
           .then((response) => {
             if (!(transport instanceof RaygunBatchTransport)) {
