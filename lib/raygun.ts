@@ -38,8 +38,12 @@ import * as raygunSyncTransport from "./raygun.sync.transport";
 import { v4 as uuidv4 } from "uuid";
 
 type SendOptionsResult =
-  | { valid: true; message: Message; options: SendOptions; skip: boolean }
-  | { valid: false; message: Message };
+  | { valid: true;
+    message: Message;
+    options: SendOptions;
+    skip: boolean; }
+    | { valid: false;
+      message: Message; };
 
 const debug = require("debug")("raygun");
 
@@ -562,7 +566,8 @@ class Raygun {
     const apiKey = this._apiKey;
 
     if (!apiKey) {
-      return { valid: false, message };
+      return { valid: false,
+        message };
     }
 
     return {
