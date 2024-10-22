@@ -601,12 +601,18 @@ class Raygun {
         transport
           .send({
             message,
-            http: httpOptions,
+            ...(transport instanceof RaygunBatchTransport 
+              ? {}
+              : {
+                  http: httpOptions
+              }),
           })
           .then((response) => {
-            debug(
-              `[raygun.ts] Sent message from offline transport: ${response}`,
-            );
+            if (!(transport instanceof RaygunBatchTransport)) {
+                debug(
+                    `[raygun.ts] Sent message from offline transport: ${response?.statusCode} ${response?.statusMessage}`,
+                );
+            }
           })
           .catch((error) => {
             console.error(
