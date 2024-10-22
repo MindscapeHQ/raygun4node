@@ -68,7 +68,6 @@ export default tseslint.config(
             "@stylistic/ts/indent": ["off", 0],
             // Documentation format check
             "tsdoc/syntax": "warn",
-            //"@stylistic/indent": "off",
         }
     }
 );
