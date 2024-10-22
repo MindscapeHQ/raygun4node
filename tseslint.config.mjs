@@ -67,7 +67,7 @@ export default tseslint.config(
             "@stylistic/ts/space-before-function-paren": ["off", 0],
             "@stylistic/ts/indent": ["off", 0],
             // Documentation format check
-            "tsdoc/syntax": "warn",
+            "tsdoc/syntax": "warn"
         }
     }
 );
