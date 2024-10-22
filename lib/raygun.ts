@@ -39,15 +39,15 @@ import { v4 as uuidv4 } from "uuid";
 
 type SendOptionsResult =
   | {
-    valid: true;
-    message: Message;
-    options: SendOptions;
-    skip: boolean;
-  }
+      valid: true;
+      message: Message;
+      options: SendOptions;
+      skip: boolean;
+    }
   | {
-    valid: false;
-    message: Message;
-  };
+      valid: false;
+      message: Message;
+    };
 
 const debug = require("debug")("raygun");
 
