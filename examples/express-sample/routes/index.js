@@ -50,7 +50,7 @@ router.get("/send", function (req, res, next) {
     .then((message) => {
       res.render("send", {
         title: "Sent custom error to Raygun",
-        body: `Raygun status code: ${message.statusCode}`,
+        body: `Raygun status code: ${message?.statusCode}`,
       });
     })
     .catch((error) => {
