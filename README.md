@@ -444,7 +444,7 @@ const raygunClient = new Raygun.Client().init({
 
 ### Offline caching
 
-Raygun can cache errors thrown by your Node application when it's running in 'offline' mode. By default the offline cache is disabled. Raygun4Node doesn't detect network state change, that is up to the application using the library to manage online/offline state changes. 
+Raygun can cache errors thrown by your Node application when it's running in 'offline' mode. By default the offline cache is disabled. Raygun4Node does not detect nor manage network state for you. It is up to the application using the library's functionality to manage online/offline state changes. 
 
 Raygun includes an on-disk cache provider out of the box, which requires write permissions to the folder you wish to use. You can also pass in your own cache storage. The default, on-disk cache provider will store crash reports as individual `.json` files in the specified directory.
 
@@ -455,13 +455,15 @@ When creating your Raygun client you need to pass through a cache path
 ```javascript
 const raygunClient = new raygun.Client().init({
   apiKey: 'YOUR_API_KEY',
-  isOffline: false,
+  isOffline: true,
   offlineStorageOptions: {
     cachePath: 'raygunCache/',
     cacheLimit: 1000 // defaults to 100 errors if you don't set this
   }
 });
 ```
+
+Setting `isOffline: true` tells the provider to start in `offline` mode. It will also trigger initialisations of resp. the connection to the cache as specified in `offlineStorageOptions`. 
 
 ##### Changing online/offline state
 
@@ -507,7 +509,7 @@ const raygunClient = new raygun.Client().init({
 
 See [lib/raygun.offline.ts](lib/raygun.offline.ts) for an example.
 
-We recommend that you limit the number of errors that you are caching so that you don't swamp the clients internet connection sending errors.
+We recommend that you limit the number of errors that you are caching so that you don't swamp the client's internet connection sending errors.
 
 ### Custom error grouping
 
@@ -623,7 +625,7 @@ View a screencast on creating an app with Node.js and Express.js, then hooking u
 You can enable logging of debug information from the Raygun client by setting the environment variable `DEBUG=raygun`. The client will then log information about transporting and storing errors, including timing information.
 
 ## Contributing
-In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using "npm test".
+In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using `npm run test`, `npm run eslint`, `npm run tseslint` and `npm run prettier`.
 
 ## Release History
 
