@@ -1,3 +1,8 @@
+## 2.1.0
+
+- chore(deps): bump cookie and express (#329) (2024-10-10)
+- chore(deps): bump cookie, cookie-parser and express in /examples/express-sample (#328) (2024-10-10)
+
 ## 2.1.0-alpha
 
 - feat: Add configurable timeouts  (#320) (2024-10-03)
