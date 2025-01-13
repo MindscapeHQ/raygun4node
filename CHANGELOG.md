@@ -1,6 +1,5 @@
 ## 2.2.0
 
-- feat: Simplication of HTTPOptions across transport, batch transport and offline. (#332) (2024-10-22)
 - docs: Some documentation improvements around online/offline behaviour. (#333) (2024-10-23)
 - chore(deps): bump cross-spawn from 7.0.3 to 7.0.6 in /examples/express-sample (#345) (2024-12-02)
 - chore(deps): bump debug from 4.3.7 to 4.4.0 (#346) (2025-01-06)
