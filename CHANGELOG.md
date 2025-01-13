@@ -1,4 +1,4 @@
-## 2.2.0
+## 2.1.1
 
 - docs: Some documentation improvements around online/offline behaviour. (#333) (2024-10-23)
 - chore(deps): bump cross-spawn from 7.0.3 to 7.0.6 in /examples/express-sample (#345) (2024-12-02)
