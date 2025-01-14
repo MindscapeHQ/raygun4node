@@ -16,6 +16,7 @@
 - chore(deps-dev): bump typescript-eslint from 8.3.0 to 8.12.2 (#339) (2024-11-01)
 - chore(deps-dev): bump @eslint/js from 9.11.1 to 9.13.0 (#337) (2024-11-01)
 - chore(deps-dev): bump typescript from 5.5.4 to 5.6.3 (#336) (2024-11-01)
+- chore: Updated package.json to deal with vuln in express dependency (#352) (2025-01-14)
 
 ## 2.1.0
 
