@@ -1,3 +1,23 @@
+## 2.1.1
+
+- docs: Some documentation improvements around online/offline behaviour. (#333) (2024-10-23)
+- chore(deps): bump cross-spawn from 7.0.3 to 7.0.6 in /examples/express-sample (#345) (2024-12-02)
+- chore(deps): bump debug from 4.3.7 to 4.4.0 (#346) (2025-01-06)
+- chore(deps): bump uuid from 10.0.0 to 11.0.2 (#338) (2024-11-01)
+- chore(deps): bump @types/express from 4.17.21 to 5.0.0 (#335) (2024-11-01)
+- chore(deps-dev): bump typescript from 5.6.3 to 5.7.2 (#349) (2025-01-06)
+- chore(deps-dev): bump typescript-eslint from 8.17.0 to 8.19.0 (#348) (2025-01-06)
+- chore(deps-dev): bump eslint from 9.16.0 to 9.17.0 (#350) (2025-01-06)
+- chore(deps-dev): bump eslint from 9.11.1 to 9.16.0 (#340) (2024-12-03)
+- chore(deps-dev): bump nock from 13.5.5 to 13.5.6 (#341) (2024-12-02)
+- chore(deps-dev): bump prettier from 3.3.3 to 3.4.1 (#342) (2024-12-02)
+- chore(deps-dev): bump @eslint/js from 9.13.0 to 9.16.0 (#343) (2024-12-02)
+- chore(deps-dev): bump @stylistic/eslint-plugin from 2.8.0 to 2.11.0 (#344) (2024-12-02)
+- chore(deps-dev): bump typescript-eslint from 8.3.0 to 8.12.2 (#339) (2024-11-01)
+- chore(deps-dev): bump @eslint/js from 9.11.1 to 9.13.0 (#337) (2024-11-01)
+- chore(deps-dev): bump typescript from 5.5.4 to 5.6.3 (#336) (2024-11-01)
+- chore: Updated package.json to deal with vuln in express dependency (#352) (2025-01-14)
+
 ## 2.1.0
 
 - chore(deps): bump cookie and express (#329) (2024-10-10)
