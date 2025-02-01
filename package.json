@@ -54,7 +54,7 @@
     "express": "^4.21.2",
     "http-terminator": "^3.2.0",
     "jshint": "^2.13.6",
-    "nock": "~13",
+    "nock": "~14",
     "prettier": "^3.2.5",
     "semver": "^7.6.0",
     "tap": "^21.0.0",
