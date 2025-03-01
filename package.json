@@ -45,7 +45,7 @@
   "devDependencies": {
     "@eslint/js": "^9.2.0",
     "@stylistic/eslint-plugin": "^2.11.0",
-    "@stylistic/eslint-plugin-ts": "^2.11.0",
+    "@stylistic/eslint-plugin-ts": "^4.1.0",
     "@types/node": "^22.0.2",
     "@types/stack-trace": "0.0.33",
     "@types/uuid": "^10.0.0",
