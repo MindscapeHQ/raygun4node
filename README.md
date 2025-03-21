@@ -624,9 +624,6 @@ View a screencast on creating an app with Node.js and Express.js, then hooking u
 ### Debug Logging
 You can enable logging of debug information from the Raygun client by setting the environment variable `DEBUG=raygun`. The client will then log information about transporting and storing errors, including timing information.
 
-## Contributing
-In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using `npm run test`, `npm run eslint`, `npm run tseslint` and `npm run prettier`.
-
 ## Release History
 
 [View the changelog here](CHANGELOG.md)
