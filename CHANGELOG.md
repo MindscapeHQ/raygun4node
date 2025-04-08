@@ -1,3 +1,25 @@
+## 2.1.2
+
+- fix(sdk): Add host to headers if specified (#373) (2025-04-08)
+- docs: add Releasing and Contributing (#365) (2025-03-21)
+- chore(deps-dev): bump typescript from 5.7.3 to 5.8.2 (#371) (2025-04-04)
+- chore(deps-dev): bump prettier from 3.4.2 to 3.5.3 (#370) (2025-04-01)
+- chore(deps): bump express and @types/express (#369) (2025-04-01)
+- chore(deps-dev): bump @eslint/js from 9.17.0 to 9.23.0 (#368) (2025-04-01)
+- chore(deps-dev): bump eslint from 9.17.0 to 9.23.0 (#367) (2025-04-01)
+- chore(deps): bump body-parser in /examples/express-sample (#366) (2025-04-01)
+- chore(deps-dev): bump prismjs from 1.29.0 to 1.30.0 (#364) (2025-03-11)
+- chore(deps-dev): bump @stylistic/eslint-plugin-ts from 2.11.0 to 4.1.0 (#362) (2025-03-03)
+- chore(deps-dev): bump typescript-eslint from 8.19.0 to 8.25.0 (#360) (2025-03-01)
+- chore(deps): bump uuid from 11.0.2 to 11.1.0 (#359) (2025-03-01)
+- chore(deps-dev): bump tap from 21.0.1 to 21.1.0 (#361) (2025-03-01)
+- chore(deps-dev): bump semver from 7.6.3 to 7.7.1 (#363) (2025-03-01)
+- chore(deps-dev): bump nock from 13.5.6 to 14.0.0 (#358) (2025-02-07)
+- chore(deps-dev): bump @types/node from 22.0.2 to 22.13.0 (#357) (2025-02-02)
+- chore(deps-dev): bump eslint-plugin-tsdoc from 0.3.0 to 0.4.0 (#355) (2025-02-02)
+- chore(deps-dev): bump typescript from 5.7.2 to 5.7.3 (#356) (2025-02-02)
+- chore(deps-dev): bump prettier from 3.4.1 to 3.4.2 (#354) (2025-02-02)
+
 ## 2.1.1
 
 - docs: Some documentation improvements around online/offline behaviour. (#333) (2024-10-23)
