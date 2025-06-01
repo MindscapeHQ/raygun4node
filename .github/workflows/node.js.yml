@@ -49,7 +49,7 @@ jobs:
           persist-credentials: false
 
       - name: Prettify code
-        uses: creyD/prettier_action@v4.3
+        uses: creyD/prettier_action@v4.5
         with:
           # "dry" causes that if any file is modified, the job fails
           dry: True
