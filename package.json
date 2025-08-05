@@ -57,10 +57,10 @@
     "nock": "~14",
     "prettier": "^3.2.5",
     "semver": "^7.6.0",
-    "tap": "^21.0.0",
+    "tap": "^21.1.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.2",
-    "typescript-eslint": "^8.29.0",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.39.0",
     "verror": "^1.10.1"
   },
   "dependencies": {

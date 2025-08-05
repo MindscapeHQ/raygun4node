@@ -1,3 +1,5 @@
+# Changelog
+
 ## 2.1.2
 
 - fix(sdk): Add host to headers if specified (#373) (2025-04-08)
@@ -151,46 +153,58 @@
 See README.md for more information.
 
 ## 0.15.0-0
+
 - async/await `send()` support
 - Upgrade dependencies
 - Improvements in filter method
 - Improvements in documentation
 
 ## 0.14.0
+
 - Upgrade dependencies
 - Support for Node v20
 
 ## 0.13.2
+
 - Fix batch transport keeping process alive
 - Fix batch transport stalling on huge errors
 - Improve batch transport performance with high error rates
 
 ## 0.13.1
+
 - Fix format of exceptions when calling `raygunClient.send` with a string value
 
 ## 0.13.0
+
 - Fatal errors can now be reported to Raygun by enabling the  `reportUncaughtExceptions` when initializing the client
 
 ## 0.12.4
+
 - Expose Raygun Client types for use in TypeScript projects
 
 ## 0.12.3
+
 - Fix regression where user function would not always be called
 
 ## 0.12.2
+
 - Fix regression where express middleware would not pass error to next middleware
 
 ## 0.12.1
+
 - Include @types/express as dependency
 
 ## 0.12.0
+
 - Add integration with raygun-apm, errors reported during a trace should link between trace and error
 
 ## 0.11.1
+
 - Fix send annotations requiring too many arguments
 - Add default export to module
 
 ## 0.11.0
+
 - Overhaul project to TypeScript, type definitions included in package
 - Unhandled exceptions are now correctly tagged
 - Add support for batch error reporting
@@ -198,14 +212,17 @@ See README.md for more information.
 - Fix Node buffer deprecation warning
 
 ## 0.10.2
+
 - Move nock to devDependencies due to CVE
 - Fix Travis Node v4 build
 - Add jshint to Travis build
 
 ## 0.10.1
+
 - Bump nock dependency to v9 as v8 has a dependency on a version of lodash with a security issue
 
 ## 0.10.0
+
 - Add support for inner errors. Option `innerErrorFieldName` to specify a field or a function on the error object to use for retrieval of an inner error. Defaults to `cause` which is used in [VError](https://github.com/joyent/node-verror)
 
 ## 0.9.1
@@ -225,58 +242,77 @@ See README.md for more information.
 - Add ability to turn off 'humanised-object-strings'
 
 ## 0.8.4
+
 - Add some smarts around passing an object in to the exception parameter
 
 ## 0.8.3
+
 - Turn strings into errors if passed through. Log out request errors.
 
 ## 0.8.2
+
 - Add setTags method
 
 ## 0.8.1
+
 - Add custom error grouping key
 
 ## 0.8.0
+
 - Add offline support
 
 ## 0.7.1
+
 - Default useSSL to true
 
 ## 0.7.0
+
 - Add onBeforeSend hook, api endpoint options, and bug fixes
 
 ## 0.6.2
+
 - Fix utf8 chars causing 400s, log when errors occur when posting
 
 ## 0.6.1
+
 - Replace deprecated request.host with request.hostname if it exists
 
 ## 0.6.0
+
 - Added ability to send tags with exception reports
 
 ## 0.5.0
+
 - Added filters for sensitive request data, and better affected user tracking/Customers
 
 ## 0.4.2
+
 - Minor test refactor
 
 ## 0.4.1
+
 - Fixed issue where getting cpu information returned undefined
 
 ## 0.4.0
+
 - Added *user* function, deprecated setUser
 
 ## 0.3.0
+
 - Added version and user tracking/Customers functionality; bump jshint version, update test
 
 ## 0.2.0
+
 - Added Express handler, bug fixes
 
 ## 0.1.2
+
 - Include more error information
 
 ## 0.1.1
+
 - Point at the correct API endpoint, include correct dependencies for NPM
 
 ## 0.1.0
+
 - Initial release
