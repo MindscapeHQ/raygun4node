@@ -4,7 +4,7 @@ var favicon = require("serve-favicon");
 var logger = require("morgan");
 var cookieParser = require("cookie-parser");
 var bodyParser = require("body-parser");
-var sassMiddleware = require("node-sass-middleware");
+
 var raygunClient = require("./raygun.client");
 
 var routes = require("./routes/index");
@@ -33,15 +33,6 @@ app.use(
   }),
 );
 app.use(cookieParser());
-app.use(
-  sassMiddleware({
-    src: __dirname,
-    dest: path.join(__dirname, "public"),
-    debug: true,
-    outputStyle: "compressed",
-    prefix: "/stylesheets",
-  }),
-);
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", routes);
