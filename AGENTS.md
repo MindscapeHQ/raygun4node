@@ -64,7 +64,6 @@ npm run prettier   # Format all source files
 ## Key Dependencies
 
 - `stack-trace`: Stack trace parsing
-- `uuid`: Unique identifier generation
 - `debug`: Debug logging (enabled via `DEBUG=raygun`)
 
 ## Examples
