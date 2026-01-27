@@ -35,7 +35,7 @@ import { startTimer } from "./timer";
 import * as raygunTransport from "./raygun.transport";
 import * as raygunSyncTransport from "./raygun.sync.transport";
 
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "crypto";
 
 type SendOptionsResult =
   | {
@@ -561,7 +561,7 @@ class Raygun {
     }
 
     if (apmBridge) {
-      const correlationId = uuidv4();
+      const correlationId = randomUUID();
 
       apmBridge.notify(exception, correlationId);
 
