@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.1
+
+- fix: replace uuid with crypto.randomUUID() for CommonJS compatibility (#452) (2026-01-27)
+
 ## 2.2.0
 
 - chore: fix for glob dev vulnerability (#449) (2026-01-24)
