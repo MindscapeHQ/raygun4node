@@ -28,6 +28,8 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm test
+    # Run CommonJS compatibility test
+    - run: npm run test:cjs
     # Run static analysis on JS files
     - run: npm run eslint
     # Run static analysis on TS files

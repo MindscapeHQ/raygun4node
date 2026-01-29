@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.2
+
+- chore: add test:cjs to CI run (#454) (2026-01-30)
+- chore(deps-dev): bump tar from 7.5.6 to 7.5.7 (#455) (2026-01-30)
+
 ## 2.2.1
 
 - fix: replace uuid with crypto.randomUUID() for CommonJS compatibility (#452) (2026-01-27)
