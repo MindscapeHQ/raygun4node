@@ -39,15 +39,15 @@ import { randomUUID } from "crypto";
 
 type SendOptionsResult =
   | {
-    valid: true;
-    message: Message;
-    options: SendOptions;
-    skip: boolean;
-  }
+      valid: true;
+      message: Message;
+      options: SendOptions;
+      skip: boolean;
+    }
   | {
-    valid: false;
-    message: Message;
-  };
+      valid: false;
+      message: Message;
+    };
 
 const debug = require("debug")("raygun");
 
