@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.2.3
+
+- chore(deps): bump ejs from 3.1.10 to 4.0.1 in /examples/express-sample (#462)
+- chore(deps): bump config from 4.1.1 to 4.2.0 in /examples/using-domains (#463)
+- chore(deps-dev): bump prettier from 3.7.4 to 3.8.1 (#460)
+- chore(deps-dev): bump @types/node from 24.10.1 to 25.1.0 (#459)
+- chore(deps-dev): bump nock from 14.0.7 to 14.0.10 (#458)
+- chore(deps-dev): bump typescript-eslint from 8.51.0 to 8.54.0 (#457)
+- chore(deps-dev): bump @stylistic/eslint-plugin from 5.6.1 to 5.7.1 (#461)
+
 ## 2.2.2
 
 - chore: add test:cjs to CI run (#454) (2026-01-30)
