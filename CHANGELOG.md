@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.4
+
+- chore(deps-dev): bump tar from 7.5.7 to 7.5.9 (#466) (2026-02-20)
+- chore(deps-dev): bump qs from 6.14.1 to 6.14.2 (#465) (2026-02-16)
+
 ## 2.2.3
 
 - chore(deps): bump ejs from 3.1.10 to 4.0.1 in /examples/express-sample (#462)
