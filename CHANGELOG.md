@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.2.5
+
+- fix: update stale example lockfiles to resolve tar vulnerability (CVE in tar <7.5.8) (#468) (2026-02-22)
+- fix: update minimatch in example lock files to resolve ReDoS vulnerabilities (2026-02-28)
+- chore(deps-dev): bump minimatch from 3.1.2 to 3.1.5 (#469) (2026-02-28)
+- chore(deps-dev): bump @types/node from 25.1.0 to 25.3.3 (#471) (2026-03-02)
+- chore(deps-dev): bump semver from 7.7.3 to 7.7.4 (#472) (2026-03-02)
+- chore(deps-dev): bump eslint-plugin-tsdoc from 0.5.0 to 0.5.2 (#474) (2026-03-02)
+- chore(deps): bump config from 4.2.0 to 4.4.1 in /examples/express-sample (#476) (2026-03-02)
+- chore(deps): bump config from 4.2.0 to 4.4.1 in /examples/using-domains (#477) (2026-03-02)
+- chore: regenerate lockfiles to resolve transitive vulnerabilities (#478) (2026-03-02)
+
 ## 2.2.4
 
 - chore(deps-dev): bump tar from 7.5.7 to 7.5.9 (#466) (2026-02-20)
