@@ -2,7 +2,6 @@
 
 import eslint from '@eslint/js';
 import stylistic from '@stylistic/eslint-plugin';
-import stylisticTs from '@stylistic/eslint-plugin-ts';
 import tseslint from 'typescript-eslint';
 import tsdocPlugin from 'eslint-plugin-tsdoc';
 
@@ -10,9 +9,7 @@ export default tseslint.config(
     // Basic eslint rules
     eslint.configs.recommended,
     // Codestyle rules for JS
-    stylistic.configs["recommended-flat"],
-    // Codestyle rules for TS
-    stylisticTs.configs["all-flat"],
+    stylistic.configs["recommended"],
     // Eslint rules for TS
     ...tseslint.configs.recommended,
     {
@@ -51,7 +48,7 @@ export default tseslint.config(
             // Stick to double quotes
             "@stylistic/quotes": ["error", "double"],
             // Enforce curly braces spacing
-            "@stylistic/ts/object-curly-spacing": ["error", "always"],
+            "@stylistic/object-curly-spacing": ["error", "always"],
             // Enforce "one true brace style"
             "@stylistic/brace-style": ["error", "1tbs"],
             // Enforce parenthesis in functions: "(a) => a"
@@ -61,11 +58,10 @@ export default tseslint.config(
             "@stylistic/no-mixed-operators": ["off", 0],
             "@stylistic/operator-linebreak": ["off", 0],
             "@stylistic/quote-props": ["off", 0],
-            "@stylistic/ts/comma-dangle": ["off", 0],
-            "@stylistic/ts/no-extra-parens": ["off", 0],
-            "@stylistic/ts/quote-props": ["off", 0],
-            "@stylistic/ts/space-before-function-paren": ["off", 0],
-            "@stylistic/ts/indent": ["off", 0],
+            "@stylistic/comma-dangle": ["off", 0],
+            "@stylistic/no-extra-parens": ["off", 0],
+            "@stylistic/space-before-function-paren": ["off", 0],
+            "@stylistic/indent": ["off", 0],
             // Documentation format check
             "tsdoc/syntax": "warn"
         }
