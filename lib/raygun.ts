@@ -44,7 +44,7 @@ type SendOptionsResult =
       options: SendOptions;
       skip: boolean;
     }
-  | {
+    | {
       valid: false;
       message: Message;
     };

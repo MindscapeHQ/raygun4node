@@ -5,7 +5,7 @@ export default [
     // Basic eslint rules
     eslint.configs.recommended,
     // Codestyle rules for JS
-    stylistic.configs["recommended-flat"],
+    stylistic.configs["recommended"],
     {
         languageOptions: {
             // Add node globals to ignore undefined
