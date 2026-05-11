@@ -1,5 +1,21 @@
 # Changelog
 
+## 2.2.6
+
+- chore(deps-dev): bump tar from 7.5.9 to 7.5.10 (#480) (2026-03-07)
+- chore(deps-dev): bump tar from 7.5.10 to 7.5.11 (#481) (2026-03-12)
+- chore(deps-dev): bump flatted from 3.3.3 to 3.4.2 (#482) (2026-03-24)
+- chore(deps): bump picomatch from 4.0.3 to 4.0.4 (#483) (2026-03-26)
+- chore(deps): bump marocchino/sticky-pull-request-comment from 2 to 3 (#488) (2026-04-01)
+- chore(deps-dev): bump @types/node from 25.3.3 to 25.5.0 (#485) (2026-04-01)
+- chore(deps): bump ejs from 4.0.1 to 5.0.1 in /examples/express-sample (#489) (2026-04-02)
+- chore(deps-dev): bump @stylistic/eslint-plugin from 5.9.0 to 5.10.0 (#486) (2026-04-02)
+- chore(deps-dev): bump typescript-eslint from 8.56.1 to 8.58.0 (#484) (2026-04-02)
+- chore: upgrade to ESLint 10 and unify stylistic plugins (#490) (2026-04-02)
+- chore(deps): address Dependabot security updates (#499) (2026-05-11)
+- chore(deps-dev): update dev tooling dependencies (#500) (2026-05-11)
+- chore(deps-dev): bump TypeScript from 5.9.3 to 6.0.3 (#495) (2026-05-11)
+
 ## 2.2.5
 
 - fix: update stale example lockfiles to resolve tar vulnerability (CVE in tar <7.5.8) (#468) (2026-02-22)
