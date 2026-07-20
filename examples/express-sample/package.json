@@ -6,7 +6,7 @@
     "start": "DEBUG=raygun,express-sample:server node ./bin/www"
   },
   "dependencies": {
-    "body-parser": "^2.2.1",
+    "body-parser": "^2.3.0",
     "config": "^4.4.1",
     "cookie-parser": "~1.4.7",
     "debug": "^4.3.4",
