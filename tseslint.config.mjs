@@ -62,6 +62,7 @@ export default tseslint.config(
             "@stylistic/no-extra-parens": ["off", 0],
             "@stylistic/space-before-function-paren": ["off", 0],
             "@stylistic/indent": ["off", 0],
+            "@stylistic/indent-binary-ops": ["off", 0],
             // Documentation format check
             "tsdoc/syntax": "warn"
         }
