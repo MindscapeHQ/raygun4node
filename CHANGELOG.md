@@ -1,5 +1,24 @@
 # Changelog
 
+## 2.2.7
+
+- chore(deps-dev): bump qs from 6.15.0 to 6.15.2 (#502) (2026-05-24)
+- chore(ci): make prettier check deterministic (#519) (2026-07-20)
+- chore(deps-dev): bump ws from 8.20.0 to 8.21.1 (#520) (2026-07-20)
+- chore(deps-dev): bump sigstore from 4.1.0 to 4.1.1 (#518) (2026-07-20)
+- chore(deps-dev): bump undici from 6.25.0 to 6.27.0 (#510) (2026-07-20)
+- chore(deps-dev): bump tar from 7.5.15 to 7.5.20 (#509) (2026-07-20)
+- chore(deps): bump morgan in /examples/express-sample (#516) (2026-07-20)
+- chore(deps): bump body-parser in /examples/express-sample (#513) (2026-07-20)
+- chore(deps): bump config from 4.4.1 to 4.4.2 in /examples/express-sample (#515) (2026-07-20)
+- chore(deps): update Express example to 4.22.2 (#521) (2026-07-20)
+- chore(deps): bump actions/checkout from 6 to 7 (#512) (2026-07-20)
+- chore(deps): bump config from 4.4.1 to 4.4.2 in /examples/using-domains (#514) (2026-07-20)
+- chore(deps): bump ejs from 5.0.2 to 6.0.1 in /examples/express-sample (#508) (2026-07-20)
+- chore(deps-dev): refresh development tooling (#522) (2026-07-21)
+- chore(ci): make lint checks non-mutating (#523) (2026-07-21)
+- chore(deps): clean up security lockfiles (#524) (2026-07-21)
+
 ## 2.2.6
 
 - chore(deps-dev): bump tar from 7.5.9 to 7.5.10 (#480) (2026-03-07)
