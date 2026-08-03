@@ -67,7 +67,7 @@
   "dependencies": {
     "@types/express": "^5.0.0",
     "debug": "^4.3.4",
-    "stack-trace": "0.0.10"
+    "stack-trace": "1.0.0"
   },
   "keywords": [
     "APM",
