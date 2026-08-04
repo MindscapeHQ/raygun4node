@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.2.8
+
+- Maintenance-only release; no public API or runtime behavior changes.
+- chore(deps): bump actions/setup-node from 6 to 7 (#528) (2026-08-04)
+- chore(deps-dev): bump tap from 21.7.2 to 21.7.5 (#529) (2026-08-04)
+- chore(deps-dev): bump eslint from 10.7.0 to 10.8.0 (#531) (2026-08-04)
+- chore(deps-dev): bump @types/node from 25.9.5 to 26.1.2 (#532) (2026-08-04)
+- chore(deps-dev): bump fast-uri from 3.1.2 to 3.1.4 (#527) (2026-08-01)
+- chore(deps-dev): bump fast-uri from 3.1.4 to 3.1.5 (#534) (2026-08-04)
+- chore(deps-dev): bump body-parser to 2.3.0 (#537) (2026-08-04)
+
 ## 2.2.7
 
 - chore(deps-dev): bump qs from 6.15.0 to 6.15.2 (#502) (2026-05-24)
