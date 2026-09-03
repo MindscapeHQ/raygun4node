@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.2.9
+
+- Maintenance-only release; no public API or runtime behavior changes.
+- Updated vulnerable development dependencies and upgraded `fast-uri` to 3.1.7 (#551, #553).
+- Hardened npm CI with disabled dependency lifecycle scripts, runtime audits, registry signature verification, and known-malicious-version blocking (#555).
+- Added clean installation, audit, and smoke checks for both example applications (#555).
+- Updated both examples to `config` 5.0.1 and refreshed Express example dependencies (#549, #550, #556).
+- Grouped routine patch and minor Dependabot updates on a monthly schedule with a seven-day cooldown; major and security updates remain separate (#554).
+- Refreshed development tooling, including ESLint, TypeScript ESLint, Nock, Prettier, and Node.js type definitions.
+
 ## 2.2.8
 
 - Maintenance-only release; no public API or runtime behavior changes.
