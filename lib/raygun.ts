@@ -52,9 +52,7 @@ type SendOptionsResult =
 const debug = require("debug")("raygun");
 
 let apmBridge:
-  | undefined
-  | null
-  | { notify(e: string | Error, s: string): void } = undefined;
+  undefined | null | { notify(e: string | Error, s: string): void } = undefined;
 
 try {
   if (module.parent) {
