@@ -8,7 +8,6 @@ updates:
       interval: "monthly"
     cooldown:
       default-days: 7
-      semver-major-days: 30
     groups:
       routine-development:
         applies-to: "version-updates"
@@ -27,7 +26,6 @@ updates:
       interval: "monthly"
     cooldown:
       default-days: 7
-      semver-major-days: 30
     groups:
       routine-express-sample-dependencies:
         applies-to: "version-updates"
@@ -51,7 +49,6 @@ updates:
       interval: "monthly"
     cooldown:
       default-days: 7
-      semver-major-days: 30
     groups:
       routine-domains-example-dependencies:
         applies-to: "version-updates"
