@@ -69,11 +69,6 @@
     "debug": "^4.3.4",
     "stack-trace": "0.0.10"
   },
-  "overrides": {
-    "keyv": "4.5.4",
-    "flat-cache": "4.0.1",
-    "file-entry-cache": "8.0.0"
-  },
   "keywords": [
     "APM",
     "crash",
