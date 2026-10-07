@@ -61,26 +61,20 @@ export function send(
           resolve(response);
           // destroy the request after successful completion
           request.destroy();
-          debug(
-            `[raygun.transport.ts] Request destroyed for message: ${options.message}`,
-          );
+          debug("[raygun.transport.ts] Request destroyed after sending report");
         },
       );
 
       if (options.http?.timeout) {
         debug(`[raygun.transport.ts] Timeout set: ${options.http.timeout}ms`);
         request.setTimeout(options.http.timeout, () => {
-          console.error(
-            `[Raygun4Node] request timed out while attempting to send error with message: ${options.message}`,
-          );
+          console.error("[Raygun4Node] Request timed out while sending report");
           request.destroy(new Error("Request timed out"));
         });
       }
 
       request.on("error", function (e) {
-        console.error(
-          `[Raygun4Node] Error with details "${e.message}" occurred while attempting to send error with message: ${options.message}`,
-        );
+        console.error("[Raygun4Node] Transport error while sending report");
 
         // request failed
         reject(e);
@@ -90,9 +84,7 @@ export function send(
       request.end();
     });
   } catch (e) {
-    console.error(
-      `[Raygun4Node] Error "${e}" occurred while attempting to send error with message: ${options.message}`,
-    );
+    console.error("[Raygun4Node] Failed to prepare report for transport");
     return Promise.reject(e);
   }
 }

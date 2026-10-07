@@ -183,6 +183,35 @@ const raygun = require('raygun');
 const raygunClient = new raygun.Client().init({ apiKey: 'YOUR_API_KEY', filters: ['password', 'creditcard'] });
 ```
 
+### Protecting sensitive data
+
+No request keys are filtered by default. `filters` removes exact, case-sensitive keys
+recursively from request headers, query parameters, and parsed request bodies.
+For Node.js request headers, use lowercase keys such as `authorization` and `cookie`.
+Filters do not sanitize raw strings, error messages, user information, custom data,
+or breadcrumbs. Avoid collecting credentials and personal data in these fields.
+
+Use `onBeforeSend` to review the complete report before transport. For example,
+remove custom data and breadcrumbs if your application does not need them:
+
+```javascript
+const raygunClient = new raygun.Client().init({
+  apiKey: 'YOUR_API_KEY',
+  filters: ['authorization', 'cookie', 'password', 'creditcard'],
+  onBeforeSend: function (payload) {
+    delete payload.details.userCustomData;
+    delete payload.details.breadcrumbs;
+    return payload;
+  }
+});
+```
+
+If you retain these sections, allowlist the fields your application needs and redact
+their values before sending. Review error messages and user information separately.
+Transport diagnostics do not log report payloads or transport error text, but other
+SDK debug messages can contain application-provided text. Keep `DEBUG=raygun`
+disabled in production unless you have reviewed the data and log access controls.
+
 ### Tags
 
 You can add tags to your error in the Send() function, as the `tags` parameter. For example:

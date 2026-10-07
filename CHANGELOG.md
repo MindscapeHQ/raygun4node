@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Updated vulnerable transitive development dependencies and the Express example's Morgan and proxy-addr dependencies.
+- Removed report payloads and transport error text from transport diagnostics while preserving errors returned to callers.
+- Documented request-filter boundaries and redaction with `onBeforeSend`.
+
 ## 2.2.9
 
 - Maintenance-only release; no public API or runtime behavior changes.
