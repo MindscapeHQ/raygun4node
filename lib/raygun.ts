@@ -69,12 +69,31 @@ type SendCB = (error: Error | null, items: string[] | undefined) => void;
 const DEFAULT_BATCH_FREQUENCY = 1000; // ms
 const DEFAULT_TIMEOUT = 5000; // ms
 
+// Sensitive field names that are filtered from error reports by default,
+// even if the consumer does not explicitly configure `filters`.
+const DEFAULT_FILTERS = [
+  "password",
+  "passwd",
+  "secret",
+  "creditcard",
+  "credit_card",
+  "cardnumber",
+  "card_number",
+  "cvv",
+  "ssn",
+  "authorization",
+  "auth",
+  "token",
+  "apikey",
+  "api_key",
+];
+
 function emptyCallback() {}
 
 class Raygun {
   _apiKey: string | undefined;
 
-  _filters: string[] = [];
+  _filters: string[] = DEFAULT_FILTERS;
 
   _user: UserMessageData | undefined;
 
@@ -122,7 +141,7 @@ class Raygun {
    */
   init(options: RaygunOptions) {
     this._apiKey = options.apiKey;
-    this._filters = options.filters || [];
+    this._filters = DEFAULT_FILTERS.concat(options.filters || []);
     this._host = options.host;
     this._port = options.port;
     this._useSSL = options.useSSL !== false;
