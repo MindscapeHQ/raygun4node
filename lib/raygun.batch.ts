@@ -82,9 +82,8 @@ export class RaygunBatchTransport {
 
     if (messageLength >= MAX_BATCH_INNER_SIZE_BYTES) {
       const messageSize = Math.ceil(messageLength / 1024);
-      const startOfMessage = serializedMessage.slice(0, 1000);
 
-      const errorMessage = `Error is too large to send to Raygun (${messageSize}kb)\nStart of error: ${startOfMessage}`;
+      const errorMessage = `Error is too large to send to Raygun (${messageSize}kb)`;
       console.error(`[Raygun4Node] ${errorMessage}`);
       throw Error(errorMessage);
     }
@@ -153,7 +152,7 @@ export class RaygunBatchTransport {
       const durationInMs = stopTimer();
       if (err) {
         debug(
-          `[raygun.batch.ts] Batch transport - error sending batch (id=${batchId}, duration=${durationInMs}ms): ${err}`,
+          `[raygun.batch.ts] Batch transport - error sending batch (id=${batchId}, duration=${durationInMs}ms)`,
         );
         for (const promise of promises) {
           promise.reject(err);

@@ -312,9 +312,7 @@ class Raygun {
     }
 
     if (sendOptionsResult.skip) {
-      console.log(
-        `[Raygun4Node] Skip sending message: ${sendOptionsResult.message.details.error}.`,
-      );
+      console.log("[Raygun4Node] Skipped sending report");
       return Promise.resolve(null);
     }
 
@@ -353,7 +351,7 @@ class Raygun {
         .catch((error) => {
           const durationInMs = stopTimer();
           debug(
-            `[raygun.ts] Error sending message (duration=${durationInMs}ms): ${error}`,
+            `[raygun.ts] Error sending message (duration=${durationInMs}ms)`,
           );
           return error;
         });
@@ -405,9 +403,7 @@ class Raygun {
 
     if (result.valid) {
       if (result.skip) {
-        console.log(
-          `[Raygun4Node] Skip sending message: ${result.message.details.error}.`,
-        );
+        console.log("[Raygun4Node] Skipped sending report");
         return;
       }
       raygunSyncTransport.send(result.options);

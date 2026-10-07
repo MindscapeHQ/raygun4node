@@ -43,6 +43,7 @@
     "prepare": "tsc",
     "//test": "runs tests on main project",
     "test": "tap --node-arg=-r --node-arg=ts-node/register --disable-coverage test/*_test.js",
+    "test:examples": "tap --node-arg=-r --node-arg=ts-node/register --disable-coverage test/examples_integration.js",
     "//test:cjs": "tests CommonJS compatibility (catches ESM-only deps)",
     "test:cjs": "node --no-experimental-require-module scripts/test-cjs-compat.js"
   },

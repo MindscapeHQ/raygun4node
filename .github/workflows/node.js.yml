@@ -117,15 +117,7 @@ jobs:
         working-directory: examples/${{ matrix.example }}
       - run: npm audit signatures
         working-directory: examples/${{ matrix.example }}
-      - name: Smoke test Express example
-        if: matrix.example == 'express-sample'
-        working-directory: examples/express-sample
+      - name: Test example error reporting against a local endpoint
         env:
-          NODE_ENV: production
-        run: node -e "require('./app')"
-      - name: Smoke test domains example
-        if: matrix.example == 'using-domains'
-        working-directory: examples/using-domains
-        run: |
-          node --check app.js
-          node -e "require('config'); require('raygun')"
+          RAYGUN_TEST_EXAMPLE: ${{ matrix.example }}
+        run: npm run test:examples

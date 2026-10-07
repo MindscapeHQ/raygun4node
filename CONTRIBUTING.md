@@ -17,6 +17,20 @@ The recommended IDE for working on this project is Visual Studio Code.
 
 To run tests, run `npm run test` or run all tests from VSCode.
 
+To test the actual examples against a local mock Raygun endpoint, run these
+commands from the repository root (Node.js 20 or later):
+
+```sh
+npm run prepare
+npm --prefix examples/express-sample ci --ignore-scripts
+npm --prefix examples/using-domains ci --ignore-scripts
+npm run test:examples
+```
+
+These tests use a test API key and do not contact Raygun. Set
+`RAYGUN_TEST_EXAMPLE=express-sample` or `RAYGUN_TEST_EXAMPLE=using-domains` to run
+only one example.
+
 ### Code analysis
 
 To check the code, run `npm run eslint` and `npm run tseslint`.
@@ -63,4 +77,3 @@ Wait for a review by the Raygun team.
 The team will leave you feedback and might ask you to do changes in your code.
 
 Once the PR is approved, the team will merge it.
-
