@@ -90,7 +90,8 @@ jobs:
           }
           NODE
       - run: npm ci --ignore-scripts
-      - run: npm audit --omit=dev
+      # Include development tooling so dependency updates cannot reintroduce known vulnerabilities.
+      - run: npm audit
       - run: npm audit signatures
 
   examples:
