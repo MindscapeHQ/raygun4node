@@ -1,10 +1,13 @@
 # Changelog
 
-## Unreleased
+## 2.2.10
 
 - Updated vulnerable transitive development dependencies and the Express example's Morgan and proxy-addr dependencies.
 - Removed report payloads and transport error text from transport diagnostics while preserving errors returned to callers.
+- Report payloads sent to Raygun and public APIs are unchanged.
 - Documented request-filter boundaries and redaction with `onBeforeSend`.
+- Added regression tests for diagnostic-log privacy and local error-reporting integration tests for both examples.
+- Expanded CI audits to include development dependencies and refreshed development tooling.
 
 ## 2.2.9
 
