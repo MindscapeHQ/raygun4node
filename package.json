@@ -70,6 +70,10 @@
     "debug": "^4.3.4",
     "stack-trace": "0.0.10"
   },
+  "overrides": {
+    "glob": "^14.0.6",
+    "minimatch": "^11.0.9"
+  },
   "keywords": [
     "APM",
     "crash",
