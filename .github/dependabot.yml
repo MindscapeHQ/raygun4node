@@ -8,6 +8,13 @@ updates:
       interval: "monthly"
     cooldown:
       default-days: 7
+    ignore:
+      # Nock 15 requires Node >=22.20. Keep the full suite on Node 20/22/24.
+      # Revisit when CI runtime policy changes or a security advisory requires it.
+      # Keep Nock 14 patch updates enabled; do not disable security alerts.
+      - dependency-name: "nock"
+        update-types:
+          - "version-update:semver-major"
     groups:
       routine-development:
         applies-to: "version-updates"
