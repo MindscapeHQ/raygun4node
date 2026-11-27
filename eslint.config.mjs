@@ -35,6 +35,7 @@ export default [
             "@stylistic/no-mixed-operators": ["off", 0],
             "@stylistic/operator-linebreak": ["off", 0],
             "@stylistic/quote-props": ["off", 0],
+            "@stylistic/indent": ["off", 0],
         }
     }
 ];
