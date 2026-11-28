@@ -47,8 +47,6 @@ export default tseslint.config(
             "@stylistic/semi": ["error", "always"],
             // Stick to double quotes
             "@stylistic/quotes": ["error", "double"],
-            // Enforce curly braces spacing
-            "@stylistic/object-curly-spacing": ["error", "always"],
             // Enforce "one true brace style"
             "@stylistic/brace-style": ["error", "1tbs"],
             // Enforce parenthesis in functions: "(a) => a"
